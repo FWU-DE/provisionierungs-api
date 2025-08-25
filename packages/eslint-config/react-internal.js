@@ -10,11 +10,14 @@ import { config as baseConfig } from './base.js';
  * A custom ESLint configuration for libraries that use React.
  *
  * @type {import("eslint").Linter.Config[]} */
-export const config = [
-  ...baseConfig,
+export const config = tseslint.config([
+  baseConfig,
   js.configs.recommended,
-  ...tseslint.configs.recommended,
+  tseslint.configs.strictTypeChecked,
   pluginReact.configs.flat.recommended,
+  {
+    rules: { '@typescript-eslint/no-confusing-void-expression': 'off' },
+  },
   {
     languageOptions: {
       ...pluginReact.configs.flat.recommended.languageOptions,
@@ -35,4 +38,4 @@ export const config = [
       'react/react-in-jsx-scope': 'off',
     },
   },
-];
+]);
