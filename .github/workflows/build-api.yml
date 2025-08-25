@@ -1,0 +1,108 @@
+name: Build
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      checks: write
+      actions: read
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+      - name: Install Node Dependencies
+        run: pnpm install
+      - name: Prepare environment
+        working-directory: apps/api
+        run: cp .env.example .env
+      - name: Tests
+        run: pnpm --filter @fwu/vidis-rostering-api test:cov --json --testLocationInResults --outputFile=./coverage/report.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: ./apps/api/coverage/report.json
+          retention-days: 7
+      - name: Find Pull Request
+        uses: jwalton/gh-find-current-pr@v1
+        id: findPr
+      - name: Find Run ID for main branch
+        id: findRunId
+        run: |
+          VAL="$(gh run list -b main -w .github/workflows/build-api.yml --json databaseId --limit 1 -q '.[].databaseId')";
+          echo $VAL;
+          echo "RUN_ID=$VAL" >> "$GITHUB_OUTPUT"
+        if: success() && steps.findPr.outputs.number
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        id: downloadBaseline
+        if: success() && steps.findPr.outputs.number
+        continue-on-error: true
+        with:
+          name: coverage-report
+          path: ./apps/api/coverage-report-main
+          run-id: ${{ steps.findRunId.outputs.RUN_ID }}
+          github-token: ${{ github.token }}
+      - name: Coverage Report with baseline
+        uses: ArtiomTr/jest-coverage-report-action@v2
+        id: coverageReport
+        if: success() && steps.findPr.outputs.number && steps.downloadBaseline.outcome == 'success'
+        with:
+          coverage-file: ./apps/api/coverage/report.json
+          base-coverage-file: ./apps/api/coverage-report-main/report.json
+          annotations: failed-tests
+          output: report-markdown
+          prnumber: ${{ steps.findPr.outputs.number }}
+      - name: Coverage Report
+        uses: ArtiomTr/jest-coverage-report-action@v2
+        id: coverageReportFailure
+        if: success() && steps.findPr.outputs.number && steps.downloadBaseline.outcome == 'failure'
+        with:
+          coverage-file: ./apps/api/coverage/report.json
+          # Script for determining coverage on main branch
+          test-script: pnpm --filter @fwu/vidis-rostering-api test:cov --json --testLocationInResults --outputFile=./coverage/report.json
+          skip-step: all
+          annotations: failed-tests
+          output: report-markdown
+          prnumber: ${{ steps.findPr.outputs.number }}
+          package-manager: pnpm
+      - uses: marocchino/sticky-pull-request-comment@v2
+        if: success() && steps.findPr.outputs.number && steps.coverageReportFailure.outputs.report
+        with:
+          number: ${{ steps.findPr.outputs.number }}
+          message: ${{ steps.coverageReportFailure.outputs.report }}
+      - uses: marocchino/sticky-pull-request-comment@v2
+        if: success() && steps.findPr.outputs.number && steps.coverageReport.outputs.report
+        with:
+          number: ${{ steps.findPr.outputs.number }}
+          message: ${{ steps.coverageReport.outputs.report }}
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+      - name: Install Node Dependencies
+        run: pnpm install
+      - name: Test Build Job
+        run: pnpm build

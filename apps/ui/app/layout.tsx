@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from 'next';
+
+import './globals.css';
 
 export const metadata: Metadata = {
-  title: "VIDIS Rostering",
-  description: "A rostering application for VIDIS",
+  title: 'VIDIS Rostering',
+  description: 'A rostering application for VIDIS',
 };
 
 export default function RootLayout({

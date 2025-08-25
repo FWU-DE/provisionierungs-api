@@ -9,7 +9,8 @@
     "debug": "nest start --debug --watch",
     "lint": "eslint",
     "check-types": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "test:cov": "jest --coverage"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.6",
