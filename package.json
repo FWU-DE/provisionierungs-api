@@ -4,7 +4,10 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "api:dev": "turbo run dev --filter=@fwu/vidis-rostering-api",
+    "ui:dev": "turbo run dev --filter=@fwu/vidis-rostering-ui",
     "lint": "turbo run lint",
+    "test": "turbo run test",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
     "prepare": "husky"

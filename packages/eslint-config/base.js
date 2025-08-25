@@ -21,7 +21,10 @@ export const config = defineConfig([
     },
   },
   {
-    rules: { '@typescript-eslint/no-confusing-void-expression': 'off' },
+    rules: {
+      '@typescript-eslint/no-confusing-void-expression': 'off',
+      '@typescript-eslint/no-extraneous-class': 'off',
+    },
   },
   {
     plugins: {
@@ -37,6 +40,12 @@ export const config = defineConfig([
     },
   },
   {
-    ignores: ['dist/**', 'eslint.config.js', 'eslint.config.mjs', '.lintstagedrc.mjs'],
+    ignores: [
+      'dist/**',
+      'eslint.config.js',
+      'eslint.config.mjs',
+      '.lintstagedrc.mjs',
+      'jest.config.js',
+    ],
   },
 ]);
