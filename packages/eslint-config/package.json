@@ -1,5 +1,5 @@
 {
-  "name": "@repo/eslint-config",
+  "name": "@fwu-rostering/eslint-config",
   "version": "0.0.0",
   "type": "module",
   "private": true,
@@ -12,7 +12,6 @@
     "@eslint/js": "^9.33.0",
     "@next/eslint-plugin-next": "^15.5.0",
     "eslint": "^9.33.0",
-    "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-only-warn": "^1.1.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
