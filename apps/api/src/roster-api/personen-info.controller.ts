@@ -5,7 +5,7 @@ import {
   Query,
   Res,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import type { Response } from 'express';
 import {
@@ -40,7 +40,6 @@ export class PersonenInfoController {
   // TODO: AUTH
   // @AllowResourceOwnerType(ResourceOwnerType.CLIENT)
   // @RequireScope(MixedScopeIdentifier.EDUPLACES_IDM_PEOPLE_READ)
-  @ApiTags('Schulconnex')
   @ApiResponse({
     status: 200,
     description: 'Read all users',
