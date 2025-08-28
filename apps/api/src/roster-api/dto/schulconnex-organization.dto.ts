@@ -1,0 +1,43 @@
+import { ApiProperty } from '@nestjs/swagger';
+
+import { SchulconnexAddress } from './schulconnex-address.dto';
+import type { Identity, PartialExcept } from '@fwu-rostering/utils/typescript';
+
+export class SchulconnexOrganization {
+  @ApiProperty({
+    description: 'The ID of the organization',
+    example: 'd7e817af-a784-4dc7-923f-ca1f182e6af5',
+  })
+  id!: string;
+
+  @ApiProperty({
+    description: 'Official ID for the organization',
+    example: 'NI_12345',
+    type: String,
+    nullable: true,
+  })
+  kennung!: string | null;
+
+  @ApiProperty({
+    description: 'Human readable name',
+    example: 'Schloss Einstein Internat',
+  })
+  name!: string;
+
+  @ApiProperty({
+    description: 'The address of the organization',
+    type: SchulconnexAddress,
+    nullable: true,
+  })
+  anschrift!: SchulconnexAddress | null;
+
+  @ApiProperty({
+    description: 'The type of the organization',
+    enum: ['SCHULE', 'ANBIETER', 'SONSTIGE'],
+  })
+  typ!: 'SCHULE' | 'ANBIETER' | 'SONSTIGE';
+}
+
+export type PartialSchulconnexOrganization = Identity<
+  PartialExcept<SchulconnexOrganization, 'id'>
+>;

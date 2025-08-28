@@ -45,5 +45,6 @@ export const nextJsConfig = tseslint.config([
       'react/react-in-jsx-scope': 'off',
     },
   },
+  { rules: { 'no-unused-vars': 'off', '@typescript-eslint/no-unused-vars': 'error' } },
   { ignores: ['.next/**', 'next-env.d.ts'] },
 ]);

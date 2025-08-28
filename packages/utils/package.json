@@ -1,0 +1,16 @@
+{
+  "name": "@fwu-rostering/utils",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@fwu-rostering/eslint-config": "workspace:*",
+    "@fwu-rostering/typescript-config": "workspace:*"
+  }
+}
