@@ -1,0 +1,46 @@
+#!/bin/bash
+
+set -x
+
+OPTS=$(getopt -o "h" --long 'help' -n 'get-access-token' -- "$@")
+if [ $? -ne 0 ]; then
+	echo 'Terminating...' >&2
+	exit 1
+fi
+
+eval set -- "$OPTS"
+
+WELLKNOWN="https://aai-test.vidis.schule/auth/realms/vidis/.well-known/openid-configuration"
+TOKEN_ENDPOINT=$(curl -s "$WELLKNOWN" | jq -r '.token_endpoint')
+
+while true; do
+	case "$1" in 
+		'-h'|'--help')
+			echo "Usage: $0 [-h|--help] client_id client_secret scopelist" >&2
+			echo "Example: $0 theclientid thesecret 'scope1 scope2'" >&2
+			echo "    --help    display this help and exit" >&2
+			exit 1
+		;;
+		'--')
+			shift
+			break
+		;;
+		*)
+			echo 'Error parsing getopts' >&2
+			echo "Arg is '$1'" >&2
+			exit 1
+		;;
+	esac
+done
+
+if [ $# -lt 3 ]
+then
+	echo "Missing parameters!" >&2
+	exit 1;
+fi
+
+CLIENTID=$1
+CLIENTSECRET=$2
+SCOPES=$3
+
+curl -X POST "$TOKEN_ENDPOINT" -u "$CLIENTID:$CLIENTSECRET" -d 'grant_type=client_credentials' -d "scope=$SCOPES"
