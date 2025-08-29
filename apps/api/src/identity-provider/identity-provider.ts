@@ -1,5 +1,5 @@
-import type { SchulconnexPersonContext } from 'src/roster-api/dto/schulconnex-person-context.dto';
-import type { SchulconnexPerson } from 'src/roster-api/dto/schulconnex-person.dto';
+import type { SchulconnexPersonContext } from '../roster-api/dto/schulconnex-person-context.dto';
+import type { SchulconnexPerson } from '../roster-api/dto/schulconnex-person.dto';
 
 export interface IdentityResult {
   pid: string;
