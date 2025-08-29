@@ -7,10 +7,13 @@
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "test": "jest"
   },
   "devDependencies": {
     "@fwu-rostering/eslint-config": "workspace:*",
-    "@fwu-rostering/typescript-config": "workspace:*"
+    "@fwu-rostering/typescript-config": "workspace:*",
+    "@types/jest": "^30.0.0",
+    "jest": "^30.0.5"
   }
 }

@@ -13,6 +13,12 @@ import {
   IdentityResult,
 } from '../identity-provider/identity-provider';
 
+import {
+  AllowResourceOwnerType,
+  ClientId,
+  RequireScope,
+  ResourceOwnerType,
+} from '../auth';
 import type {
   PartialSchulconnexGroupdataset,
   SchulconnexGroupdataset,
@@ -31,15 +37,15 @@ import type {
   SchulconnexModelTransformerShowFields,
   SchulconnexModelTransformerVisibleFields,
 } from './interfaces/schulconnex-model-transformer-options.interface';
+import { ScopeIdentifier } from '../auth/scope/scope-identifier';
 
 @Controller('schulconnex/v1')
 export class PersonenInfoController {
   constructor(private readonly identityProvider: IdentityProvider) {}
 
   @Get('personen-info')
-  // TODO: AUTH
-  // @AllowResourceOwnerType(ResourceOwnerType.CLIENT)
-  // @RequireScope(MixedScopeIdentifier.EDUPLACES_IDM_PEOPLE_READ)
+  @AllowResourceOwnerType(ResourceOwnerType.CLIENT)
+  @RequireScope(ScopeIdentifier.SCHULCONNEX_ACCESS)
   @ApiResponse({
     status: 200,
     description: 'Read all users',
@@ -85,6 +91,7 @@ export class PersonenInfoController {
   @ApiBearerAuth()
   async getUsers(
     @Res({ passthrough: true }) res: Response,
+    @ClientId() clientId: string,
     @Query('vollstaendig') // comma separated string
     completeRaw?: string,
     @Query('organisation.id')
@@ -94,7 +101,7 @@ export class PersonenInfoController {
     @Query('pid')
     pidFilter?: string,
   ): Promise<SchulconnexPersonsResponse[]> {
-    const appId = 'some-app-id'; // TODO: From token
+    const appId = clientId;
     const schoolIds = ['some-school-id']; // TODO: From configuration
     if (
       [pidFilter, organizationIdFilter, groupIdFilter].filter(

@@ -1,3 +1,4 @@
 {
-  "extends": "@fwu-rostering/typescript-config/nest.json"
+  "extends": "@fwu-rostering/typescript-config/nest.json",
+  "exclude": ["dist/*"]
 }

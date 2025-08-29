@@ -35,5 +35,6 @@ async function bootstrap() {
 }
 
 bootstrap().catch((err: unknown) => {
+  // eslint-disable-next-line no-console
   console.error('Error during app bootstrap:', err);
 });

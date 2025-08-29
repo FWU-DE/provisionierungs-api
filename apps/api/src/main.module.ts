@@ -1,8 +1,20 @@
 import { Module } from '@nestjs/common';
 
+import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth';
+import authConfig from './config/auth.config';
+import { LogModule } from './logger';
 import { RosterApiModule } from './roster-api/roster-api.module';
 
 @Module({
-  imports: [RosterApiModule],
+  imports: [
+    ConfigModule.forRoot({
+      load: [authConfig],
+      expandVariables: true,
+    }),
+    AuthModule,
+    LogModule,
+    RosterApiModule,
+  ],
 })
 export class MainModule {}

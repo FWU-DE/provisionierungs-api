@@ -1,10 +1,22 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "ui": "stream",
+  "globalEnv": ["LOG_LEVEL", "LOG_FORMAT"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "env": [
+        "AUTH_INTROSPECTION_URL",
+        "AUTH_CLIENT_ID",
+        "AUTH_CLIENT_SECRET",
+        "POSTGRES_HOST",
+        "POSTGRES_PORT",
+        "POSTGRES_USER",
+        "POSTGRES_PASSWORD",
+        "POSTGRES_DATABASE",
+        "POSTGRES_PASSWORD"
+      ],
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "lint": {

@@ -32,6 +32,11 @@ export const config = defineConfig([
     },
     rules: {
       'turbo/no-undeclared-env-vars': 'warn',
+      'no-console': 'warn',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
+      ],
     },
   },
   {
