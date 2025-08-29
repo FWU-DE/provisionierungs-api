@@ -2,9 +2,21 @@ import { NestFactory } from '@nestjs/core';
 
 import { MainModule } from './main.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(MainModule);
+
+  // Enable NestJS Validation Pipe
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
+
+  app.enableShutdownHooks();
 
   const config = new DocumentBuilder()
     .setTitle('VIDIS Rostering API')

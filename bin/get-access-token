@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -x
-
 OPTS=$(getopt -o "h" --long 'help' -n 'get-access-token' -- "$@")
 if [ $? -ne 0 ]; then
 	echo 'Terminating...' >&2
@@ -43,4 +41,4 @@ CLIENTID=$1
 CLIENTSECRET=$2
 SCOPES=$3
 
-curl -X POST "$TOKEN_ENDPOINT" -u "$CLIENTID:$CLIENTSECRET" -d 'grant_type=client_credentials' -d "scope=$SCOPES"
+curl -s -X POST "$TOKEN_ENDPOINT" -u "$CLIENTID:$CLIENTSECRET" -d 'grant_type=client_credentials' -d "scope=$SCOPES" | jq
