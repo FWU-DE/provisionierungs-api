@@ -1,12 +1,10 @@
-import { type JWTPayload, SignJWT, jwtVerify } from 'jose';
+import { type JWTPayload } from 'jose';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
 import 'server-only';
 
-// eslint-disable-next-line turbo/no-undeclared-env-vars
-const secretKey = process.env.SESSION_SECRET;
-const encodedKey = new TextEncoder().encode(secretKey);
+import { decrypt, encrypt as encryptAuth } from './auth';
 
 interface SessionPayload extends JWTPayload {
   userId: string;
@@ -14,37 +12,7 @@ interface SessionPayload extends JWTPayload {
 
 // TODO: This is all test code and needs to be replaced with proper user session management
 export async function encrypt(payload: SessionPayload) {
-  return new SignJWT(payload)
-    .setProtectedHeader({ alg: 'HS256' })
-    .setIssuedAt()
-    .setExpirationTime('7d')
-    .sign(encodedKey);
-}
-
-export async function decrypt(session: string | undefined = '') {
-  try {
-    const { payload } = await jwtVerify(session, encodedKey, {
-      algorithms: ['HS256'],
-    });
-    return payload;
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('Failed to verify session', error);
-  }
-}
-
-export async function createSession(userId: string) {
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-  const session = await encrypt({ userId, expiresAt });
-  const cookieStore = await cookies();
-
-  cookieStore.set('session', session, {
-    httpOnly: true,
-    secure: true,
-    expires: expiresAt,
-    sameSite: 'lax',
-    path: '/',
-  });
+  return encryptAuth(payload);
 }
 
 export async function updateSession() {

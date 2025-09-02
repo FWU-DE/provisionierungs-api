@@ -8,6 +8,7 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "env": [
         "AUTH_INTROSPECTION_URL",
+        "AUTH_URL",
         "AUTH_CLIENT_ID",
         "AUTH_CLIENT_SECRET",
         "POSTGRES_HOST",
@@ -15,7 +16,8 @@
         "POSTGRES_USER",
         "POSTGRES_PASSWORD",
         "POSTGRES_DATABASE",
-        "POSTGRES_PASSWORD"
+        "POSTGRES_PASSWORD",
+        "SESSION_SECRET"
       ],
       "outputs": [".next/**", "!.next/cache/**"]
     },

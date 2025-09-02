@@ -1,0 +1,30 @@
+services:
+  reverse-proxy:
+    image: nginx
+    depends_on:
+      create_certificates:
+        condition: service_completed_successfully
+    ports:
+      - 443:443
+    volumes:
+      - ./reverse-proxy/config:/etc/nginx/templates/
+      - certificates:/etc/nginx/certs:ro
+    environment:
+      - UPSTREAM_PORT=3000
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+
+  create_certificates:
+    image: alpine
+    command: |
+      /bin/sh -c "
+      apk add --no-cache openssl &&
+      openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /certs/local.key -out /certs/local.crt -subj '/CN=localhost' &&
+      chown 101:101 /certs/local.key /certs/local.crt
+      "
+    volumes:
+      - certificates:/certs
+
+volumes:
+  certificates:
+    driver: local
