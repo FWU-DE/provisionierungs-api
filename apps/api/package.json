@@ -10,7 +10,8 @@
     "lint": "eslint . --max-warnings=0",
     "check-types": "tsc --noEmit",
     "test": "jest",
-    "test:cov": "jest --coverage"
+    "test:cov": "jest --coverage",
+    "clean": "rm -rf dist/ .turbo/"
   },
   "dependencies": {
     "@fwu-rostering/utils": "workspace:*",

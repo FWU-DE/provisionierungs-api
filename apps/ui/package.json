@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "clean": "rm -rf .next/ .turbo/"
   },
   "dependencies": {
     "@fwu-rostering/ui": "workspace:*",

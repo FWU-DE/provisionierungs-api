@@ -8,12 +8,14 @@
   "scripts": {
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "clean": "rm -rf dist/ .turbo/"
   },
   "devDependencies": {
     "@fwu-rostering/eslint-config": "workspace:*",
     "@fwu-rostering/typescript-config": "workspace:*",
     "@types/jest": "^30.0.0",
+    "eslint": "^9.33.0",
     "jest": "^30.0.5"
   }
 }

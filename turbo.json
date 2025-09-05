@@ -19,7 +19,7 @@
         "POSTGRES_PASSWORD",
         "SESSION_SECRET"
       ],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".next/**", "dist/**", "!.next/cache/**"]
     },
     "lint": {
       "dependsOn": ["^lint"]
@@ -29,6 +29,10 @@
     },
     "check-types": {
       "dependsOn": ["^check-types"]
+    },
+    "clean": {
+      "dependsOn": ["^clean"],
+      "cache": false
     },
     "dev": {
       "cache": false,
