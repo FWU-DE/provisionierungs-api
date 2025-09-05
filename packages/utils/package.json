@@ -15,7 +15,7 @@
     "@fwu-rostering/eslint-config": "workspace:*",
     "@fwu-rostering/typescript-config": "workspace:*",
     "@types/jest": "^30.0.0",
-    "eslint": "^9.33.0",
-    "jest": "^30.0.5"
+    "eslint": "catalog:",
+    "jest": "catalog:"
   }
 }

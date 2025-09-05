@@ -2,6 +2,15 @@ packages:
   - apps/*
   - packages/*
 
+catalog:
+  '@types/react': ^19.1.0
+  '@types/react-dom': ^19.1.0
+  eslint: ^9.33.0
+  jest: ^30.0.5
+  react: ^19.1.0
+  react-dom: ^19.1.0
+  typescript: ^5.9.2
+
 onlyBuiltDependencies:
   - '@nestjs/core'
   - '@scarf/scarf'
