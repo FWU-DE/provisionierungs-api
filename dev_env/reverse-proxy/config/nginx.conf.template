@@ -5,7 +5,7 @@ upstream ui {
 server {
   listen 443 ssl;
 
-  # Inrease buffer size to prevent 400 Request Header Or Cookie Too Large
+  # Increase buffer size to prevent 400 Request Header Or Cookie Too Large
   large_client_header_buffers 4 16k;
 
   # Increase buffer size to prevent 502 errors

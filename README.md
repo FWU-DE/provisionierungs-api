@@ -1,9 +1,13 @@
 # FWU VIDIS Rostering
 
-## Running the Application
+## Running the applications
 
 ```bash
+# All applications
 pnpm dev
+
+# Only the API
+pnpm api:dev
 ```
 
 ## Applications
