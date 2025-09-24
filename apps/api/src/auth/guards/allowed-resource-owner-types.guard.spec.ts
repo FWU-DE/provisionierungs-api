@@ -16,21 +16,26 @@ describe('ResourceOwnerTokenGuard', () => {
         return 'ok';
       }
     }
+
     const { infra, testClient } = await createInfrastructureWithController([
       TestController,
     ]);
-    testClient.addClientToken('valid-client-token', []);
+    try {
+      testClient.addClientToken('valid-client-token', []);
 
-    const response = await request((await infra.getApp()).getHttpServer())
-      .get('/')
-      .set('Authorization', 'Bearer valid-client-token')
-      .expect(403);
+      const response = await request((await infra.getApp()).getHttpServer())
+        .get('/')
+        .set('Authorization', 'Bearer valid-client-token')
+        .expect(403);
 
-    expect(response.body).toEqual({
-      error: 'Forbidden',
-      statusCode: 403,
-      message: 'Forbidden resource',
-    });
+      expect(response.body).toEqual({
+        error: 'Forbidden',
+        statusCode: 403,
+        message: 'Forbidden resource',
+      });
+    } finally {
+      await infra.tearDown();
+    }
   });
 
   it('does not grant access with wrong grant type on class level', async () => {
@@ -47,15 +52,18 @@ describe('ResourceOwnerTokenGuard', () => {
     ]);
     testClient.addUserToken('valid-user-token', []);
     testClient.addClientToken('valid-client-token', []);
-
-    await request((await infra.getApp()).getHttpServer())
-      .get('/')
-      .set('Authorization', 'Bearer valid-client-token')
-      .expect(200);
-    await request((await infra.getApp()).getHttpServer())
-      .get('/')
-      .set('Authorization', 'Bearer valid-user-token')
-      .expect(403);
+    try {
+      await request((await infra.getApp()).getHttpServer())
+        .get('/')
+        .set('Authorization', 'Bearer valid-client-token')
+        .expect(200);
+      await request((await infra.getApp()).getHttpServer())
+        .get('/')
+        .set('Authorization', 'Bearer valid-user-token')
+        .expect(403);
+    } finally {
+      await infra.tearDown();
+    }
   });
 
   it('does not grant access with wrong grant type on method level', async () => {
@@ -77,24 +85,27 @@ describe('ResourceOwnerTokenGuard', () => {
     ]);
     testClient.addClientToken('valid-client-token', []);
     testClient.addUserToken('valid-user-token', []);
+    try {
+      await request((await infra.getApp()).getHttpServer())
+        .get('/')
+        .set('Authorization', 'Bearer valid-client-token')
+        .expect(200);
+      await request((await infra.getApp()).getHttpServer())
+        .get('/')
+        .set('Authorization', 'Bearer valid-user-token')
+        .expect(403);
 
-    await request((await infra.getApp()).getHttpServer())
-      .get('/')
-      .set('Authorization', 'Bearer valid-client-token')
-      .expect(200);
-    await request((await infra.getApp()).getHttpServer())
-      .get('/')
-      .set('Authorization', 'Bearer valid-user-token')
-      .expect(403);
-
-    await request((await infra.getApp()).getHttpServer())
-      .get('/needs-auth')
-      .set('Authorization', 'Bearer valid-client-token')
-      .expect(403);
-    await request((await infra.getApp()).getHttpServer())
-      .get('/needs-auth')
-      .set('Authorization', 'Bearer valid-user-token')
-      .expect(200);
+      await request((await infra.getApp()).getHttpServer())
+        .get('/needs-auth')
+        .set('Authorization', 'Bearer valid-client-token')
+        .expect(403);
+      await request((await infra.getApp()).getHttpServer())
+        .get('/needs-auth')
+        .set('Authorization', 'Bearer valid-user-token')
+        .expect(200);
+    } finally {
+      await infra.tearDown();
+    }
   });
 
   it('method level overwrites class level', async () => {
@@ -112,15 +123,18 @@ describe('ResourceOwnerTokenGuard', () => {
     ]);
     testClient.addClientToken('valid-client-token', []);
     testClient.addUserToken('valid-user-token', []);
-
-    await request((await infra.getApp()).getHttpServer())
-      .get('/')
-      .set('Authorization', 'Bearer valid-client-token')
-      .expect(403);
-    await request((await infra.getApp()).getHttpServer())
-      .get('/')
-      .set('Authorization', 'Bearer valid-user-token')
-      .expect(200);
+    try {
+      await request((await infra.getApp()).getHttpServer())
+        .get('/')
+        .set('Authorization', 'Bearer valid-client-token')
+        .expect(403);
+      await request((await infra.getApp()).getHttpServer())
+        .get('/')
+        .set('Authorization', 'Bearer valid-user-token')
+        .expect(200);
+    } finally {
+      await infra.tearDown();
+    }
   });
 });
 

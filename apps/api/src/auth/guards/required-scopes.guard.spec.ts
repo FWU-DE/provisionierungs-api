@@ -20,11 +20,14 @@ describe('ScopeGuard', () => {
       TestController,
     ]);
     testClient.addUserToken('valid-user-token', ['wrong-scope']);
-
-    await request((await infra.getApp()).getHttpServer())
-      .get('/')
-      .set('Authorization', 'Bearer valid-user-token')
-      .expect(403);
+    try {
+      await request((await infra.getApp()).getHttpServer())
+        .get('/')
+        .set('Authorization', 'Bearer valid-user-token')
+        .expect(403);
+    } finally {
+      await infra.tearDown();
+    }
   });
 
   it('restricts access with wrong scope on method level', async () => {
@@ -40,11 +43,14 @@ describe('ScopeGuard', () => {
       TestController,
     ]);
     testClient.addUserToken('valid-user-token', ['wrong-scope']);
-
-    await request((await infra.getApp()).getHttpServer())
-      .get('/')
-      .set('Authorization', 'Bearer valid-user-token')
-      .expect(403);
+    try {
+      await request((await infra.getApp()).getHttpServer())
+        .get('/')
+        .set('Authorization', 'Bearer valid-user-token')
+        .expect(403);
+    } finally {
+      await infra.tearDown();
+    }
   });
 
   it('method level overwrites class level', async () => {
@@ -62,15 +68,18 @@ describe('ScopeGuard', () => {
     ]);
     testClient.addUserToken('invalid-user-token', ['scope1']);
     testClient.addUserToken('valid-user-token', ['scope2']);
-
-    await request((await infra.getApp()).getHttpServer())
-      .get('/')
-      .set('Authorization', 'Bearer valid-user-token')
-      .expect(200);
-    await request((await infra.getApp()).getHttpServer())
-      .get('/')
-      .set('Authorization', 'Bearer invalid-user-token')
-      .expect(403);
+    try {
+      await request((await infra.getApp()).getHttpServer())
+        .get('/')
+        .set('Authorization', 'Bearer valid-user-token')
+        .expect(200);
+      await request((await infra.getApp()).getHttpServer())
+        .get('/')
+        .set('Authorization', 'Bearer invalid-user-token')
+        .expect(403);
+    } finally {
+      await infra.tearDown();
+    }
   });
 
   it('multiple scopes', async () => {
@@ -87,15 +96,18 @@ describe('ScopeGuard', () => {
     ]);
     testClient.addUserToken('invalid-user-token', ['scope1']);
     testClient.addUserToken('valid-user-token', ['scope1', 'scope2']);
-
-    await request((await infra.getApp()).getHttpServer())
-      .get('/')
-      .set('Authorization', 'Bearer valid-user-token')
-      .expect(200);
-    await request((await infra.getApp()).getHttpServer())
-      .get('/')
-      .set('Authorization', 'Bearer invalid-user-token')
-      .expect(403);
+    try {
+      await request((await infra.getApp()).getHttpServer())
+        .get('/')
+        .set('Authorization', 'Bearer valid-user-token')
+        .expect(200);
+      await request((await infra.getApp()).getHttpServer())
+        .get('/')
+        .set('Authorization', 'Bearer invalid-user-token')
+        .expect(403);
+    } finally {
+      await infra.tearDown();
+    }
   });
 
   it('ORed scopes', async () => {
@@ -113,19 +125,22 @@ describe('ScopeGuard', () => {
     testClient.addUserToken('one-user-token', ['scope1']);
     testClient.addUserToken('two-user-token', ['scope2']);
     testClient.addUserToken('three-user-token', ['scope1', 'scope2']);
-
-    await request((await infra.getApp()).getHttpServer())
-      .get('/')
-      .set('Authorization', 'Bearer one-user-token')
-      .expect(200);
-    await request((await infra.getApp()).getHttpServer())
-      .get('/')
-      .set('Authorization', 'Bearer two-user-token')
-      .expect(403);
-    await request((await infra.getApp()).getHttpServer())
-      .get('/')
-      .set('Authorization', 'Bearer three-user-token')
-      .expect(200);
+    try {
+      await request((await infra.getApp()).getHttpServer())
+        .get('/')
+        .set('Authorization', 'Bearer one-user-token')
+        .expect(200);
+      await request((await infra.getApp()).getHttpServer())
+        .get('/')
+        .set('Authorization', 'Bearer two-user-token')
+        .expect(403);
+      await request((await infra.getApp()).getHttpServer())
+        .get('/')
+        .set('Authorization', 'Bearer three-user-token')
+        .expect(200);
+    } finally {
+      await infra.tearDown();
+    }
   });
 
   it('grants access with valid token', async () => {
@@ -141,12 +156,15 @@ describe('ScopeGuard', () => {
       TestController,
     ]);
     testClient.addUserToken('valid-user-token', ['scope1']);
-
-    await request((await infra.getApp()).getHttpServer())
-      .get('/')
-      .set('Authorization', 'Bearer valid-user-token')
-      .expect(200)
-      .expect('ok');
+    try {
+      await request((await infra.getApp()).getHttpServer())
+        .get('/')
+        .set('Authorization', 'Bearer valid-user-token')
+        .expect(200)
+        .expect('ok');
+    } finally {
+      await infra.tearDown();
+    }
   });
 });
 

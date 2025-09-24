@@ -19,14 +19,19 @@ describe('AccessTokenGuard', () => {
     const { infra } = await createInfrastructureWithController([
       TestController,
     ]);
-    const response = await request((await infra.getApp()).getHttpServer())
-      .get('/')
-      .expect(403);
-    expect(response.body).toEqual({
-      error: 'Forbidden',
-      statusCode: 403,
-      message: 'Forbidden resource',
-    });
+
+    try {
+      const response = await request((await infra.getApp()).getHttpServer())
+        .get('/')
+        .expect(403);
+      expect(response.body).toEqual({
+        error: 'Forbidden',
+        statusCode: 403,
+        message: 'Forbidden resource',
+      });
+    } finally {
+      await infra.tearDown();
+    }
   });
 
   it('grants access with valid token', async () => {
@@ -41,12 +46,15 @@ describe('AccessTokenGuard', () => {
       TestController,
     ]);
     testClient.addUserToken('valid-user-token', []);
-
-    await request((await infra.getApp()).getHttpServer())
-      .get('/')
-      .set('Authorization', 'Bearer valid-user-token')
-      .expect(200)
-      .expect('ok');
+    try {
+      await request((await infra.getApp()).getHttpServer())
+        .get('/')
+        .set('Authorization', 'Bearer valid-user-token')
+        .expect(200)
+        .expect('ok');
+    } finally {
+      await infra.tearDown();
+    }
   });
 
   it('accesses public route without token on class level', async () => {
@@ -61,11 +69,14 @@ describe('AccessTokenGuard', () => {
     const { infra } = await createInfrastructureWithController([
       TestController,
     ]);
-
-    await request((await infra.getApp()).getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('ok');
+    try {
+      await request((await infra.getApp()).getHttpServer())
+        .get('/')
+        .expect(200)
+        .expect('ok');
+    } finally {
+      await infra.tearDown();
+    }
   });
 
   it('accesses public route without token on method level', async () => {
@@ -84,14 +95,17 @@ describe('AccessTokenGuard', () => {
     const { infra } = await createInfrastructureWithController([
       TestController,
     ]);
-
-    await request((await infra.getApp()).getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('ok');
-    await request((await infra.getApp()).getHttpServer())
-      .get('/needs-auth')
-      .expect(403);
+    try {
+      await request((await infra.getApp()).getHttpServer())
+        .get('/')
+        .expect(200)
+        .expect('ok');
+      await request((await infra.getApp()).getHttpServer())
+        .get('/needs-auth')
+        .expect(403);
+    } finally {
+      await infra.tearDown();
+    }
   });
 
   it('method level overwrites class level', async () => {
@@ -113,13 +127,17 @@ describe('AccessTokenGuard', () => {
       TestController,
     ]);
 
-    await request((await infra.getApp()).getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('ok');
-    await request((await infra.getApp()).getHttpServer())
-      .get('/needs-auth')
-      .expect(403);
+    try {
+      await request((await infra.getApp()).getHttpServer())
+        .get('/')
+        .expect(200)
+        .expect('ok');
+      await request((await infra.getApp()).getHttpServer())
+        .get('/needs-auth')
+        .expect(403);
+    } finally {
+      await infra.tearDown();
+    }
   });
 });
 
