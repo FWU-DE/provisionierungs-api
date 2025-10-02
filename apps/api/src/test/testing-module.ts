@@ -8,13 +8,14 @@ import type { QueryRunner } from 'typeorm';
 import { DataSource } from 'typeorm';
 import type { BaseEntity } from '../database/base.entity';
 import { Persister } from './fixture/persister';
+import { TestDatabaseProviderModule } from './database-provider.module';
 
 export function createTestingModule(
   metadata: ModuleMetadata,
 ): TestingModuleBuilder {
   metadata.imports = [
     ConfigModule.forRoot({ envFilePath: ['.env.test', '.env'] }),
-    // TestDatabaseProviderModule, // TODO: enable when needed
+    TestDatabaseProviderModule,
     ...(metadata.imports ?? []),
   ];
   return Test.createTestingModule(metadata);

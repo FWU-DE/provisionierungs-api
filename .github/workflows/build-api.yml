@@ -25,6 +25,10 @@ jobs:
           cache: 'pnpm'
       - name: Install Node Dependencies
         run: pnpm install
+      - name: Setup infrastructure
+        uses: hoverkraft-tech/compose-action@v2.0.0
+        with:
+          compose-file: 'test_env/docker-compose.yml'
       - name: Prepare environment
         working-directory: apps/api
         run: cp .env.example .env

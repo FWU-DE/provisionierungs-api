@@ -47,6 +47,7 @@ export const config = defineConfig([
   {
     ignores: [
       'dist/**',
+      'scripts/*',
       'eslint.config.js',
       'eslint.config.mjs',
       '.lintstagedrc.mjs',

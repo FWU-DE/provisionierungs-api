@@ -9,6 +9,8 @@
     "ui:dev": "turbo run dev --filter=@fwu/vidis-rostering-ui",
     "infra:up": "docker compose -f dev_env/docker-compose.yml -p vidis-rostering up -d",
     "infra:down": "docker compose -f dev_env/docker-compose.yml -p vidis-rostering down --remove-orphans",
+    "test:infra:up": "docker compose -f test_env/docker-compose.yml -p vidis-rostering-test up -d",
+    "test:infra:down": "docker compose -f test_env/docker-compose.yml -p vidis-rostering-test down --remove-orphans",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "test:cov": "turbo run test:cov",

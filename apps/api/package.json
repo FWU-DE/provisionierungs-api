@@ -11,7 +11,13 @@
     "check-types": "tsc --noEmit",
     "test": "jest",
     "test:cov": "jest --coverage",
-    "clean": "rm -rf dist/ .turbo/"
+    "clean": "rm -rf dist/ .turbo/",
+    "db:migration:build": "tsc",
+    "db:migration:generate": "zx --verbose scripts/database/create-migration.mjs",
+    "db:migration:run": "zx --verbose scripts/database/run-migrations.mjs",
+    "db:migration:revert": "zx --verbose scripts/database/revert-migration.mjs",
+    "db:reset": "zx --verbose scripts/database/reset.mjs",
+    "db:fixture": "zx --verbose scripts/database/load-fixture.mjs"
   },
   "dependencies": {
     "@fwu-rostering/utils": "workspace:*",
@@ -46,9 +52,10 @@
     "ts-jest": "^29.4.1",
     "ts-loader": "^9.5.4",
     "ts-node": "^10.9.2",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "zx": "^8.8.3"
   },
-  "engines" : {
-    "node" : ">=22.19.0"
+  "engines": {
+    "node": ">=22.19.0"
   }
 }
