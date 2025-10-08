@@ -1,7 +1,7 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "ui": "stream",
-  "globalEnv": ["LOG_LEVEL", "LOG_FORMAT"],
+  "globalEnv": ["LOG_LEVEL", "LOG_FORMAT", "DEBUG"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -14,7 +14,16 @@
         "DB_MAIN_URL",
         "DB_REPLICA_URL",
         "DATABASE_POOL_SIZE",
-        "SESSION_SECRET"
+        "SESSION_SECRET",
+        "PSEUDONYMIZATION_SALT_ENDPOINT",
+        "IDP_EDUPLACES_TOKEN_ENDPOINT",
+        "IDP_EDUPLACES_API_ENDPOINT",
+        "IDP_EDUPLACES_CLIENT_ID",
+        "IDP_EDUPLACES_CLIENT_SECRET",
+        "IDP_EDUPLACES_STAGING_TOKEN_ENDPOINT",
+        "IDP_EDUPLACES_STAGING_API_ENDPOINT",
+        "IDP_EDUPLACES_STAGING_CLIENT_ID",
+        "IDP_EDUPLACES_STAGING_CLIENT_SECRET"
       ],
       "outputs": [".next/**", "dist/**", "!.next/cache/**"]
     },

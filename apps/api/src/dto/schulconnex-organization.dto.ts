@@ -13,7 +13,6 @@ export class SchulconnexOrganization {
   @ApiProperty({
     description: 'Official ID for the organization',
     example: 'NI_12345',
-    type: String,
     nullable: true,
   })
   kennung!: string | null;
@@ -36,6 +35,13 @@ export class SchulconnexOrganization {
     enum: ['SCHULE', 'ANBIETER', 'SONSTIGE'],
   })
   typ!: 'SCHULE' | 'ANBIETER' | 'SONSTIGE';
+
+  @ApiProperty({
+    description: 'The authority/operator of the organization',
+    nullable: true,
+    enum: ['01', '02', '03', '04', '05', '06'],
+  })
+  traegerschaft!: '01' | '02' | '03' | '04' | '05' | '06' | null;
 }
 
 export type PartialSchulconnexOrganization = Identity<

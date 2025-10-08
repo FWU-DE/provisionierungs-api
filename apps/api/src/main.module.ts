@@ -5,7 +5,7 @@ import { AuthModule } from './auth';
 import authConfig from './config/auth.config';
 import { DatabaseProviderModule } from './database/database.module';
 import { LogModule } from './logger';
-import { RosterApiModule } from './roster-api/roster-api.module';
+import { ControllerModule } from './controller/controller.module';
 
 @Module({
   imports: [
@@ -17,7 +17,7 @@ import { RosterApiModule } from './roster-api/roster-api.module';
 
     AuthModule,
     LogModule,
-    RosterApiModule,
+    ControllerModule,
   ],
 })
 export class MainModule {}

@@ -1,5 +1,5 @@
 // Visible according to schulconnex spec
-export interface SchulconnexModelTransformerShowFields {
+export interface SchulconnexClearanceShowFields {
   users: boolean;
   userContexts: boolean;
   organizations: boolean;
@@ -8,7 +8,7 @@ export interface SchulconnexModelTransformerShowFields {
 }
 
 // Visible according to granted scopes
-export interface SchulconnexModelTransformerVisibleFields {
+export interface SchulconnexClearanceVisibleFields {
   name: boolean;
   role: boolean;
   groups: boolean;

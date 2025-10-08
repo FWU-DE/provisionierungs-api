@@ -7,10 +7,18 @@ export class SchulconnexAddress {
     nullable: true,
   })
   postleitzahl!: string | null;
+
   @ApiProperty({
     description: 'The city',
     example: 'Braunschweig',
     nullable: true,
   })
   ort!: string | null;
+
+  @ApiProperty({
+    description: 'The district',
+    example: 'Gliesmarode',
+    nullable: true,
+  })
+  ortsteil!: string | null;
 }

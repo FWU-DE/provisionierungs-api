@@ -13,7 +13,7 @@ const dataSource = new DataSource({
   synchronize: false,
   namingStrategy: new AdvancedSnakeNamingStrategy(),
   entities: ['dist/**/*.entity.js'],
-  migrations: ['dist/database/migrations/*.js'],
+  migrations: ['dist/src/database/migrations/*.js'],
 });
 
 export default dataSource;

@@ -25,13 +25,13 @@ export const keycloakIntrospectionSchema = z.discriminatedUnion('active', [
   }),
 ]);
 
-export type Introspection = {
+export interface Introspection {
   authenticated: true;
   sub: string;
   subType: ResourceOwnerType;
   scopes: string[];
   clientId: string;
-};
+}
 
 export interface RequestWithIntrospection extends Request {
   introspection: Introspection;

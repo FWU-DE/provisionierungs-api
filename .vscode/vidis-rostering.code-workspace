@@ -1,0 +1,24 @@
+{
+  "folders": [
+    {
+      "path": "../apps/api",
+    },
+    {
+      "path": "../apps/ui",
+    },
+    {
+      "path": "../packages",
+    },
+    {
+      "name": "$root",
+      "path": "..",
+    },
+  ],
+  "settings": {
+    "files.exclude": {
+      "packages/": true,
+      "apps/": true,
+    },
+    "typescript.preferences.includePackageJsonAutoImports": "on",
+  },
+}

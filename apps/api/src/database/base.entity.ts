@@ -19,7 +19,7 @@ export abstract class BaseEntity {
   @Field(() => ID, { defaultValue: undefined })
   id!: string;
 
-  // Precision is set to 3 as postgresqls precision is greater than javascripts which leads to problems when comparing dates
+  // Precision is set to 3 as postgresql's precision is greater than JavaScript's, which leads to problems when comparing dates
   @CreateDateColumn({
     type: 'timestamp with time zone',
     precision: 3,
@@ -28,7 +28,7 @@ export abstract class BaseEntity {
   @Field()
   createdAt!: Date;
 
-  // Precision is set to 3 as postgresqls precision is greater than javascripts which leads to problems when comparing dates
+  // Precision is set to 3 as postgresql's precision is greater than JavaScript's, which leads to problems when comparing dates
   @UpdateDateColumn({
     type: 'timestamp with time zone',
     precision: 3,
@@ -37,7 +37,7 @@ export abstract class BaseEntity {
   @Field()
   updatedAt!: Date;
 
-  // Precision is set to 3 as postgresqls precision is greater than javascripts which leads to problems when comparing dates
+  // Precision is set to 3 as postgresql's precision is greater than JavaScript's, which leads to problems when comparing dates
   @DeleteDateColumn({
     type: 'timestamp with time zone',
     precision: 3,

@@ -12,6 +12,7 @@ import tseslint from 'typescript-eslint';
 export const config = defineConfig([
   js.configs.recommended,
   tseslint.configs.strictTypeChecked,
+  tseslint.configs.stylisticTypeChecked,
   {
     languageOptions: {
       parserOptions: {
@@ -24,6 +25,7 @@ export const config = defineConfig([
     rules: {
       '@typescript-eslint/no-confusing-void-expression': 'off',
       '@typescript-eslint/no-extraneous-class': 'off',
+      '@typescript-eslint/consistent-type-imports': ['error'],
     },
   },
   {

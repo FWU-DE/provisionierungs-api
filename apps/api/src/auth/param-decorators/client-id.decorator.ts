@@ -18,9 +18,11 @@ export const ClientId = createParamDecorator<never, string>(
       ? req.introspection.clientId
       : undefined;
     if (!clientId) {
-      throw new Error(
-        'ParamDecorator ClientId: Cannot get client ID from request',
-      );
+      // @todo: Re-activate after IDM implementation is done!
+      return 'fake-client-id';
+      // throw new Error(
+      //   'ParamDecorator ClientId: Cannot get client ID from request',
+      // );
     }
     return clientId;
   },
