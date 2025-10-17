@@ -6,6 +6,7 @@ import authConfig from './config/auth.config';
 import { DatabaseProviderModule } from './database/database.module';
 import { LogModule } from './logger';
 import { ControllerModule } from './controller/controller.module';
+import { GraphQLModule } from './graphql/graphql.module';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { ControllerModule } from './controller/controller.module';
       expandVariables: true,
     }),
     DatabaseProviderModule,
-
+    GraphQLModule,
     AuthModule,
     LogModule,
     ControllerModule,

@@ -30,7 +30,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('openapi', app, document);
 
-  // eslint-disable-next-line turbo/no-undeclared-env-vars
   await app.listen(process.env.PORT ?? 3010);
 }
 
