@@ -36,7 +36,7 @@ export class Pseudonymization {
         ): Promise<SchulconnexPersonsResponse> => {
           identity.pid = this.hasher.hash(identity.pid, salt, sectorIdentifier);
 
-          if (identity.person?.stammorganisation?.id) {
+          if (identity.person.stammorganisation?.id) {
             identity.person.stammorganisation.id = this.hasher.hash(
               identity.person.stammorganisation.id,
               salt,
@@ -44,7 +44,7 @@ export class Pseudonymization {
             );
           }
 
-          identity.personenkontexte.map(
+          identity.personenkontexte?.map(
             (
               personenkontext:
                 | SchulconnexPersonContext

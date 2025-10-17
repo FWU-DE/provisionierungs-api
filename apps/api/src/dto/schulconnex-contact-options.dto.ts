@@ -10,7 +10,8 @@ export class SchulconnexContactOptions {
 
   @ApiProperty({
     description: 'The value specific to the type.',
+    nullable: true,
     example: 'max.mustermann@test.local',
   })
-  kennung!: string;
+  kennung?: string | null;
 }

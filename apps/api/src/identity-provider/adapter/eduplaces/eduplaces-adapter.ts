@@ -28,7 +28,7 @@ export class EduplacesAdapter implements AdapterInterface {
 
   async getPersons(
     parameters: SchulconnexQueryParameters,
-  ): AdapterGetPersonsReturnType {
+  ): Promise<AdapterGetPersonsReturnType> {
     const authToken = await this.clientCredentialsProvider.authenticate(
       this.idpEduplacesConfig.IDP_EDUPLACES_TOKEN_ENDPOINT,
       this.idpEduplacesConfig.IDP_EDUPLACES_CLIENT_ID,

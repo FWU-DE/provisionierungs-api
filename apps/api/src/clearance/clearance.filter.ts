@@ -47,7 +47,6 @@ export function applyClearanceFilter(
       pid: identity.pid,
       person: filterPerson(identity.person, showFields, visibleProperties),
 
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       personenkontexte: (identity.personenkontexte ?? []).map((context) =>
         filterPersonContext(context, showFields, visibleProperties),
       ),
@@ -145,7 +144,7 @@ function filterGroup(
   group: SchulconnexGroupdataset | PartialSchulconnexGroupdataset,
   showFields: SchulconnexClearanceShowFields,
 ): PartialSchulconnexGroupdataset {
-  if (!showFields.groups) {
+  if (!showFields.groups && group.gruppe) {
     return { gruppe: { id: group.gruppe.id } };
   }
 

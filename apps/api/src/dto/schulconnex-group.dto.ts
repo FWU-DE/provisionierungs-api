@@ -13,28 +13,28 @@ export class SchulconnexGroup {
     description: 'The associated organization ID',
     example: 'b1d02e65-73a1-4719-ae00-1b24356ab8ac',
   })
-  orgid!: string;
+  orgid?: string;
 
   @ApiProperty({
     description: 'The human readable name of the group',
     examples: ['Klasse 5a', 'Kollegium', 'Admins'],
     example: 'Klasse 5a',
   })
-  bezeichnung!: string;
+  bezeichnung?: string;
 
   @ApiProperty({
     description: 'The topic of the group',
     nullable: true,
     example: 'Klasse 5a',
   })
-  thema!: string | null;
+  thema?: string | null;
 
   @ApiProperty({
     description: 'The description of the group',
     nullable: true,
     example: 'Alle Schueler der Klasse 5a',
   })
-  beschreibung!: string | null;
+  beschreibung?: string | null;
 
   @ApiProperty({
     description:
@@ -43,7 +43,7 @@ export class SchulconnexGroup {
     enum: ['Sonstig', 'Klasse', 'Kurs'],
     example: 'Sonstig',
   })
-  typ!: 'Sonstig' | 'Klasse' | 'Kurs' | null;
+  typ?: 'Sonstig' | 'Klasse' | 'Kurs' | null;
 
   @ApiProperty({
     description: 'The subject type of the group.',
@@ -51,7 +51,7 @@ export class SchulconnexGroup {
     enum: ['Pflicht', 'Wahl', 'Wahlpflicht', 'Grundkurs', 'Leistungskurs'],
     example: 'Wahl',
   })
-  bereich!:
+  bereich?:
     | 'Pflicht'
     | 'Wahl'
     | 'Wahlpflicht'
@@ -65,14 +65,14 @@ export class SchulconnexGroup {
     isArray: true,
     example: ['bilingual'],
   })
-  optionen!: string[] | null;
+  optionen?: string[] | null;
 
   @ApiProperty({
     description: 'The course level of the group.',
     nullable: true,
     example: 'G',
   })
-  differenzierung!: string | null;
+  differenzierung?: string | null;
 
   @ApiProperty({
     description: 'The educational objectives of the group.',
@@ -80,7 +80,7 @@ export class SchulconnexGroup {
     isArray: true,
     example: ['GS', 'RS'],
   })
-  bildungsziele!: string[] | null;
+  bildungsziele?: string[] | null;
 
   @ApiProperty({
     description: 'The grade levels of the group.',
@@ -88,7 +88,7 @@ export class SchulconnexGroup {
     isArray: true,
     example: ['05', '06'],
   })
-  jahrgangsstufen!: string[] | null;
+  jahrgangsstufen?: string[] | null;
 
   @ApiProperty({
     description: 'The school subjects of the group.',
@@ -96,14 +96,14 @@ export class SchulconnexGroup {
     isArray: true,
     example: ['NAT', 'EN', 'SP'],
   })
-  faecher!: string[] | null;
+  faecher?: string[] | null;
 
   @ApiProperty({
     description: 'The duration of the group.',
     nullable: true,
     type: SchulconnexDuration,
   })
-  laufzeit!: SchulconnexDuration | null;
+  laufzeit?: SchulconnexDuration | null;
 }
 
 export type PartialSchulconnexGroup = PartialExcept<SchulconnexGroup, 'id'>;

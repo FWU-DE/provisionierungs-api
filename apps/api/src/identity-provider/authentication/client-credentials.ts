@@ -48,11 +48,11 @@ export class ClientCredentialsProvider {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const data = await response.json();
 
-    // RUn validation
+    // Validate response schema
     const { error, data: parsedData } =
       clientCredentialsResponseSchema.safeParse(data);
     if (error || !parsedData.access_token) {
-      this.logger.error(`IDP response is invalid: ${error?.message ?? ''}`);
+      this.logger.error(`IdP response is invalid: ${error?.message ?? ''}`);
       throw new Error('Authorization towards Schulconnex failed.');
     }
 

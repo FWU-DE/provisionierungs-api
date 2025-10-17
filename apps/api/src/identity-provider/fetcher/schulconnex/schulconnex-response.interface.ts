@@ -4,6 +4,6 @@ import type { SchulconnexPersonContext } from '../../../dto/schulconnex-person-c
 export interface SchulconnexResponse {
   pid: string;
   // We do assumer that the input structure matches the schulconnex specification and therefore the DTO structure:
-  person: SchulconnexPerson;
-  personenkontexte: SchulconnexPersonContext[];
+  person?: SchulconnexPerson;
+  personenkontexte?: SchulconnexPersonContext[];
 }

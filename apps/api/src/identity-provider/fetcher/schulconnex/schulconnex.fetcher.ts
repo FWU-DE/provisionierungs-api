@@ -29,7 +29,7 @@ export class SchulconnexFetcher extends AbstractFetcher<BearerToken> {
     return this.validateData<SchulconnexResponse[]>(data);
   }
 
-  protected getValidator(): ZodObject | ZodArray {
+  public getValidator(): ZodObject | ZodArray {
     return schulconnexUsersResponseSchema;
   }
 }

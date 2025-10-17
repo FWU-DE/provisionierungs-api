@@ -17,12 +17,13 @@ export class SchulconnexPersonsResponse {
   @ApiProperty({
     description: 'The person',
   })
-  person?: PartialSchulconnexPerson;
+  person!: PartialSchulconnexPerson;
 
   @ApiProperty({
     description: 'The person context',
     type: SchulconnexPersonContext,
     isArray: true,
+    nullable: true,
   })
-  personenkontexte!: PartialSchulconnexPersonContext[];
+  personenkontexte?: PartialSchulconnexPersonContext[] | null;
 }

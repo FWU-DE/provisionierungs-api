@@ -44,6 +44,8 @@ jobs:
         run: pnpm install
       - name: Test Code Linting
         run: pnpm lint
+      - name: Typecheck
+        run: pnpm check-types
 
   prettier:
     name: Prettier

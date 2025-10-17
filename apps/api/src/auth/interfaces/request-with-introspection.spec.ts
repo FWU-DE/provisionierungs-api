@@ -20,7 +20,7 @@ describe('RequestWithIntrospection', () => {
         // Additional keys that may be present but are not validated
         exp: 1234567890,
         iat: 1234560000,
-        iss: 'http://example.com/',
+        iss: 'http://example.local/',
         jti: '::jti::',
       };
 

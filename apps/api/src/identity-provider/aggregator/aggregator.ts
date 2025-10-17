@@ -36,12 +36,12 @@ export class Aggregator {
     clientId: string,
     parameters: SchulconnexQueryParameters,
   ): Promise<SchulconnexPersonsResponse[]> {
-    // Request data from all IDPs in parallel
-    const idpRequests: AdapterGetPersonsReturnType[] = [];
+    // Request data from all IdPs in parallel
+    const idpRequests: Promise<AdapterGetPersonsReturnType>[] = [];
     idpIds.forEach((idpId) => {
       const adapter = this.getAdapterById(idpId);
       if (!adapter) {
-        this.logger.error(`No adapter found for IDP: ${idpId}`);
+        this.logger.error(`No adapter found for IdP: ${idpId}`);
         return [];
       }
       idpRequests.push(adapter.getPersons(parameters));
@@ -52,7 +52,7 @@ export class Aggregator {
       await Promise.all(idpRequests)
     ).reduce((acc: SchulconnexPersonsResponse[], identities) => {
       if (identities.response === null) {
-        this.logger.error('No data received from IDP: ' + identities.idp);
+        this.logger.error('No data received from IdP: ' + identities.idp);
         return acc;
       }
       return [...acc, ...identities.response];

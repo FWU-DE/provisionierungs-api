@@ -25,7 +25,8 @@ export abstract class AbstractFetcher<Credentials> {
     parameters: SchulconnexQueryParameters,
     credentials: Credentials,
   ): Promise<null | SchulconnexResponse[]>;
-  protected abstract getValidator(): ZodObject | ZodArray;
+
+  public abstract getValidator(): ZodObject | ZodArray;
 
   /**
    * Common wrapper method to handle common request issues.
@@ -33,7 +34,7 @@ export abstract class AbstractFetcher<Credentials> {
   protected async handleData<T>(response: Response): Promise<T | null> {
     if (!response.ok) {
       this.logger.error(
-        `Failed to fetch IDP data: ${String(response.status)} ${response.statusText}}`,
+        `Failed to fetch IdP data: ${String(response.status)} ${response.statusText}`,
       );
       this.logger.error(`Response: ${await response.text()}`);
       return null;
@@ -50,7 +51,7 @@ export abstract class AbstractFetcher<Credentials> {
     const { error, data: parsedData } = validator.safeParse(data);
     if (error) {
       this.logger.error(
-        `Schema Validation | IDP response is invalid: ${error.message}`,
+        `Schema Validation | IdP response is invalid: ${error.message}`,
       );
       return null;
     }

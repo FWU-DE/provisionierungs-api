@@ -22,6 +22,7 @@ export class SchulconnexPersonResponse {
     description: 'The person context',
     type: SchulconnexPersonContext,
     isArray: true,
+    nullable: true,
   })
-  personenkontexte!: SchulconnexPersonContext[];
+  personenkontexte?: SchulconnexPersonContext[] | null;
 }

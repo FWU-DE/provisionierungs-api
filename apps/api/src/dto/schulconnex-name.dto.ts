@@ -4,28 +4,30 @@ export class SchulconnexName {
   @ApiProperty({
     description: 'The family name of the person.',
     example: 'Mustermann',
+    nullable: true,
   })
-  familienname!: string;
+  familienname?: string | null;
 
   @ApiProperty({
     description: 'The given name of the person.',
     example: 'Max',
+    nullable: true,
   })
-  vorname!: string;
+  vorname?: string | null;
 
   @ApiProperty({
     description: 'The initials of the family name of the person.',
     nullable: true,
     example: 'M',
   })
-  initialenfamilienname!: string | null;
+  initialenfamilienname?: string | null;
 
   @ApiProperty({
     description: 'The initials of the given name of the person.',
     nullable: true,
     example: 'M',
   })
-  initialenvorname!: string | null;
+  initialenvorname?: string | null;
 
   @ApiProperty({
     description:
@@ -33,5 +35,5 @@ export class SchulconnexName {
     nullable: true,
     example: 'Max',
   })
-  rufname!: string | null;
+  rufname?: string | null;
 }
