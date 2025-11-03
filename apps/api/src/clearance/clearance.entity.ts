@@ -11,8 +11,12 @@ export class Clearance extends BaseEntity {
 
   @Column({ type: 'text' })
   @Field()
+  schoolId!: string;
+
+  @Column({ type: 'text' })
+  @Field()
   idpId!: string;
 
   @Column({ type: 'text' })
-  organizationId!: string;
+  groupId!: string;
 }

@@ -1,15 +1,17 @@
 import {
+  AdapterGetGroupsReturnType,
   AdapterGetPersonsReturnType,
   AdapterInterface,
 } from '../adapter-interface';
 import { Inject, Injectable } from '@nestjs/common';
 import { SchulconnexFetcher } from '../../fetcher/schulconnex/schulconnex.fetcher';
-import { SchulconnexQueryParameters } from '../../../controller/types/schulconnex';
-import { transformSchulconnexResponse } from '../../fetcher/schulconnex/schulconnex.transformer';
+import { SchulconnexQueryParameters } from '../../../controller/parameters/schulconnex-query-parameters';
+import { transformSchulconnexPersonsResponse } from '../../fetcher/schulconnex/schulconnex.transformer';
 import { ClientCredentialsProvider } from '../../authentication/client-credentials';
 import idpEduplacesStagingConfig, {
   type EduplacesStagingConfig,
 } from '../../../config/idp.eduplaces-staging.config';
+import { BearerToken } from '../../authentication/bearer-token';
 
 @Injectable()
 export class EduplacesStagingAdapter implements AdapterInterface {
@@ -26,26 +28,40 @@ export class EduplacesStagingAdapter implements AdapterInterface {
     return 'eduplaces-staging';
   }
 
-  async getPersons(
-    parameters: SchulconnexQueryParameters,
-  ): Promise<AdapterGetPersonsReturnType> {
-    const authToken = await this.clientCredentialsProvider.authenticate(
+  private async getAuthToken(): Promise<BearerToken> {
+    return this.clientCredentialsProvider.authenticate(
       this.idpEduplacesStagingConfig.IDP_EDUPLACES_STAGING_TOKEN_ENDPOINT,
       this.idpEduplacesStagingConfig.IDP_EDUPLACES_STAGING_CLIENT_ID,
       this.idpEduplacesStagingConfig.IDP_EDUPLACES_STAGING_CLIENT_SECRET,
       'client_credentials',
       'urn:eduplaces:idm:v1:schools:read urn:eduplaces:idm:v1:groups:read urn:eduplaces:idm:v1:people:read',
     );
+  }
 
+  async getPersons(
+    parameters: SchulconnexQueryParameters,
+  ): Promise<AdapterGetPersonsReturnType> {
     const response = await this.schulconnexFetcher.fetchPersons(
       this.idpEduplacesStagingConfig.IDP_EDUPLACES_STAGING_API_ENDPOINT,
       parameters,
-      authToken,
+      await this.getAuthToken(),
     );
 
     return {
       idp: this.getIdentifier(),
-      response: transformSchulconnexResponse(response),
+      response: transformSchulconnexPersonsResponse(response),
+    };
+  }
+
+  async getGroups(): Promise<AdapterGetGroupsReturnType> {
+    const response = await this.schulconnexFetcher.fetchGroups(
+      this.idpEduplacesStagingConfig.IDP_EDUPLACES_STAGING_API_ENDPOINT,
+      await this.getAuthToken(),
+    );
+
+    return {
+      idp: this.getIdentifier(),
+      response: response,
     };
   }
 }

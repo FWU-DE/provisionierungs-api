@@ -1,8 +1,9 @@
 import type { ZodArray, ZodObject } from 'zod';
 import { Logger } from '../../logger';
-import { type SchulconnexResponse } from './schulconnex/schulconnex-response.interface';
-import { type SchulconnexQueryParameters } from '../../controller/types/schulconnex';
+import { type SchulconnexPersonsResponse } from './schulconnex/schulconnex-response.interface';
+import { type SchulconnexQueryParameters } from '../../controller/parameters/schulconnex-query-parameters';
 import { Inject } from '@nestjs/common';
+import { SchulconnexGroup } from '../../dto/schulconnex-group.dto';
 
 /**
  * Fetcher
@@ -24,7 +25,12 @@ export abstract class AbstractFetcher<Credentials> {
     endpointUrl: string,
     parameters: SchulconnexQueryParameters,
     credentials: Credentials,
-  ): Promise<null | SchulconnexResponse[]>;
+  ): Promise<null | SchulconnexPersonsResponse[]>;
+
+  public abstract fetchGroups(
+    endpointUrl: string,
+    credentials: Credentials,
+  ): Promise<SchulconnexGroup[]>;
 
   public abstract getValidator(): ZodObject | ZodArray;
 
@@ -39,21 +45,16 @@ export abstract class AbstractFetcher<Credentials> {
       this.logger.error(`Response: ${await response.text()}`);
       return null;
     }
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const data = await response.json();
-
-    return data as T;
+    return (await response.json()) as T;
   }
 
   protected validateData<T>(data: T | null): T | null {
     const validator = this.getValidator();
     const { error, data: parsedData } = validator.safeParse(data);
     if (error) {
-      this.logger.error(
+      throw new Error(
         `Schema Validation | IdP response is invalid: ${error.message}`,
       );
-      return null;
     }
     return parsedData as T;
   }

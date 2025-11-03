@@ -17,7 +17,7 @@ export class SchulconnexPersonsResponse {
   @ApiProperty({
     description: 'The person',
   })
-  person!: PartialSchulconnexPerson;
+  person?: PartialSchulconnexPerson;
 
   @ApiProperty({
     description: 'The person context',

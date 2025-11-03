@@ -47,4 +47,12 @@ export class ClearanceService extends EntityService<Clearance> {
       where: options?.where,
     })) as ResolveRelations<TRelations, Clearance>[];
   }
+
+  async findAllForApp(appId: string): Promise<Clearance[]> {
+    return this.findAll({
+      where: {
+        appId: appId,
+      },
+    });
+  }
 }

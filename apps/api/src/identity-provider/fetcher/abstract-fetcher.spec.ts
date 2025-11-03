@@ -1,9 +1,10 @@
 import { AbstractFetcher } from './abstract-fetcher';
 import { Logger } from '../../logger';
 import { type ZodObject, z } from 'zod';
-import { type SchulconnexResponse } from './schulconnex/schulconnex-response.interface';
-import { type SchulconnexQueryParameters } from '../../controller/types/schulconnex';
+import { type SchulconnexPersonsResponse } from './schulconnex/schulconnex-response.interface';
+import { type SchulconnexQueryParameters } from '../../controller/parameters/schulconnex-query-parameters';
 import { Test, type TestingModule } from '@nestjs/testing';
+import { type SchulconnexGroup } from '../../dto/schulconnex-group.dto';
 
 // Create a concrete implementation of AbstractFetcher for testing
 class TestFetcher extends AbstractFetcher<{ token: string }> {
@@ -11,13 +12,23 @@ class TestFetcher extends AbstractFetcher<{ token: string }> {
     endpointUrl: string,
     parameters: SchulconnexQueryParameters,
     credentials: { token: string },
-  ): Promise<null | SchulconnexResponse[]> {
+  ): Promise<null | SchulconnexPersonsResponse[]> {
     void endpointUrl;
     void parameters;
     void credentials;
 
     // This method is not tested directly in this file
     return Promise.resolve(null);
+  }
+  public async fetchGroups(
+    endpointUrl: string,
+    credentials: { token: string },
+  ): Promise<SchulconnexGroup[]> {
+    void endpointUrl;
+    void credentials;
+
+    // This method is not tested directly in this file
+    return Promise.resolve([]);
   }
 
   public getValidator(): ZodObject {
@@ -115,27 +126,17 @@ describe('AbstractFetcher', () => {
       expect(result).toEqual(mockData);
     });
 
-    it('should return null and log error when validation fails', () => {
+    it('should throw an error when validation fails', () => {
       // Mock data with invalid structure
       const mockData = { invalid: 'value' };
 
-      // Call the method
-      const result = fetcher.testValidateData<typeof mockData>(mockData);
-
-      // Assertions
-      expect(result).toBeNull();
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(mockLogger.error).toHaveBeenCalled();
+      expect(() => fetcher.testValidateData<typeof mockData>(mockData)).toThrow(
+        Error,
+      );
     });
 
-    it('should return null when input is null', () => {
-      // Call the method with null
-      const result = fetcher.testValidateData<unknown>(null);
-
-      // Assertions
-      expect(result).toBeNull();
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(mockLogger.error).toHaveBeenCalled();
+    it('should throw an error when input is null', () => {
+      expect(() => fetcher.testValidateData<unknown>(null)).toThrow(Error);
     });
   });
 });

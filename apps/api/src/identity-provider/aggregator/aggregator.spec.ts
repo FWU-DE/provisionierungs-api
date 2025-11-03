@@ -3,18 +3,30 @@ import { EduplacesAdapter } from '../adapter/eduplaces/eduplaces-adapter';
 import { EduplacesStagingAdapter } from '../adapter/eduplaces-staging/eduplaces-staging-adapter';
 import { Pseudonymization } from '../../pseudonymization/pseudonymize';
 import { Logger } from '../../logger';
-import { type SchulconnexQueryParameters } from '../../controller/types/schulconnex';
+import { SchulconnexQueryParameters } from '../../controller/parameters/schulconnex-query-parameters';
 import { type AdapterGetPersonsReturnType } from '../adapter/adapter-interface';
 import {
   createTestingInfrastructure,
   type TestingInfrastructure,
 } from '../../test/testing-module';
 import { IdentityProviderModule } from '../identity-provider.module';
+import type { Clearance } from '../../clearance/clearance.entity';
 
-// Mock the clearance filter module
-jest.mock('../../clearance/clearance.filter', () => ({
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  applyClearanceFilter: jest.fn().mockImplementation((clientId, data) => data),
+// Mock the clearance filter modules
+jest.mock('../../clearance/clearance-field.filter', () => ({
+  applyClearancePersonsFieldFilter: jest
+    .fn()
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    .mockImplementation((clientId, data) => data),
+}));
+jest.mock('../../clearance/clearance-group.filter', () => ({
+  applyClearancePersonsGroupFilter: jest
+    .fn()
+    .mockImplementation((data, clearanceEntries?: Clearance[]) => {
+      void clearanceEntries;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return data;
+    }),
 }));
 
 describe('Aggregator', () => {
@@ -76,7 +88,8 @@ describe('Aggregator', () => {
   describe('getUsers', () => {
     it('should aggregate users from multiple adapters', async () => {
       // Mock data
-      const mockParameters: SchulconnexQueryParameters = {};
+      const mockParameters: SchulconnexQueryParameters =
+        new SchulconnexQueryParameters('personen, personenkontexte');
       const mockClientId = 'test-client';
       const mockIdpIds = ['eduplaces', 'eduplaces-staging'];
 
@@ -164,7 +177,8 @@ describe('Aggregator', () => {
 
     it('should handle adapters that return null response', async () => {
       // Mock data
-      const mockParameters: SchulconnexQueryParameters = {};
+      const mockParameters: SchulconnexQueryParameters =
+        new SchulconnexQueryParameters('personen, personenkontexte');
       const mockClientId = 'test-client';
       const mockIdpIds = ['eduplaces', 'eduplaces-staging'];
 
@@ -221,7 +235,8 @@ describe('Aggregator', () => {
 
     it('should handle non-existent adapter IDs', async () => {
       // Mock data
-      const mockParameters: SchulconnexQueryParameters = {};
+      const mockParameters: SchulconnexQueryParameters =
+        new SchulconnexQueryParameters('personen, personenkontexte');
       const mockClientId = 'test-client';
       const mockIdpIds = ['non-existent', 'eduplaces-staging'];
 
@@ -272,7 +287,8 @@ describe('Aggregator', () => {
 
     it('should handle empty idpIds array', async () => {
       // Mock data
-      const mockParameters: SchulconnexQueryParameters = {};
+      const mockParameters: SchulconnexQueryParameters =
+        new SchulconnexQueryParameters();
       const mockClientId = 'test-client';
       const mockIdpIds: string[] = [];
 
@@ -296,7 +312,8 @@ describe('Aggregator', () => {
   describe('adapter management', () => {
     it('should find adapter by ID when it exists', async () => {
       // Mock data
-      const mockParameters: SchulconnexQueryParameters = {};
+      const mockParameters: SchulconnexQueryParameters =
+        new SchulconnexQueryParameters();
       const mockClientId = 'test-client';
       const mockIdpIds = ['eduplaces'];
 
@@ -332,7 +349,8 @@ describe('Aggregator', () => {
 
     it('should not find adapter by ID when it does not exist', async () => {
       // Mock data
-      const mockParameters: SchulconnexQueryParameters = {};
+      const mockParameters: SchulconnexQueryParameters =
+        new SchulconnexQueryParameters();
       const mockClientId = 'test-client';
       const mockIdpIds = ['non-existent'];
 

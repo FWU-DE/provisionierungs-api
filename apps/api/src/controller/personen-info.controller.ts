@@ -5,11 +5,15 @@ import type { Response } from 'express';
 import { ClientId, NoAccessTokenAuthRequired } from '../auth';
 import { Aggregator } from '../identity-provider/aggregator/aggregator';
 import { SchulconnexPersonsResponse } from '../dto/schulconnex-persons-response.dto';
-import { SchulconnexQueryParameters } from './types/schulconnex';
+import { SchulconnexQueryParameters } from './parameters/schulconnex-query-parameters';
+import { ClearanceService } from '../clearance/clearance.service';
 
 @Controller('schulconnex/v1')
 export class PersonenInfoController {
-  constructor(private readonly aggregator: Aggregator) {}
+  constructor(
+    private readonly aggregator: Aggregator,
+    private readonly clearanceService: ClearanceService,
+  ) {}
 
   @Get('personen-info')
   // @todo: enable auth again when introspection is fixed
@@ -80,29 +84,26 @@ export class PersonenInfoController {
     @Query('organisation.id')
     organizationIdFilter?: string,
   ): Promise<SchulconnexPersonsResponse[]> {
-    // @todo: Filter via pid can logically only be performed on already fetched and pseudonymized data!
+    const filterParameters = new SchulconnexQueryParameters(
+      completeRaw,
+      pidFilter,
+      userContextIdFilter,
+      groupIdFilter,
+      organizationIdFilter,
+    );
 
-    const filterParameters: SchulconnexQueryParameters = {
-      ...(completeRaw && { vollstaendig: completeRaw }),
-      ...(pidFilter && { pid: pidFilter }),
-      ...(userContextIdFilter && {
-        'personenkontext.id': userContextIdFilter,
-      }),
-      ...(groupIdFilter && { 'gruppe.id': groupIdFilter }),
-      ...(organizationIdFilter && {
-        'organisation.id': organizationIdFilter,
-      }),
-    };
+    const clearance = await this.clearanceService.findAllForApp(clientId);
+    const idpIds = [...new Set(clearance.map((c) => c.idpId))];
 
     /*
      * Fetch data from IdP
      */
-    // @todo: Get IdP list dynamically from the database based on clientId matching.
     const identities: SchulconnexPersonsResponse[] =
       await this.aggregator.getUsers(
-        ['eduplaces', 'eduplaces-staging'],
+        idpIds,
         clientId,
         filterParameters,
+        clearance,
       );
 
     // Spec says we need to send an ETag header

@@ -1,13 +1,9 @@
 import { registerAs } from '@nestjs/config';
 
 import z from 'zod';
+import type { IdmApiWithClientCredentialConfig } from './idm-config.interface';
 
-export interface EduplacesConfig {
-  IDP_EDUPLACES_TOKEN_ENDPOINT: string;
-  IDP_EDUPLACES_API_ENDPOINT: string;
-  IDP_EDUPLACES_CLIENT_ID: string;
-  IDP_EDUPLACES_CLIENT_SECRET: string;
-}
+export type EduplacesConfig = IdmApiWithClientCredentialConfig<'IDP_EDUPLACES'>;
 
 const eduplacesConfigSchema = z.object({
   IDP_EDUPLACES_TOKEN_ENDPOINT: z.url(),

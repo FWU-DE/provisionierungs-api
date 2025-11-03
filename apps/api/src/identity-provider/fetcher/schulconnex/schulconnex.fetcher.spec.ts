@@ -1,6 +1,6 @@
 import { SchulconnexFetcher } from './schulconnex.fetcher';
 import { Logger } from '../../../logger';
-import { type SchulconnexQueryParameters } from '../../../controller/types/schulconnex';
+import { SchulconnexQueryParameters } from '../../../controller/parameters/schulconnex-query-parameters';
 import { type BearerToken } from '../../authentication/bearer-token';
 import { schulconnexUsersResponseSchema } from './schulconnex.validator';
 import {
@@ -48,9 +48,8 @@ describe('SchulconnexFetcher', () => {
     it('should fetch persons successfully', async () => {
       // Mock data
       const mockEndpointUrl = 'https://api.example.local';
-      const mockParameters: SchulconnexQueryParameters = {
-        vollstaendig: 'personenkontexte',
-      };
+      const mockParameters: SchulconnexQueryParameters =
+        new SchulconnexQueryParameters('personenkontexte');
       const mockToken: BearerToken = { token: 'test-token' };
       const mockResponse = [
         {
@@ -97,7 +96,8 @@ describe('SchulconnexFetcher', () => {
     it('should return null when fetch fails', async () => {
       // Mock data
       const mockEndpointUrl = 'https://api.example.local';
-      const mockParameters: SchulconnexQueryParameters = {};
+      const mockParameters: SchulconnexQueryParameters =
+        new SchulconnexQueryParameters();
       const mockToken: BearerToken = { token: 'test-token' };
 
       // Setup mock response
@@ -124,7 +124,8 @@ describe('SchulconnexFetcher', () => {
     it('should return null when validation fails', async () => {
       // Mock data
       const mockEndpointUrl = 'https://api.example.local';
-      const mockParameters: SchulconnexQueryParameters = {};
+      const mockParameters: SchulconnexQueryParameters =
+        new SchulconnexQueryParameters();
       const mockToken: BearerToken = { token: 'test-token' };
       const mockResponse = [{ invalid: 'data' }]; // Invalid response structure
 

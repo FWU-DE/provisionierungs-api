@@ -61,8 +61,9 @@ describe('ClearanceQuery', () => {
     await infra.addFixtures(
       fixture(Clearance, {
         appId: 'app-1',
+        schoolId: 'school-1',
         idpId: 'idp-1',
-        organizationId: 'org-1',
+        groupId: 'group-1',
       }),
     );
     const response = await request((await infra.getApp()).getHttpServer())
@@ -73,6 +74,7 @@ describe('ClearanceQuery', () => {
           allClearances {
             id
             appId
+            schoolId
             idpId
           }
         }`,
@@ -85,6 +87,7 @@ describe('ClearanceQuery', () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       id: expect.any(String),
       appId: 'app-1',
+      schoolId: 'school-1',
       idpId: 'idp-1',
     });
   });

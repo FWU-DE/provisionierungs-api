@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 
 /**
- * Base entity for all of eduplaces database entities.
+ * Base entity for all database entities.
  */
 // TypeORM decorators
 // - none

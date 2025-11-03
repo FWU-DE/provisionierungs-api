@@ -8,6 +8,7 @@ type Clearance {
   deletedAt: DateTime
   id: ID!
   idpId: String!
+  schoolId: String!
   updatedAt: DateTime!
 }
 

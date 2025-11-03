@@ -1,11 +1,11 @@
-import { transformSchulconnexResponse } from './schulconnex.transformer';
-import { type SchulconnexResponse } from './schulconnex-response.interface';
+import { transformSchulconnexPersonsResponse } from './schulconnex.transformer';
+import { type SchulconnexPersonsResponse } from './schulconnex-response.interface';
 
 describe('SchulconnexTransformer', () => {
   describe('transformSchulconnexResponse', () => {
     it('should transform response correctly', () => {
       // Mock data
-      const mockResponse: SchulconnexResponse[] = [
+      const mockResponse: SchulconnexPersonsResponse[] = [
         {
           pid: 'person1',
           person: {
@@ -34,7 +34,7 @@ describe('SchulconnexTransformer', () => {
       ];
 
       // Call the function
-      const result = transformSchulconnexResponse(mockResponse);
+      const result = transformSchulconnexPersonsResponse(mockResponse);
 
       // Assertions
       expect(result).toBe(mockResponse); // Since it's just a type cast, the reference should be the same
@@ -43,7 +43,7 @@ describe('SchulconnexTransformer', () => {
 
     it('should handle null input', () => {
       // Call the function with null
-      const result = transformSchulconnexResponse(null);
+      const result = transformSchulconnexPersonsResponse(null);
 
       // Assertions
       expect(result).toEqual([]);
@@ -51,10 +51,10 @@ describe('SchulconnexTransformer', () => {
 
     it('should handle empty array', () => {
       // Mock data
-      const mockResponse: SchulconnexResponse[] = [];
+      const mockResponse: SchulconnexPersonsResponse[] = [];
 
       // Call the function
-      const result = transformSchulconnexResponse(mockResponse);
+      const result = transformSchulconnexPersonsResponse(mockResponse);
 
       // Assertions
       expect(result).toEqual([]);
@@ -63,7 +63,7 @@ describe('SchulconnexTransformer', () => {
 
     it('should maintain the structure of the input', () => {
       // Mock data with a complex structure
-      const mockResponse: SchulconnexResponse[] = [
+      const mockResponse: SchulconnexPersonsResponse[] = [
         {
           pid: 'person1',
           person: {
@@ -116,13 +116,14 @@ describe('SchulconnexTransformer', () => {
       ];
 
       // Call the function
-      const result = transformSchulconnexResponse(mockResponse);
+      const result = transformSchulconnexPersonsResponse(mockResponse);
 
       // Assertions
       expect(result).toEqual(mockResponse);
+      expect(result[0]).toBeDefined();
       // Check that the result is a valid SchulconnexPersonsResponse[]
       expect(result[0].pid).toBe('person1');
-      expect(result[0].person.name?.vorname).toBe('Test');
+      expect(result[0].person?.name?.vorname).toBe('Test');
       expect(result[0].personenkontexte?.[0]?.rolle).toBe('LERN');
     });
   });

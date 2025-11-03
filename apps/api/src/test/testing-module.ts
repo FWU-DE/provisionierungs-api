@@ -99,7 +99,7 @@ export class TestingInfrastructure {
    */
   private async setUpTransactionsInDatabase() {
     const ds = this.module.get(DataSource);
-    // Ensure that a query runner is set on the the manager that is used everywhere.
+    // Ensure that a query runner is set on the manager used everywhere.
     const queryRunner = (this.queryRunner = ds.createQueryRunner());
     // We need to release the queryrunner back to the pool. We do not want that as we always return the same queryrunner.
     const origRelease = queryRunner.release.bind(queryRunner);

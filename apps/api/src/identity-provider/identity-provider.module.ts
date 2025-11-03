@@ -11,10 +11,13 @@ import { EduplacesStagingAdapter } from './adapter/eduplaces-staging/eduplaces-s
 import { Pseudonymization } from '../pseudonymization/pseudonymize';
 import pseudonymizationConfig from '../config/pseudonymization.config';
 import { Hasher } from '../pseudonymization/hasher';
+import { ClearanceModule } from '../clearance/clearance.module';
+import { PostRequestFilter } from './post-request-filter/post-request-filter';
 
 @Module({
   imports: [
     LogModule,
+    ClearanceModule,
     ConfigModule.forFeature(idpEduplacesConfig),
     ConfigModule.forFeature(idpEduplacesStagingConfig),
     ConfigModule.forFeature(pseudonymizationConfig),
@@ -27,7 +30,8 @@ import { Hasher } from '../pseudonymization/hasher';
     ClientCredentialsProvider,
     Hasher,
     Pseudonymization,
+    PostRequestFilter,
   ],
-  exports: [Aggregator],
+  exports: [Aggregator, PostRequestFilter],
 })
 export class IdentityProviderModule {}

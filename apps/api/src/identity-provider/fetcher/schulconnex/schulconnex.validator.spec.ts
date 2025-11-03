@@ -1,11 +1,11 @@
 import { schulconnexUsersResponseSchema } from './schulconnex.validator';
-import { type SchulconnexResponse } from './schulconnex-response.interface';
+import { type SchulconnexPersonsResponse } from './schulconnex-response.interface';
 
 describe('SchulconnexValidator', () => {
   describe('schulconnexUsersResponseSchema', () => {
     it('should validate a valid response', () => {
       // Mock data with minimal required fields
-      const mockResponse: SchulconnexResponse[] = [
+      const mockResponse: SchulconnexPersonsResponse[] = [
         {
           pid: 'person1',
           person: {
@@ -31,7 +31,7 @@ describe('SchulconnexValidator', () => {
 
     it('should validate a complex valid response', () => {
       // Mock data with more fields
-      const mockResponse: SchulconnexResponse[] = [
+      const mockResponse: SchulconnexPersonsResponse[] = [
         {
           pid: 'person1',
           person: {
@@ -176,7 +176,7 @@ describe('SchulconnexValidator', () => {
 
     it('should accept response with optional fields missing', () => {
       // Mock data with minimal required fields
-      const mockResponse: SchulconnexResponse[] = [
+      const mockResponse: SchulconnexPersonsResponse[] = [
         {
           pid: 'person1',
           // person is optional
@@ -194,7 +194,7 @@ describe('SchulconnexValidator', () => {
 
     it('should accept empty array', () => {
       // Empty array
-      const mockResponse: SchulconnexResponse[] = [];
+      const mockResponse: SchulconnexPersonsResponse[] = [];
 
       // Validate the data
       const result = schulconnexUsersResponseSchema.safeParse(mockResponse);

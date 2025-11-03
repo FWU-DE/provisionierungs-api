@@ -1,5 +1,8 @@
-import type { AdapterInterface } from './adapter-interface';
-import type { SchulconnexQueryParameters } from '../../controller/types/schulconnex';
+import type {
+  AdapterGetGroupsReturnType,
+  AdapterInterface,
+} from './adapter-interface';
+import { SchulconnexQueryParameters } from '../../controller/parameters/schulconnex-query-parameters';
 
 describe('AdapterInterface', () => {
   it('should handle getPersons method correctly', async () => {
@@ -25,10 +28,14 @@ describe('AdapterInterface', () => {
             },
           ],
         }),
+      getGroups: function (): Promise<AdapterGetGroupsReturnType> {
+        throw new Error('Function not implemented.');
+      },
     };
 
     // Test the getPersons method
-    const mockParameters: SchulconnexQueryParameters = {};
+    const mockParameters: SchulconnexQueryParameters =
+      new SchulconnexQueryParameters();
     const result = await mockAdapter.getPersons(mockParameters);
 
     expect(result).toHaveProperty('idp', 'test-adapter');
@@ -46,10 +53,14 @@ describe('AdapterInterface', () => {
           idp: 'test-adapter',
           response: null,
         }),
+      getGroups: function (): Promise<AdapterGetGroupsReturnType> {
+        throw new Error('Function not implemented.');
+      },
     };
 
     // Test the getPersons method with a null response
-    const mockParameters: SchulconnexQueryParameters = {};
+    const mockParameters: SchulconnexQueryParameters =
+      new SchulconnexQueryParameters();
     const result = await mockAdapter.getPersons(mockParameters);
 
     expect(result).toHaveProperty('idp', 'test-adapter');
