@@ -15,7 +15,7 @@ export const ClientIdOptional = createParamDecorator<never, string | undefined>(
         context,
       ).req;
     return isRequestWithIntrospection(req)
-      ? req.introspection.clientId
+      ? (req.introspection.clientId ?? undefined)
       : undefined;
   },
 );

@@ -7,6 +7,7 @@ import { TestIntrospectionClient } from '../introspection/introspection-client.t
 import request from 'supertest';
 import { AccessTokenAuthRequired } from '../route-decorators/access-token-auth-required.decorator';
 import { NoAccessTokenAuthRequired } from '../route-decorators/no-access-token-auth-required.decorator';
+
 describe('AccessTokenGuard', () => {
   it('restricts access without token per default', async () => {
     @Controller()

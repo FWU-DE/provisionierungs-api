@@ -21,7 +21,12 @@
     "typescript": "catalog:"
   },
   "dependencies": {
+    "@apollo/client": "^4.0.8",
+    "@apollo/client-integration-nextjs": "^0.14.1",
+    "gql.tada": "^1.8.13",
+    "next-auth": "^4.24.12",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "rxjs": "^7.8.2"
   }
 }

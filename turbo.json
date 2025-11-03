@@ -9,10 +9,13 @@
       "env": [
         "PORT",
         "NODE_ENV",
+        "AUTH_VALIDATION",
         "AUTH_INTROSPECTION_URL",
+        "AUTH_WELL_KNOWN_URL",
         "AUTH_URL",
         "AUTH_CLIENT_ID",
         "AUTH_CLIENT_SECRET",
+        "API_BASE_URL",
         "DB_MAIN_URL",
         "DB_REPLICA_URL",
         "DATABASE_POOL_SIZE",

@@ -1,7 +1,6 @@
 import { Controller, Get, Inject } from '@nestjs/common';
-import { NoAccessTokenAuthRequired } from '../auth';
-import { ClearanceService } from '../clearance/clearance.service';
 import { Clearance } from '../clearance/clearance.entity';
+import { ClearanceService } from '../clearance/clearance.service';
 import { Aggregator } from '../identity-provider/aggregator/aggregator';
 import { ApiGroupsDto } from '../dto/api.groups.dto';
 import { SchulconnexGroup } from '../dto/schulconnex-group.dto';
@@ -21,7 +20,6 @@ export class TestController {
   ) {}
 
   @Get('test')
-  @NoAccessTokenAuthRequired()
   async test(): Promise<TestResponse> {
     /*
       // @todo:   Mock UI behaviour:

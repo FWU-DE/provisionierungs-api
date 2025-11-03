@@ -32,7 +32,14 @@ describe('ClearanceQuery', () => {
       .enableDatabase()
       .build();
 
-    testIntrospectionClient.addUserToken('::user-access-token::', ['openid']);
+    testIntrospectionClient.addUserToken(
+      '::user-access-token::',
+      ['openid'],
+      undefined,
+      undefined,
+      undefined,
+      { heimatorganisation: 'school-1', schulkennung: ['sk-1'] },
+    );
     await infra.setUp();
   });
 

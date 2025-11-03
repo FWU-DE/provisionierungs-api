@@ -77,7 +77,7 @@ jobs:
         with:
           coverage-file: ./apps/api/coverage/report.json
           # Script for determining coverage on main branch
-          test-script: pnpm --filter @fwu/vidis-rostering-api test:cov --json --testLocationInResults --outputFile=./coverage/report.json
+          test-script: bash -c "cp ./apps/api/.env.example ./apps/api/.env && pnpm --filter @fwu/vidis-rostering-api test:cov --json --testLocationInResults --outputFile=./coverage/baseline-report.json && cp ./apps/api/coverage/baseline-report.json report.json"
           skip-step: all
           annotations: failed-tests
           output: report-markdown

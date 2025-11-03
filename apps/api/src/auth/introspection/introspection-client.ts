@@ -1,10 +1,24 @@
 import { Inject, Injectable } from '@nestjs/common';
 import authConfig, { type AuthConfig } from '../../config/auth.config';
-import {
-  keycloakIntrospectionSchema,
-  type KeycloakIntrospection,
-} from '../interfaces/request-with-introspection.interface';
 import { Logger } from '../../logger';
+import z from 'zod';
+
+export const keycloakIntrospectionSchema = z.discriminatedUnion('active', [
+  z.object({ active: z.literal(false) }),
+  z.object({
+    active: z.literal(true),
+    scope: z.string(),
+    client_id: z.string().optional(),
+    sub: z.string(),
+    username: z.string(),
+    typ: z.enum(['Bearer', 'ID']),
+    sid: z.string().optional(),
+    heimatorganisation: z.string().optional(),
+    schulkennung: z.array(z.string()).optional(),
+  }),
+]);
+
+export type KeycloakIntrospection = z.infer<typeof keycloakIntrospectionSchema>;
 
 @Injectable()
 export class IntrospectionClient {
@@ -16,6 +30,12 @@ export class IntrospectionClient {
   async getIntrospectionResponse(
     accessToken: string,
   ): Promise<KeycloakIntrospection> {
+    if (this.authConfig.AUTH_VALIDATION !== 'introspect') {
+      throw new Error(
+        'IntrospectionClient: AUTH_VALIDATION is not set to introspect.',
+      );
+    }
+
     const response = await fetch(this.authConfig.AUTH_INTROSPECTION_URL, {
       method: 'POST',
       headers: {

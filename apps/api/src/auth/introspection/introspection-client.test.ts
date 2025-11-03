@@ -1,4 +1,4 @@
-import type { KeycloakIntrospection } from '../interfaces/request-with-introspection.interface';
+import type { KeycloakIntrospection } from './introspection-client';
 
 export class TestIntrospectionClient {
   private tokens: Map<string, KeycloakIntrospection> = new Map<
@@ -23,6 +23,7 @@ export class TestIntrospectionClient {
     sub?: string,
     clientId?: string,
     username?: string,
+    additionalInfo?: { heimatorganisation: string; schulkennung: string[] },
   ) {
     this.tokens.set(token, {
       active: true,
@@ -31,6 +32,8 @@ export class TestIntrospectionClient {
       sub: sub ?? 'test-sub',
       typ: 'Bearer',
       username: username ?? 'test-username',
+      sid: 'test-sid',
+      ...(additionalInfo ?? {}),
     });
   }
 

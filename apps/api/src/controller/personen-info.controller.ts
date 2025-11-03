@@ -2,11 +2,17 @@ import { Controller, Get, Query, Res } from '@nestjs/common';
 import { ApiBearerAuth, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import type { Response } from 'express';
 
-import { ClientId, NoAccessTokenAuthRequired } from '../auth';
-import { Aggregator } from '../identity-provider/aggregator/aggregator';
+import {
+  AllowResourceOwnerType,
+  ClientId,
+  RequireScope,
+  ResourceOwnerType,
+} from '../auth';
+import { ScopeIdentifier } from '../auth/scope/scope-identifier';
 import { SchulconnexPersonsResponse } from '../dto/schulconnex-persons-response.dto';
-import { SchulconnexQueryParameters } from './parameters/schulconnex-query-parameters';
+import { Aggregator } from '../identity-provider/aggregator/aggregator';
 import { ClearanceService } from '../clearance/clearance.service';
+import { SchulconnexQueryParameters } from './parameters/schulconnex-query-parameters';
 
 @Controller('schulconnex/v1')
 export class PersonenInfoController {
@@ -16,10 +22,8 @@ export class PersonenInfoController {
   ) {}
 
   @Get('personen-info')
-  // @todo: enable auth again when introspection is fixed
-  // @AllowResourceOwnerType(ResourceOwnerType.CLIENT)
-  // @RequireScope(ScopeIdentifier.SCHULCONNEX_ACCESS)
-  @NoAccessTokenAuthRequired()
+  @AllowResourceOwnerType(ResourceOwnerType.CLIENT)
+  @RequireScope(ScopeIdentifier.SCHULCONNEX_ACCESS)
   @ApiResponse({
     status: 200,
     description: 'Read all users',

@@ -1,21 +1,23 @@
 import { Query, Resolver } from '@nestjs/graphql';
+import { AllowResourceOwnerType, ResourceOwnerType } from '../auth';
+import {
+  UserCtx,
+  type UserContext,
+} from '../auth/param-decorators/user-context.decorator';
 import { Clearance } from './clearance.entity';
 import { ClearanceService } from './clearance.service';
-import { In } from 'typeorm';
 
 @Resolver()
 export class ClearanceQuery {
   constructor(private readonly service: ClearanceService) {}
 
   @Query(() => [Clearance])
-  // @NoAccessTokenAuthRequired()
-  async allClearances(): Promise<Clearance[]> {
-    // TODO: We should always restrict responses by the currently logged in school.
-    return await this.service.findAll({
-      where: {
-        // @todo: Replace with actual school ids
-        schoolId: In(['school-1']),
-      },
-    });
+  @AllowResourceOwnerType(ResourceOwnerType.USER)
+  async allClearances(
+    @UserCtx() userContext: UserContext,
+  ): Promise<Clearance[]> {
+    return await this.service.findByOrganisationId(
+      userContext.heimatorganisation,
+    );
   }
 }

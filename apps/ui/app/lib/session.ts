@@ -8,6 +8,7 @@ import { decrypt, encrypt as encryptAuth } from './auth';
 
 interface SessionPayload extends JWTPayload {
   userId: string;
+  accessToken: string;
 }
 
 // TODO: This is all test code and needs to be replaced with proper user session management
@@ -40,15 +41,21 @@ export async function deleteSession() {
   cookieStore.delete('session');
 }
 
-export const verifySession = cache(async () => {
-  const session = await getSession();
+export const verifySession = cache(
+  async (): Promise<{ isAuth: boolean; userId: string; accessToken: string }> => {
+    const session = await getSession();
 
-  if (!session?.userId) {
-    redirect('/login');
-  }
+    if (!session?.userId) {
+      redirect('/login');
+    }
 
-  return { isAuth: true, userId: session.userId };
-});
+    return {
+      isAuth: true,
+      userId: session.userId as string,
+      accessToken: session.accessToken as string,
+    };
+  },
+);
 
 export const getSession = cache(async () => {
   const cookie = (await cookies()).get('session')?.value;

@@ -1,4 +1,4 @@
-import { keycloakIntrospectionSchema } from './request-with-introspection.interface';
+import { keycloakIntrospectionSchema } from '../introspection/introspection-client';
 
 describe('RequestWithIntrospection', () => {
   describe('keycloakIntrospectionSchema', () => {

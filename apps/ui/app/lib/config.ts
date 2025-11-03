@@ -2,6 +2,7 @@ export interface Config {
   clientId: string;
   clientSecret: string;
   url: string;
+  apiBaseUrl: string;
 }
 
 export function getConfig(): Config {
@@ -18,5 +19,6 @@ export function getConfig(): Config {
     clientId: process.env.AUTH_CLIENT_ID,
     clientSecret: process.env.AUTH_CLIENT_SECRET,
     url: process.env.AUTH_URL,
+    apiBaseUrl: process.env.API_BASE_URL ?? 'http://localhost:3010',
   };
 }

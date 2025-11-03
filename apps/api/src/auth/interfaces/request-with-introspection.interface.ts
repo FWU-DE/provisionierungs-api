@@ -1,36 +1,15 @@
 import type { Request } from 'express';
-import z from 'zod';
 import type { ResourceOwnerType } from '../enums/resource-owner-type.enum';
-
-export type KeycloakIntrospection =
-  | { active: false }
-  | {
-      active: true;
-      scope: string;
-      client_id: string;
-      sub: string;
-      username: string;
-      typ: 'Bearer' | 'ID';
-    };
-
-export const keycloakIntrospectionSchema = z.discriminatedUnion('active', [
-  z.object({ active: z.literal(false) }),
-  z.object({
-    active: z.literal(true),
-    scope: z.string(),
-    client_id: z.string(),
-    sub: z.string(),
-    username: z.string(),
-    typ: z.enum(['Bearer', 'ID']),
-  }),
-]);
 
 export interface Introspection {
   authenticated: true;
+  typ: string;
   sub: string;
   subType: ResourceOwnerType;
   scopes: string[];
-  clientId: string;
+  clientId: string | null;
+  heimatorganisation?: string;
+  schulkennung?: string[];
 }
 
 export interface RequestWithIntrospection extends Request {

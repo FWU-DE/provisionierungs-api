@@ -3,14 +3,15 @@ import { APP_GUARD } from '@nestjs/core';
 
 import { ConfigModule } from '@nestjs/config';
 import authConfig from '../config/auth.config';
+import { LogModule } from '../logger';
 import { AccessTokenGuard } from './guards/access-token.guard';
 import { AllowedResourceOwnerTypesGuard } from './guards/allowed-resource-owner-types.guard';
-import { IntrospectionProvider } from './introspection/introspection.provider';
 import { PublicRouteEvaluator } from './guards/public-route.evaluator';
 import { RequiredScopesGuard } from './guards/required-scopes.guard';
-import { loggerProviderFactory } from './logger/logger.provider';
-import { LogModule } from '../logger';
+import { AccessTokenVerifierFactory } from './introspection/access-token-verifier.factory';
 import { IntrospectionClient } from './introspection/introspection-client';
+import { IntrospectionProvider } from './introspection/introspection.provider';
+import { loggerProviderFactory } from './logger/logger.provider';
 
 @Global()
 @Module({
@@ -20,6 +21,8 @@ import { IntrospectionClient } from './introspection/introspection-client';
     PublicRouteEvaluator,
     IntrospectionProvider,
     IntrospectionClient,
+    AccessTokenVerifierFactory,
+
     {
       provide: APP_GUARD,
       useClass: AccessTokenGuard,

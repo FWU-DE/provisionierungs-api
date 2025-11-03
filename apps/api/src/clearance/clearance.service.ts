@@ -48,6 +48,27 @@ export class ClearanceService extends EntityService<Clearance> {
     })) as ResolveRelations<TRelations, Clearance>[];
   }
 
+  async findByOrganisationId<
+    TRelations extends FindOptionsRelations<Clearance>,
+  >(
+    id: Clearance['schoolId'],
+    options?: {
+      select?: FindOptionsSelect<Clearance>;
+      relations?: TRelations;
+      transactionManager?: EntityManager;
+    },
+  ): Promise<ResolveRelations<TRelations, Clearance>[]> {
+    const repository = this.getRepository(options?.transactionManager);
+
+    return (await repository.find({
+      select: options?.select,
+      relations: options?.relations,
+      where: {
+        schoolId: id,
+      },
+    })) as ResolveRelations<TRelations, Clearance>[];
+  }
+
   async findAllForApp(appId: string): Promise<Clearance[]> {
     return this.findAll({
       where: {

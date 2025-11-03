@@ -10,8 +10,6 @@ import { IntrospectionClient } from '../auth/introspection/introspection-client'
 import { TestIntrospectionClient } from '../auth/introspection/introspection-client.test';
 import { ScopeIdentifier } from '../auth/scope/scope-identifier';
 
-// @todo: Re-activate tests (remove skip) after re-activation of authentication.
-
 describe('Schulconnex Users Controller', () => {
   let infra: TestingInfrastructure;
   let testIntrospectionClient: TestIntrospectionClient;
@@ -44,27 +42,27 @@ describe('Schulconnex Users Controller', () => {
   });
 
   describe('Access Control', () => {
-    it.skip('no authorization', async () => {
+    it('no authorization', async () => {
       await request((await infra.getApp()).getHttpServer())
         .get('/schulconnex/v1/personen-info')
         .expect(403);
     });
 
-    it.skip('missing scope', async () => {
+    it('missing scope', async () => {
       await request((await infra.getApp()).getHttpServer())
         .get('/schulconnex/v1/personen-info')
         .set('Authorization', 'Bearer ::access-token-without-scope::')
         .expect(403);
     });
 
-    it.skip('missing token', async () => {
+    it('missing token', async () => {
       await request((await infra.getApp()).getHttpServer())
         .get('/schulconnex/v1/personen-info')
         .set('Authorization', 'Bearer ::missing-access-token::')
         .expect(403);
     });
 
-    it.skip('wrong resource owner', async () => {
+    it('wrong resource owner', async () => {
       await request((await infra.getApp()).getHttpServer())
         .get('/schulconnex/v1/personen-info')
         .set('Authorization', 'Bearer ::user-access-token::')

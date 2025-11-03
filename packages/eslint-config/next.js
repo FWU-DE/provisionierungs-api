@@ -46,5 +46,5 @@ export const nextJsConfig = tseslint.config([
     },
   },
   { rules: { 'no-unused-vars': 'off', '@typescript-eslint/no-unused-vars': 'error' } },
-  { ignores: ['.next/**', 'next-env.d.ts'] },
+  { ignores: ['.next/**', 'next-env.d.ts', '**/*/graphql-env.d.ts'] },
 ]);

@@ -9,16 +9,21 @@
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
     "check-types": "tsc --noEmit",
-    "clean": "rm -rf .next/ .turbo/"
+    "clean": "rm -rf .next/ .turbo/",
+    "prebuild": "gql-tada generate output"
   },
   "dependencies": {
+    "@apollo/client": "^4.0.8",
+    "@apollo/client-integration-nextjs": "^0.14.1",
     "@fwu-rostering/ui": "workspace:*",
     "cookie": "^1.0.2",
+    "gql.tada": "^1.8.13",
     "jose": "^6.1.0",
     "next": "^15.5.0",
     "openid-client": "^6.7.0",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "rxjs": "^7.8.2"
   },
   "devDependencies": {
     "@fwu-rostering/eslint-config": "workspace:*",

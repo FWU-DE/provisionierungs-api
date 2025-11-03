@@ -24,6 +24,7 @@ describe('TestIntrospectionClient', () => {
       sub: 'sub123',
       typ: 'Bearer',
       username: 'user123',
+      sid: 'test-sid',
     });
   });
 
@@ -54,6 +55,7 @@ describe('TestIntrospectionClient', () => {
       sub: 'test-sub',
       typ: 'Bearer',
       username: 'test-username',
+      sid: 'test-sid',
     });
   });
 

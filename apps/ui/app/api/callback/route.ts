@@ -24,10 +24,10 @@ export async function GET(request: NextRequest) {
     return new Response('No claims found', { status: 400 });
   }
 
-  const cookieData = await encrypt({ userId: claims.sub });
+  const cookieData = await encrypt({ userId: claims.sub, accessToken: token.access_token });
   const cookie = serialize('session', cookieData, {
     httpOnly: true,
-    maxAge: 60 * 60 * 2,
+    maxAge: token.expiresIn(),
     path: '/',
   });
 

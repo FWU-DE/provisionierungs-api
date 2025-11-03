@@ -10,3 +10,10 @@ export type PropertiesOnly<T> = Omit<
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   { [K in keyof T]: T[K] extends Function ? K : never }[keyof T]
 >;
+
+export function assertUnreachable(value: never): never {
+  throw new Error(
+    'This should be unreachable. This should never happen. Value: ' +
+      JSON.stringify(value as unknown),
+  );
+}

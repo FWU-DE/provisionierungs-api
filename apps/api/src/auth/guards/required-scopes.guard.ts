@@ -1,5 +1,5 @@
 import type { CanActivate, ExecutionContext } from '@nestjs/common';
-import { ConsoleLogger, Injectable } from '@nestjs/common';
+import { ConsoleLogger, Inject, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
 import type { RequestMaybeContainingIntrospection } from '../interfaces/request-with-introspection.interface';
@@ -7,16 +7,27 @@ import type { RecursiveArray } from '../route-decorators/require-scope.decorator
 import { RequireScope } from '../route-decorators/require-scope.decorator';
 import { transformIntoExpressContext } from '../util/graphql/express-context';
 import { IntrospectionProvider } from '../introspection/introspection.provider';
+import type { AuthConfig } from '../../config/auth.config';
+import authConfig from '../../config/auth.config';
 
 @Injectable()
 export class RequiredScopesGuard implements CanActivate {
   constructor(
+    @Inject(authConfig.KEY)
+    private readonly authConfig: AuthConfig,
     private readonly reflector: Reflector,
     private readonly logger: ConsoleLogger,
     private readonly introspectionProvider: IntrospectionProvider,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    if (this.authConfig.AUTH_VALIDATION === 'off') {
+      this.logger.error(
+        'RequiredScopesGuard: AUTH_VALIDATION is set to "off". Allowing access without scope checks.',
+      );
+      return true;
+    }
+
     this.logger.debug(
       'RequiredScopesGuard: Checking if all required scopes are granted for route...',
     );
