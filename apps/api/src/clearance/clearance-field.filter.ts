@@ -1,27 +1,18 @@
-import { SchulconnexPersonsResponse } from '../dto/schulconnex-persons-response.dto';
-import { type SchulconnexPersonContext } from '../dto/schulconnex-person-context.dto';
+import { SchulconnexPersonsResponse } from '../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
+import { type SchulconnexPersonContext } from '../identity-management/dto/schulconnex/schulconnex-person-context.dto';
 import { type SchulconnexClearanceVisibleFields } from './schulconnex-clearance-options.interface';
-import {
-  type PartialSchulconnexPerson,
-  type SchulconnexPerson,
-} from '../dto/schulconnex-person.dto';
-import {
-  type PartialSchulconnexOrganization,
-  type SchulconnexOrganization,
-} from '../dto/schulconnex-organization.dto';
-import {
-  type PartialSchulconnexGroupdataset,
-  type SchulconnexGroupdataset,
-} from '../dto/schulconnex-groupdataset.dto';
+import { type SchulconnexPerson } from '../identity-management/dto/schulconnex/schulconnex-person.dto';
+import { type SchulconnexOrganization } from '../identity-management/dto/schulconnex/schulconnex-organization.dto';
+import { type SchulconnexGroupdataset } from '../identity-management/dto/schulconnex/schulconnex-groupdataset.dto';
 import { plainToInstance } from 'class-transformer';
 
 export function applyClearancePersonsFieldFilter(
-  clientId: string,
+  offerId: number,
   identities: SchulconnexPersonsResponse[],
   // @todo: Create a fitting ClearanceField interface.
   // clearance?: Clearance[],
 ): SchulconnexPersonsResponse[] {
-  const visibleProperties = getClearedProperties(clientId);
+  const visibleProperties = getClearedProperties(offerId);
   return identities.map((identity) =>
     plainToInstance(SchulconnexPersonsResponse, {
       pid: identity.pid,
@@ -34,11 +25,11 @@ export function applyClearancePersonsFieldFilter(
 }
 
 function getClearedProperties(
-  clientId: string,
+  offerId: number,
 ): SchulconnexClearanceVisibleFields {
   // @todo: Implement clearance table with dummy data
   // @todo: Get clearance for client
-  void clientId;
+  void offerId;
 
   // @todo: Develop actual list of properties to toggle clearance for.
   // @todo: Configure by app via clearance table
@@ -52,9 +43,9 @@ function getClearedProperties(
 }
 
 function filterPerson(
-  person: undefined | PartialSchulconnexPerson | SchulconnexPerson,
+  person: undefined | SchulconnexPerson,
   visibleProperties: SchulconnexClearanceVisibleFields,
-): SchulconnexPerson | PartialSchulconnexPerson | undefined {
+): SchulconnexPerson | undefined {
   if (typeof person === 'undefined') {
     return undefined;
   }
@@ -98,18 +89,18 @@ function filterPersonContext(
 }
 
 function filterOrganization(
-  organization: SchulconnexOrganization | PartialSchulconnexOrganization,
+  organization: SchulconnexOrganization,
   visibleProperties: SchulconnexClearanceVisibleFields,
-): PartialSchulconnexOrganization {
+): SchulconnexOrganization {
   void visibleProperties;
   // @todo: Implement if necessary.
   return organization;
 }
 
 function filterGroup(
-  group: SchulconnexGroupdataset | PartialSchulconnexGroupdataset,
+  group: SchulconnexGroupdataset,
   visibleProperties: SchulconnexClearanceVisibleFields,
-): PartialSchulconnexGroupdataset {
+): SchulconnexGroupdataset {
   void visibleProperties;
   // @todo: Implement if necessary.
   return group;

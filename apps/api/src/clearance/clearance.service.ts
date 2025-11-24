@@ -6,11 +6,12 @@ import {
   type FindOptionsRelations,
   type FindOptionsSelect,
   type FindOptionsWhere,
+  In,
   type Repository,
 } from 'typeorm';
-import { Clearance } from './clearance.entity';
-import { EntityService } from '../database/entity.service';
-import type { ResolveRelations } from '../database/typeorm';
+import { Clearance } from './entity/clearance.entity';
+import { EntityService } from '../common/database/entity.service';
+import type { ResolveRelations } from '../common/database/typeorm';
 
 @Injectable()
 export class ClearanceService extends EntityService<Clearance> {
@@ -29,10 +30,10 @@ export class ClearanceService extends EntityService<Clearance> {
   }
 
   async delete(
-    clearance: Clearance,
+    id: Clearance['id'],
     transactionManager?: EntityManager,
   ): Promise<DeleteResult> {
-    return this.getRepository(transactionManager).delete(clearance.id);
+    return this.getRepository(transactionManager).delete(id);
   }
 
   async findAll<TRelations extends FindOptionsRelations<Clearance>>(options?: {
@@ -48,10 +49,9 @@ export class ClearanceService extends EntityService<Clearance> {
     })) as ResolveRelations<TRelations, Clearance>[];
   }
 
-  async findByOrganisationId<
-    TRelations extends FindOptionsRelations<Clearance>,
-  >(
-    id: Clearance['schoolId'],
+  async findByIdmAndSchools<TRelations extends FindOptionsRelations<Clearance>>(
+    idmId: Clearance['idmId'],
+    schoolIds: Clearance['schoolId'][],
     options?: {
       select?: FindOptionsSelect<Clearance>;
       relations?: TRelations;
@@ -64,15 +64,16 @@ export class ClearanceService extends EntityService<Clearance> {
       select: options?.select,
       relations: options?.relations,
       where: {
-        schoolId: id,
+        idmId: idmId,
+        schoolId: In(schoolIds),
       },
     })) as ResolveRelations<TRelations, Clearance>[];
   }
 
-  async findAllForApp(appId: string): Promise<Clearance[]> {
+  async findAllForOffer(offerId: number): Promise<Clearance[]> {
     return this.findAll({
       where: {
-        appId: appId,
+        offerId: offerId,
       },
     });
   }

@@ -1,3 +1,10 @@
+/**
+ * Schulconnex query parameters
+ *
+ * The schulconnex API allows the usage of query parameters for data filtration.
+ * Documentation: https://schulconnex.de/docs/generated/openapi/dienste/read-personen-info
+ */
+
 export const schulconnexQueryParameterCompleteOptions = [
   'personen',
   'personenkontexte',

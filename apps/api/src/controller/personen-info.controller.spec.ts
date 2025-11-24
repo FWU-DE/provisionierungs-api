@@ -1,14 +1,14 @@
 import request from 'supertest';
-import { AuthModule } from '../auth';
+import { AuthModule } from '../common/auth';
 import {
   createTestingInfrastructure,
   type TestingInfrastructure,
 } from '../test/testing-module';
-import type { SchulconnexPersonResponse } from '../dto/schulconnex-person-response.dto';
+import type { SchulconnexPersonResponse } from '../identity-management/dto/schulconnex/schulconnex-person-response.dto';
 import { ControllerModule } from './controller.module';
-import { IntrospectionClient } from '../auth/introspection/introspection-client';
-import { TestIntrospectionClient } from '../auth/introspection/introspection-client.test';
-import { ScopeIdentifier } from '../auth/scope/scope-identifier';
+import { IntrospectionClient } from '../common/auth/introspection/introspection-client';
+import { TestIntrospectionClient } from '../common/auth/introspection/introspection-client.test';
+import { ScopeIdentifier } from '../common/auth/scope/scope-identifier';
 
 describe('Schulconnex Users Controller', () => {
   let infra: TestingInfrastructure;

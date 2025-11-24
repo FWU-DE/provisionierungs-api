@@ -48,6 +48,7 @@ export const config = defineConfig([
   },
   {
     ignores: [
+      'coverage/**',
       'dist/**',
       'scripts/*',
       'eslint.config.js',

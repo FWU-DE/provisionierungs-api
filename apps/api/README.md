@@ -73,3 +73,95 @@ $ pnpm db:fixture example
 ## OpenAPI (Swagger)
 
 The OpenAPI documentation is available at `http://localhost:3010/openapi` when the server is running.
+
+## GraphQL
+
+### Clearance
+
+**all**:
+
+```
+query AllClearances {
+	allClearances {
+		idmId,
+		schoolId,
+		groupId
+	}
+}
+```
+
+**create**:
+
+```
+mutation CreateClearance(
+  $offerId: Int!
+  $idmId: String!
+  $groupId: String!
+  $schoolId: String!
+) {
+  createClearance(
+    offerId: $offerId
+    idmId: $idmId
+    groupId: $groupId
+    schoolId: $schoolId
+  ) {
+		id
+    offerId
+    idmId
+    groupId
+    schoolId
+  }
+}
+
+# Variables
+{
+	"offerId": 54321,
+	"groupId": "group-id-123",
+	"idmId": "idm-id",
+	"schoolId": "school-id"
+}
+```
+
+**delete**:
+
+```
+mutation DeleteClearance(
+  $id: String!
+) {
+  deleteClearance(
+    id: $id
+  ) {
+		deleted
+  }
+}
+
+# Variables
+{
+	"id": "76798772-c4d8-4388-ad3a-8430018d75bd"
+}
+```
+
+### Offer
+
+**all**:
+
+```
+query AllOffers {
+	allOffers {
+		offerId
+	}
+}
+```
+
+### Groups
+
+**all**:
+
+```
+query AllGroups {
+	allGroups {
+		id
+		name
+	}
+}
+```

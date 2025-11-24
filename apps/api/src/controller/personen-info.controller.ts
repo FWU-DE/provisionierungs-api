@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Res } from '@nestjs/common';
+import { Controller, Get, Inject, Query, Res } from '@nestjs/common';
 import { ApiBearerAuth, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import type { Response } from 'express';
 
@@ -7,18 +7,21 @@ import {
   ClientId,
   RequireScope,
   ResourceOwnerType,
-} from '../auth';
-import { ScopeIdentifier } from '../auth/scope/scope-identifier';
-import { SchulconnexPersonsResponse } from '../dto/schulconnex-persons-response.dto';
-import { Aggregator } from '../identity-provider/aggregator/aggregator';
+} from '../common/auth';
+import { ScopeIdentifier } from '../common/auth/scope/scope-identifier';
+import { SchulconnexPersonsResponse } from '../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
+import { Aggregator } from '../identity-management/aggregator/aggregator';
 import { ClearanceService } from '../clearance/clearance.service';
 import { SchulconnexQueryParameters } from './parameters/schulconnex-query-parameters';
+import { OffersFetcher } from '../offers/fetcher/offers.fetcher';
+import { OfferContext } from '../offers/model/offer-context';
 
 @Controller('schulconnex/v1')
 export class PersonenInfoController {
   constructor(
     private readonly aggregator: Aggregator,
     private readonly clearanceService: ClearanceService,
+    @Inject(OffersFetcher) private offersFetcher: OffersFetcher,
   ) {}
 
   @Get('personen-info')
@@ -96,16 +99,24 @@ export class PersonenInfoController {
       organizationIdFilter,
     );
 
-    const clearance = await this.clearanceService.findAllForApp(clientId);
-    const idpIds = [...new Set(clearance.map((c) => c.idpId))];
+    const offerForClientId =
+      await this.offersFetcher.fetchOfferForClientId(clientId);
+    if (!offerForClientId?.offerId) {
+      return [];
+    }
+
+    const clearance = await this.clearanceService.findAllForOffer(
+      offerForClientId.offerId,
+    );
+    const idmIds = [...new Set(clearance.map((c) => c.idmId))];
 
     /*
-     * Fetch data from IdP
+     * Fetch data from IDM
      */
     const identities: SchulconnexPersonsResponse[] =
       await this.aggregator.getUsers(
-        idpIds,
-        clientId,
+        idmIds,
+        new OfferContext(offerForClientId.offerId, clientId),
         filterParameters,
         clearance,
       );

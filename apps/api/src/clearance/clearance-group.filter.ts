@@ -1,5 +1,5 @@
-import { type SchulconnexPersonsResponse } from '../dto/schulconnex-persons-response.dto';
-import { type Clearance } from './clearance.entity';
+import { type SchulconnexPersonsResponse } from '../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
+import { type Clearance } from './entity/clearance.entity';
 
 export function applyClearancePersonsGroupFilter(
   identities: SchulconnexPersonsResponse[],

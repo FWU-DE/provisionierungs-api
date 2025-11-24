@@ -1,7 +1,7 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AdvancedSnakeNamingStrategy } from '../database/advanced-snake.naming-strategy';
+import { AdvancedSnakeNamingStrategy } from '../common/database/advanced-snake.naming-strategy';
 
 @Module({
   imports: [
@@ -18,7 +18,7 @@ import { AdvancedSnakeNamingStrategy } from '../database/advanced-snake.naming-s
         synchronize: false,
         logging: process.env.LOG_LEVEL === 'debug',
         entities: ['**/*.entity.ts'],
-        migrations: ['database/migrations/*.ts'],
+        migrations: ['common/database/migrations/*.ts'],
       }),
     }),
   ],

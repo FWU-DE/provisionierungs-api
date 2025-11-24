@@ -3,13 +3,18 @@
 # ------------------------------------------------------
 
 type Clearance {
-  appId: String!
   createdAt: DateTime!
   deletedAt: DateTime
+  groupId: String!
   id: ID!
-  idpId: String!
+  idmId: String!
+  offerId: Float!
   schoolId: String!
   updatedAt: DateTime!
+}
+
+type ClearanceDeleteResponse {
+  deleted: Boolean!
 }
 
 """
@@ -17,6 +22,31 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Group {
+  id: String!
+  name: String!
+}
+
+type Mutation {
+  createClearance(groupId: String!, idmId: String!, offerId: Int!, schoolId: String!): Clearance!
+  deleteClearance(id: String!): ClearanceDeleteResponse!
+}
+
+type OffersDto {
+  educationProviderOrganizationName: String!
+  offerDescription: String!
+  offerId: Float!
+  offerLink: String!
+  offerLogo: String!
+  offerLongTitle: String!
+  offerResourcePk: Float!
+  offerStatus: String!
+  offerTitle: String!
+  offerVersion: Float!
+}
+
 type Query {
   allClearances: [Clearance!]!
+  allGroups: [Group!]!
+  allOffers: [OffersDto!]!
 }

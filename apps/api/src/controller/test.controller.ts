@@ -1,92 +1,105 @@
 import { Controller, Get, Inject } from '@nestjs/common';
-import { Clearance } from '../clearance/clearance.entity';
+import { Clearance } from '../clearance/entity/clearance.entity';
 import { ClearanceService } from '../clearance/clearance.service';
-import { Aggregator } from '../identity-provider/aggregator/aggregator';
-import { ApiGroupsDto } from '../dto/api.groups.dto';
-import { SchulconnexGroup } from '../dto/schulconnex-group.dto';
+import { Aggregator } from '../identity-management/aggregator/aggregator';
+import { GroupsPerIdmModel } from '../identity-management/model/groups-per-idm.model';
+import { SchulconnexGroup } from '../identity-management/dto/schulconnex/schulconnex-group.dto';
+import {
+  AllowResourceOwnerType,
+  RequireScope,
+  ResourceOwnerType,
+} from '../common/auth';
+import { ScopeIdentifier } from '../common/auth/scope/scope-identifier';
+import { OffersFetcher } from '../offers/fetcher/offers.fetcher';
+import { OfferItem } from '../offers/model/response/offer-item.model';
 
 // @todo: Remove after implementation of clearance database!
 
 interface TestResponse {
-  groups: ApiGroupsDto[];
+  groups: GroupsPerIdmModel[];
   clearanceEntries: Clearance[];
+  offerIdForClientId: OfferItem['offerId'] | undefined;
 }
 
 @Controller('/')
 export class TestController {
   constructor(
     @Inject(ClearanceService) private clearanceService: ClearanceService,
+    @Inject(OffersFetcher) private offersFetcher: OffersFetcher,
     private readonly aggregator: Aggregator,
   ) {}
 
   @Get('test')
+  @AllowResourceOwnerType(ResourceOwnerType.CLIENT)
+  @RequireScope(ScopeIdentifier.SCHULCONNEX_ACCESS)
   async test(): Promise<TestResponse> {
-    /*
-      // @todo:   Mock UI behaviour:
-        // @todo:   Prepare reading the admin user's JWT for the "heimatorganisation" and "schulkennung" claims??? How do we get these information?
-        // @todo:   Prepare query to VIDIS Offer API endpoint to fetch all schools and find the one with the given "schulkennung" to determine the organizationId.
-        //            Endpoint:   https://fwu-de.github.io/bmi-docs/api/vidis#tag/IDMBetreiber/operation/getAllOffers
-        // @todo:   Prepare query to VIDIS Offer API endpoint to fetch the activated apps for the given organizationId. => appId[]
-        // @todo:   Prepare clearance configuration for fields/field-groups. [needs to be defined/conceptualized first!].
+    const groups = await this.fetchGroups();
 
-      // @todo:   Implement API behaviour:
-        // @todo:   Only query the IdP ("heimatorganisation") that is derived from the client information.
-     */
+    await this.createEntriesForGroups(groups);
 
-    const availableIdps = ['eduplaces', 'eduplaces-staging'];
+    // Retrieve all clearance entries
+    const clearanceEntries = await this.clearanceService.findAll();
 
-    const selectedIdps = availableIdps
+    const offerForClientId =
+      await this.offersFetcher.fetchOfferForClientId('springboot-demo');
+
+    return {
+      offerIdForClientId: offerForClientId?.offerId,
+      groups: groups,
+      clearanceEntries: clearanceEntries,
+    };
+  }
+
+  private async fetchGroups(): Promise<GroupsPerIdmModel[]> {
+    const availableIdms = ['eduplaces', 'eduplaces-staging', 'DE-BY-vidis-idp'];
+
+    const selectedIdms = availableIdms
       .sort(() => Math.random() - 0.5)
-      .slice(0, Math.floor(Math.random() * availableIdps.length) + 1);
+      .slice(0, Math.floor(Math.random() * availableIdms.length) + 1);
 
-    /*
-     * UI Logic
-     */
-    const groups: ApiGroupsDto[] =
-      await this.aggregator.getGroups(selectedIdps);
+    return await this.aggregator.getGroups(selectedIdms);
+  }
 
-    /*
-     * API Logic
-     */
-    const availableClientIds = ['fake-client-id', 'client-1', 'client-2'];
+  private async createEntriesForGroups(
+    groups: GroupsPerIdmModel[],
+  ): Promise<void> {
+    const availableOfferIds = [87654321, 12345678];
+
+    const availableSchoolIds = [
+      'DE-BY-1234',
+      'test-school-' + Math.random().toString(),
+      'test-school-' + Math.random().toString(),
+      'test-school-' + Math.random().toString(),
+    ];
 
     await Promise.all(
-      groups.map((groupSet: ApiGroupsDto) => {
+      groups.map((groupSet: GroupsPerIdmModel) => {
         return groupSet.groups.map(
           async (groupEntry: SchulconnexGroup): Promise<Clearance> => {
-            const clearance = new Clearance();
-            clearance.appId =
-              availableClientIds[
-                Math.floor(Math.random() * availableClientIds.length)
+            const offerId =
+              availableOfferIds[
+                Math.floor(Math.random() * availableOfferIds.length)
               ];
-            clearance.schoolId =
-              'test-school-' + new Date().toLocaleTimeString();
-            clearance.idpId = groupSet.idp;
+            const schoolId =
+              availableSchoolIds[
+                Math.floor(Math.random() * availableSchoolIds.length)
+              ];
+
+            const clearance = new Clearance();
+            clearance.offerId = offerId;
+            clearance.schoolId = schoolId;
+            clearance.idmId = groupSet.idm;
             clearance.groupId = groupEntry.id;
-            return await this.clearanceService.save(clearance);
+
+            return (await this.clearanceService
+              .save(clearance)
+              .catch((e: unknown) => {
+                // eslint-disable-next-line
+                console.log(e);
+              })) as Clearance;
           },
         );
       }),
     );
-
-    // const clearance = new Clearance();
-    // clearance.appId =
-    //   availableClientIds[Math.floor(Math.random() * availableClientIds.length)];
-    // clearance.schoolId = 'test-school-' + new Date().toLocaleTimeString();
-    // clearance.idpId =
-    //   availableIdps[Math.floor(Math.random() * availableIdps.length)];
-    // clearance.groupId = 'test-group-' + new Date().toLocaleTimeString();
-    // await this.clearanceService.save(clearance);
-
-    const clearanceEntries = await this.clearanceService.findAll();
-
-    // if (clearanceEntries[0]) {
-    //   await this.clearanceService.delete(clearanceEntries[0]);
-    // }
-
-    return {
-      groups: groups,
-      clearanceEntries: clearanceEntries,
-    };
   }
 }

@@ -1,5 +1,5 @@
 import type { EntityManager } from 'typeorm';
-import { BaseEntity } from '../../database/base.entity';
+import { BaseEntity } from '../../common/database/base.entity';
 import { ensureError } from '@fwu-rostering/utils/error';
 
 export class Persister {

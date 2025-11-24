@@ -6,7 +6,7 @@ import type { TestingModule, TestingModuleBuilder } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { QueryRunner } from 'typeorm';
 import { DataSource } from 'typeorm';
-import type { BaseEntity } from '../database/base.entity';
+import type { BaseEntity } from '../common/database/base.entity';
 import { Persister } from './fixture/persister';
 import { TestDatabaseProviderModule } from './database-provider.module';
 
