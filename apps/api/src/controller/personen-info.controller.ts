@@ -15,6 +15,7 @@ import { ClearanceService } from '../clearance/clearance.service';
 import { SchulconnexQueryParameters } from './parameters/schulconnex-query-parameters';
 import { OffersFetcher } from '../offers/fetcher/offers.fetcher';
 import { OfferContext } from '../offers/model/offer-context';
+import { Logger } from '../common/logger';
 
 @Controller('schulconnex/v1')
 export class PersonenInfoController {
@@ -22,7 +23,10 @@ export class PersonenInfoController {
     private readonly aggregator: Aggregator,
     private readonly clearanceService: ClearanceService,
     @Inject(OffersFetcher) private offersFetcher: OffersFetcher,
-  ) {}
+    private readonly logger: Logger,
+  ) {
+    this.logger.setContext(PersonenInfoController.name);
+  }
 
   @Get('personen-info')
   @AllowResourceOwnerType(ResourceOwnerType.CLIENT)
@@ -102,12 +106,21 @@ export class PersonenInfoController {
     const offerForClientId =
       await this.offersFetcher.fetchOfferForClientId(clientId);
     if (!offerForClientId?.offerId) {
+      this.logger.error(
+        `No offer found for clientId "${clientId}". Cannot fetch users without a valid offer.`,
+      );
       return [];
     }
 
     const clearance = await this.clearanceService.findAllForOffer(
       offerForClientId.offerId,
     );
+    if (clearance.length === 0) {
+      this.logger.verbose(
+        `No clearance found for offer "${String(offerForClientId.offerId)}" and client "${clientId}"`,
+      );
+      return [];
+    }
     const idmIds = [...new Set(clearance.map((c) => c.idmId))];
 
     /*

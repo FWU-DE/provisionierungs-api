@@ -4,10 +4,11 @@ import { IdentityProviderModule } from '../identity-management/identity-provider
 import { PersonenInfoController } from './personen-info.controller';
 import { TestController } from './test.controller';
 import { OffersModule } from '../offers/offers.module';
+import { LogModule } from '../common/logger';
 
 // @todo: Cleanup after removal of TestController.
 @Module({
-  imports: [IdentityProviderModule, ClearanceModule, OffersModule],
+  imports: [IdentityProviderModule, ClearanceModule, OffersModule, LogModule],
   controllers: [PersonenInfoController, TestController],
 })
 export class ControllerModule {}

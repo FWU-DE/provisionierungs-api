@@ -14,7 +14,7 @@ WORKDIR /src
 COPY --from=builder /src/out/json/ .
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 COPY --from=builder /src/out/full/ .
-RUN pnpm build #
+RUN pnpm build
 
 
 FROM base AS production
@@ -23,7 +23,8 @@ ENV NODE_ENV=production
 
 COPY --from=builder /src/out/json/ .
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+COPY --from=builder /src/out/full/ .
 COPY --chown=node:node --from=installer /src/apps/api/dist /app/apps/api/dist
 USER node
 
-CMD ["node", "apps/api/dist/main.js"]
+CMD ["node", "apps/api/dist/src/main.js"]

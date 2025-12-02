@@ -21,7 +21,9 @@ export class OffersFetcher {
     private readonly offersConfig: OffersConfig,
     @Inject(Logger)
     protected readonly logger: Logger,
-  ) {}
+  ) {
+    this.logger.setContext(OffersFetcher.name);
+  }
 
   private async fetchOffers(
     mode: OfferFetchMode,

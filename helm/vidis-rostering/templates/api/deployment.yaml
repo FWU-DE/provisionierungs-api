@@ -1,0 +1,146 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "vidis-rostering.apiFullname" . }}
+  labels:
+    {{- include "vidis-rostering.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.api.autoscaling.enabled }}
+  replicas: {{ .Values.api.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "vidis-rostering.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.api.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "vidis-rostering.labels" . | nindent 8 }}
+        {{- with .Values.api.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      automountServiceAccountToken: false
+      {{- with .Values.api.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          {{- with .Values.api.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.api.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+          env:
+            - name: PORT
+              value: "3000"
+            - name: LOG_LEVEL
+              value: {{ .Values.api.options.logLevel | quote }}
+            - name: LOG_FORMAT
+              value: {{ .Values.api.options.logFormat | quote }}
+            - name: AUTH_VALIDATION
+              value: {{ .Values.api.options.authValidationType | quote }}
+            - name: AUTH_WELL_KNOWN_URL
+              value: {{ .Values.api.options.authWellKnownUrl | quote }}
+            - name: AUTH_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.api.existingSecret.name }}
+                  key: {{ .Values.api.existingSecret.keyAuthClientId }}
+            - name: AUTH_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.api.existingSecret.name }}
+                  key: {{ .Values.api.existingSecret.keyAuthClientSecret }}
+            - name: DB_MAIN_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.api.existingSecret.name }}
+                  key: {{ .Values.api.existingSecret.keyDbMainUrl }}
+            - name: DB_REPLICA_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.api.existingSecret.name }}
+                  key: {{ .Values.api.existingSecret.keyDbReplicaUrl }}
+            - name: PSEUDONYMIZATION_SALT_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.api.existingSecret.name }}
+                  key: {{ .Values.api.existingSecret.keyPseudonymizationSaltEndpoint }}
+            - name: OFFERS_API_ENDPOINT
+              value: {{ .Values.api.options.offersApiEndpoint | quote }}
+            - name: OFFERS_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.api.existingSecret.name }}
+                  key: {{ .Values.api.existingSecret.keyOffersClientId }}
+            - name: OFFERS_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.api.existingSecret.name }}
+                  key: {{ .Values.api.existingSecret.keyOffersClientSecret }}
+            - name: IDM_EDUPLACES_TOKEN_ENDPOINT
+              value: {{ .Values.api.options.idmEduplacesTokenEndpoint | quote }}
+            - name: IDM_EDUPLACES_API_ENDPOINT
+              value: {{ .Values.api.options.idmEduplacesApiEndpoint | quote }}
+            - name: IDM_EDUPLACES_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.api.existingSecret.name }}
+                  key: {{ .Values.api.existingSecret.keyIdmEduplacesClientId }}
+            - name: IDM_EDUPLACES_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.api.existingSecret.name }}
+                  key: {{ .Values.api.existingSecret.keyIdmEduplacesClientSecret }}
+            - name: IDM_EDUPLACES_STAGING_TOKEN_ENDPOINT
+              value: {{ .Values.api.options.idmEduplacesStagingTokenEndpoint | quote }}
+            - name: IDM_EDUPLACES_STAGING_API_ENDPOINT
+              value: {{ .Values.api.options.idmEduplacesStagingApiEndpoint | quote }}
+            - name: IDM_EDUPLACES_STAGING_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.api.existingSecret.name }}
+                  key: {{ .Values.api.existingSecret.keyIdmEduplacesStagingClientId }}
+            - name: IDM_EDUPLACES_STAGING_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.api.existingSecret.name }}
+                  key: {{ .Values.api.existingSecret.keyIdmEduplacesStagingClientSecret }}
+          {{- with .Values.api.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.api.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.api.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.api.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
