@@ -21,7 +21,8 @@ export default async function Home() {
   return (
     <div>
       <h1>{t('welcome')}</h1>
-      Here you should be logged in<pre>{JSON.stringify(session)}</pre>
+      Here you should be logged in
+      <pre className="w-full overflow-x-scroll">{JSON.stringify(session, undefined, '  ')}</pre>
       <AccessTokenCopyBox token={session.accessToken} />
       <pre>{JSON.stringify(result)}</pre>
     </div>
