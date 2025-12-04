@@ -1,16 +1,24 @@
+import createMiddleware from 'next-intl/middleware';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
 import { getSession } from './app/lib/session';
+import { defaultLocale, locales } from './i18n';
 
-// This function can be marked `async` if using `await` inside
+const intlMiddleware = createMiddleware({
+  locales,
+  defaultLocale,
+  localePrefix: 'always',
+});
+
 export async function middleware(request: NextRequest) {
   if (null === (await getSession())) {
     return NextResponse.redirect(new URL('/api/login', request.url));
   }
-  return NextResponse.next();
+
+  return intlMiddleware(request);
 }
 
 export const config = {
-  matcher: '/home',
+  matcher: ['/((?!_next/|api/).*)'],
 };

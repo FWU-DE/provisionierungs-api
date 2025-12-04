@@ -1,0 +1,14 @@
+{
+  "app": {
+    "title": "VIDIS Rostering",
+    "description": "Eine Rostering-Anwendung für VIDIS"
+  },
+  "auth": {
+    "login": "Anmelden",
+    "logout": "Abmelden",
+    "login_description": "Melden Sie sich an, um auf die VIDIS Rostering-Anwendung zuzugreifen."
+  },
+  "home": {
+    "welcome": "Willkommen"
+  }
+}

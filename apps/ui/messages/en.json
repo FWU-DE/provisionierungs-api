@@ -1,0 +1,14 @@
+{
+  "app": {
+    "title": "VIDIS Rostering",
+    "description": "A rostering application for VIDIS"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "login_description": "Log in to access the VIDIS rostering application."
+  },
+  "home": {
+    "welcome": "Welcome"
+  }
+}
