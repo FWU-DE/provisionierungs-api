@@ -1,21 +1,21 @@
-{{- if .Values.api.ingress.enabled -}}
+{{- if .Values.ui.ingress.enabled -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "vidis-rostering.apiFullname" . }}
+  name: {{ include "vidis-rostering.uiFullname" . }}
   labels:
-    {{- include "vidis-rostering.apiLabels" . | nindent 4 }}
-  {{- with .Values.api.ingress.annotations }}
+    {{- include "vidis-rostering.uiLabels" . | nindent 4 }}
+  {{- with .Values.ui.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- with .Values.api.ingress.className }}
+  {{- with .Values.ui.ingress.className }}
   ingressClassName: {{ . }}
   {{- end }}
-  {{- if .Values.api.ingress.tls }}
+  {{- if .Values.ui.ingress.tls }}
   tls:
-    {{- range .Values.api.ingress.tls }}
+    {{- range .Values.ui.ingress.tls }}
     - hosts:
         {{- range .hosts }}
         - {{ . | quote }}
@@ -24,7 +24,7 @@ spec:
     {{- end }}
   {{- end }}
   rules:
-    {{- range .Values.api.ingress.hosts }}
+    {{- range .Values.ui.ingress.hosts }}
     - host: {{ .host | quote }}
       http:
         paths:
@@ -35,9 +35,9 @@ spec:
             {{- end }}
             backend:
               service:
-                name: {{ include "vidis-rostering.apiFullname" $ }}
+                name: {{ include "vidis-rostering.uiFullname" $ }}
                 port:
-                  number: {{ $.Values.api.service.port }}
+                  number: {{ $.Values.ui.service.port }}
           {{- end }}
     {{- end }}
 {{- end }}

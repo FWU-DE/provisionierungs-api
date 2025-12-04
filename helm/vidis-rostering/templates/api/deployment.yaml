@@ -3,14 +3,14 @@ kind: Deployment
 metadata:
   name: {{ include "vidis-rostering.apiFullname" . }}
   labels:
-    {{- include "vidis-rostering.labels" . | nindent 4 }}
+    {{- include "vidis-rostering.apiLabels" . | nindent 4 }}
 spec:
   {{- if not .Values.api.autoscaling.enabled }}
   replicas: {{ .Values.api.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "vidis-rostering.selectorLabels" . | nindent 6 }}
+      {{- include "vidis-rostering.apiSelectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.api.podAnnotations }}
@@ -18,7 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "vidis-rostering.labels" . | nindent 8 }}
+        {{- include "vidis-rostering.apiLabels" . | nindent 8 }}
         {{- with .Values.api.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

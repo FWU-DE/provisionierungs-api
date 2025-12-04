@@ -6,7 +6,7 @@ FROM base AS builder
 WORKDIR /src
 RUN npm install -g turbo@^2
 COPY . .
-RUN turbo prune @fwu/vidis-rostering-api --docker
+RUN turbo prune @fwu/vidis-rostering-ui --docker
 
 
 FROM base AS installer
@@ -14,6 +14,7 @@ WORKDIR /src
 COPY --from=builder /src/out/json/ .
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 COPY --from=builder /src/out/full/ .
+COPY ./apps/api/schema/* /src/apps/api/schema/
 RUN pnpm build
 
 
@@ -24,7 +25,7 @@ ENV NODE_ENV=production
 COPY --from=builder /src/out/json/ .
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 COPY --from=builder /src/out/full/ .
-COPY --chown=node:node --from=installer /src/apps/api/dist /app/apps/api/dist
+COPY --chown=node:node --from=installer /src/apps/ui/.next /app/apps/ui/.next
 USER node
 
-CMD ["node", "apps/api/dist/src/main.js"]
+CMD ["pnpm", "--filter", "@fwu/vidis-rostering-ui", "start"]

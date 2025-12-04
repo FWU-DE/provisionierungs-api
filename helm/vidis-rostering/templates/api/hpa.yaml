@@ -4,7 +4,7 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "vidis-rostering.apiFullname" . }}
   labels:
-    {{- include "vidis-rostering.labels" . | nindent 4 }}
+    {{- include "vidis-rostering.apiLabels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1

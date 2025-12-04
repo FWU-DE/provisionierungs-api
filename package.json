@@ -4,6 +4,7 @@
   "scripts": {
     "prepare": "[ \"$NODE_ENV\" = \"production\" ] || husky",
     "build": "turbo run build",
+    "start": "turbo run start",
     "dev": "turbo run dev",
     "api:dev": "turbo run dev --filter=@fwu/vidis-rostering-api",
     "ui:dev": "turbo run dev --filter=@fwu/vidis-rostering-ui",
