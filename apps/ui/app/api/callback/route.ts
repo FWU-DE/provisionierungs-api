@@ -1,9 +1,10 @@
 import * as client from 'openid-client';
-import { serialize } from 'cookie';
-import type { NextRequest } from 'next/server';
+import { cookies } from 'next/headers';
+import { type NextRequest, NextResponse } from 'next/server';
 
 import { getClientConfiguration, getState } from '../../lib/auth';
-import { encrypt } from '../../lib/session';
+import { getConfig } from '../../lib/config';
+import { encryptSession } from '../../lib/session';
 
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
@@ -24,18 +25,13 @@ export async function GET(request: NextRequest) {
     return new Response('No claims found', { status: 400 });
   }
 
-  const cookieData = await encrypt({ userId: claims.sub, accessToken: token.access_token });
-  const cookie = serialize('session', cookieData, {
+  const cookieData = await encryptSession({ userId: claims.sub, accessToken: token.access_token });
+  (await cookies()).set(getConfig().sessionCookieName, cookieData, {
     httpOnly: true,
+    secure: true,
     maxAge: token.expiresIn(),
     path: '/',
   });
 
-  const redirectUrl = new URL(request.url);
-  redirectUrl.pathname = '/home';
-  redirectUrl.search = '';
-  return new Response(null, {
-    status: 302,
-    headers: { 'Location': redirectUrl.toString(), 'Set-Cookie': cookie },
-  });
+  return NextResponse.redirect(`${getConfig().selfBaseUrl}/home`, { status: 302 });
 }

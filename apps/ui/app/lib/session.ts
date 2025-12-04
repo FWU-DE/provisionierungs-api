@@ -4,41 +4,21 @@ import { redirect } from 'next/navigation';
 import { cache } from 'react';
 import 'server-only';
 
-import { decrypt, encrypt as encryptAuth } from './auth';
+import { decrypt, encrypt } from './auth';
+import { getConfig } from './config';
 
 interface SessionPayload extends JWTPayload {
   userId: string;
   accessToken: string;
 }
 
-// TODO: This is all test code and needs to be replaced with proper user session management
-export async function encrypt(payload: SessionPayload) {
-  return encryptAuth(payload);
-}
-
-export async function updateSession() {
-  const session = (await cookies()).get('session')?.value;
-  const payload = await decrypt(session);
-
-  if (!session || !payload) {
-    return null;
-  }
-
-  const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-
-  const cookieStore = await cookies();
-  cookieStore.set('session', session, {
-    httpOnly: true,
-    secure: true,
-    expires: expires,
-    sameSite: 'lax',
-    path: '/',
-  });
+export async function encryptSession(payload: SessionPayload) {
+  return encrypt(payload);
 }
 
 export async function deleteSession() {
   const cookieStore = await cookies();
-  cookieStore.delete('session');
+  cookieStore.delete(getConfig().sessionCookieName);
 }
 
 export const verifySession = cache(
@@ -58,7 +38,7 @@ export const verifySession = cache(
 );
 
 export const getSession = cache(async () => {
-  const cookie = (await cookies()).get('session')?.value;
+  const cookie = (await cookies()).get(getConfig().sessionCookieName)?.value;
   const session = await decrypt(cookie);
   return session ?? null;
 });

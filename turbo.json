@@ -31,7 +31,9 @@
         "IDM_EDUPLACES_STAGING_CLIENT_SECRET",
         "OFFERS_API_ENDPOINT",
         "OFFERS_CLIENT_ID",
-        "OFFERS_CLIENT_SECRET"
+        "OFFERS_CLIENT_SECRET",
+        "SELF_BASE_URL",
+        "AUTH_REQUESTED_SCOPES"
       ],
       "outputs": [".next/**", "dist/**", "!.next/cache/**"]
     },

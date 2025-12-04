@@ -4,7 +4,7 @@ import { type JWTPayload, SignJWT, jwtVerify } from 'jose';
 import { getConfig } from './config';
 
 export async function getClientConfiguration() {
-  const { clientId, clientSecret, url } = getConfig();
+  const { clientId, clientSecret, authUrl: url } = getConfig();
   return await client.discovery(new URL(url), clientId, clientSecret);
 }
 
@@ -33,6 +33,10 @@ export async function decrypt(jwt: string | undefined = '') {
     // eslint-disable-next-line no-console
     console.log('Failed to verify session', error);
   }
+}
+
+export async function encryptState(state: string, codeVerifier: string) {
+  return await encrypt({ state, codeVerifier });
 }
 
 export async function getState(
