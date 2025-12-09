@@ -15,7 +15,7 @@ import {
 import { fixture } from '../../test/fixture/fixture.interface';
 import { Clearance } from '../entity/clearance.entity';
 
-describe('ClearanceQuery', () => {
+describe('ClearanceAllQuery', () => {
   let infra: TestingInfrastructure;
   let testIntrospectionClient: TestIntrospectionClient;
 
@@ -56,7 +56,7 @@ describe('ClearanceQuery', () => {
       .send({
         query: `query {
           allClearances {
-            id
+            groupId
           }
         }`,
       })

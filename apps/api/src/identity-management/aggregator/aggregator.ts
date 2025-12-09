@@ -11,17 +11,19 @@ import { EduplacesStagingAdapter } from '../adapter/eduplaces-staging/eduplaces-
 import { Pseudonymization } from '../../pseudonymization/pseudonymization';
 import { Logger } from '../../common/logger';
 import { GroupsPerIdmModel } from '../model/groups-per-idm.model';
-import { applyClearancePersonsFieldFilter } from '../../clearance/clearance-field.filter';
+import { applyClearancePersonsFieldFilter } from '../../clearance/filter/clearance-field.filter';
 import { Clearance } from '../../clearance/entity/clearance.entity';
 import { PostRequestFilter } from '../post-request-filter/post-request-filter';
-import { applyClearancePersonsGroupFilter } from '../../clearance/clearance-group.filter';
+import { applyClearancePersonsGroupFilter } from '../../clearance/filter/clearance-group.filter';
 import { OfferContext } from '../../offers/model/offer-context';
+import { DeByVidisIdpAdapter } from '../adapter/DE-BY-vidis-idp/de-by-vidis-idp-adapter';
 
 @Injectable()
 export class Aggregator {
   constructor(
     private readonly eduplacesAdapter: EduplacesAdapter,
     private readonly eduplacesStagingAdapter: EduplacesStagingAdapter,
+    private readonly deByVidisIdpAdapter: DeByVidisIdpAdapter,
     @Inject(Pseudonymization)
     private readonly pseudonymization: Pseudonymization,
     private readonly logger: Logger,
@@ -29,7 +31,11 @@ export class Aggregator {
   ) {}
 
   private getAvailableAdapters(): AdapterInterface[] {
-    return [this.eduplacesAdapter, this.eduplacesStagingAdapter];
+    return [
+      this.eduplacesAdapter,
+      this.eduplacesStagingAdapter,
+      this.deByVidisIdpAdapter,
+    ];
   }
 
   private getAdapterById(id: string): undefined | AdapterInterface {
@@ -38,7 +44,7 @@ export class Aggregator {
     );
   }
 
-  public async getUsers(
+  public async getPersons(
     idmIds: string[],
     offerContext: OfferContext,
     parameters: SchulconnexQueryParameters,

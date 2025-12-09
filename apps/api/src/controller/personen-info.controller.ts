@@ -127,7 +127,7 @@ export class PersonenInfoController {
      * Fetch data from IDM
      */
     const identities: SchulconnexPersonsResponse[] =
-      await this.aggregator.getUsers(
+      await this.aggregator.getPersons(
         idmIds,
         new OfferContext(offerForClientId.offerId, clientId),
         filterParameters,

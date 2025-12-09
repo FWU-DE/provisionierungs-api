@@ -4,21 +4,23 @@ import {
   UserCtx,
   type UserContext,
 } from '../../common/auth/param-decorators/user-context.decorator';
-import { Clearance } from '../entity/clearance.entity';
 import { ClearanceService } from '../clearance.service';
+import { ClearanceResponse } from '../dto/clearance-response.dto';
 
 @Resolver()
 export class ClearanceAllQuery {
   constructor(private readonly service: ClearanceService) {}
 
-  @Query(() => [Clearance])
+  @Query(() => [ClearanceResponse])
   @AllowResourceOwnerType(ResourceOwnerType.USER)
   async allClearances(
     @UserCtx() userContext: UserContext,
-  ): Promise<Clearance[]> {
-    return await this.service.findByIdmAndSchools(
+  ): Promise<ClearanceResponse[]> {
+    const response = await this.service.findByIdmAndSchools(
       userContext.heimatorganisation,
       userContext.schulkennung,
     );
+
+    return response.map((clearance) => new ClearanceResponse(clearance));
   }
 }

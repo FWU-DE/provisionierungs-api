@@ -1,9 +1,9 @@
-import { SchulconnexPersonsResponse } from '../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
-import { type SchulconnexPersonContext } from '../identity-management/dto/schulconnex/schulconnex-person-context.dto';
-import { type SchulconnexClearanceVisibleFields } from './schulconnex-clearance-options.interface';
-import { type SchulconnexPerson } from '../identity-management/dto/schulconnex/schulconnex-person.dto';
-import { type SchulconnexOrganization } from '../identity-management/dto/schulconnex/schulconnex-organization.dto';
-import { type SchulconnexGroupdataset } from '../identity-management/dto/schulconnex/schulconnex-groupdataset.dto';
+import { SchulconnexPersonsResponse } from '../../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
+import { type SchulconnexPersonContext } from '../../identity-management/dto/schulconnex/schulconnex-person-context.dto';
+import { type SchulconnexClearanceVisibleFields } from '../schulconnex-clearance-options.interface';
+import { type SchulconnexPerson } from '../../identity-management/dto/schulconnex/schulconnex-person.dto';
+import { type SchulconnexOrganization } from '../../identity-management/dto/schulconnex/schulconnex-organization.dto';
+import { type SchulconnexGroupdataset } from '../../identity-management/dto/schulconnex/schulconnex-groupdataset.dto';
 import { plainToInstance } from 'class-transformer';
 
 export function applyClearancePersonsFieldFilter(

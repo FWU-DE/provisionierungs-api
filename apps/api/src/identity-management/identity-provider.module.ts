@@ -12,6 +12,8 @@ import { ClearanceModule } from '../clearance/clearance.module';
 import { PostRequestFilter } from './post-request-filter/post-request-filter';
 import { PseudonymizationModule } from '../pseudonymization/pseudonymization.module';
 import { GroupAllQuery } from './graphql/group-all.query';
+import { DeByVidisIdpAdapter } from './adapter/DE-BY-vidis-idp/de-by-vidis-idp-adapter';
+import idmDEBYVidisIdpConfig from './config/idm.DE-BY-vidis-idp.config';
 
 @Module({
   imports: [
@@ -19,12 +21,14 @@ import { GroupAllQuery } from './graphql/group-all.query';
     ClearanceModule,
     ConfigModule.forFeature(idmEduplacesConfig),
     ConfigModule.forFeature(idmEduplacesStagingConfig),
+    ConfigModule.forFeature(idmDEBYVidisIdpConfig),
     PseudonymizationModule,
   ],
   providers: [
     SchulconnexFetcher,
     EduplacesAdapter,
     EduplacesStagingAdapter,
+    DeByVidisIdpAdapter,
     Aggregator,
     ClientCredentialsProvider,
     PostRequestFilter,

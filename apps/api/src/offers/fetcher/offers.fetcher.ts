@@ -68,9 +68,6 @@ export class OffersFetcher {
   public async fetchActiveOffers(
     schoolIds: string[],
   ): Promise<(OffersResponse | null)[]> {
-    // @todo: Remove asap! This is just a working schoolId for testing!
-    schoolIds.push('DE-VIDIS-vidis_test_101010');
-
     return await Promise.all(
       schoolIds.map(async (schoolId) => {
         return await this.fetchOffers(OfferFetchMode.ACTIVATED_BY_SCHOOL, {

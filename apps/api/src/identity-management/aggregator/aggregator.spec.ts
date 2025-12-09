@@ -14,13 +14,13 @@ import type { Clearance } from '../../clearance/entity/clearance.entity';
 import { OfferContext } from '../../offers/model/offer-context';
 
 // Mock the clearance filter modules
-jest.mock('../../clearance/clearance-field.filter', () => ({
+jest.mock('../../clearance/filter/clearance-field.filter', () => ({
   applyClearancePersonsFieldFilter: jest
     .fn()
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     .mockImplementation((clientId, data) => data),
 }));
-jest.mock('../../clearance/clearance-group.filter', () => ({
+jest.mock('../../clearance/filter/clearance-group.filter', () => ({
   applyClearancePersonsGroupFilter: jest
     .fn()
     .mockImplementation((data, clearanceEntries?: Clearance[]) => {
@@ -140,7 +140,7 @@ describe('Aggregator', () => {
       );
 
       // Call the method
-      const result = await aggregator.getUsers(
+      const result = await aggregator.getPersons(
         mockIdmIds,
         mockOfferContext,
         mockParameters,
@@ -211,7 +211,7 @@ describe('Aggregator', () => {
       );
 
       // Call the method
-      const result = await aggregator.getUsers(
+      const result = await aggregator.getPersons(
         mockIdmIds,
         mockOfferContext,
         mockParameters,
@@ -263,7 +263,7 @@ describe('Aggregator', () => {
       );
 
       // Call the method
-      const result = await aggregator.getUsers(
+      const result = await aggregator.getPersons(
         mockIdmIds,
         mockOfferContext,
         mockParameters,
@@ -295,7 +295,7 @@ describe('Aggregator', () => {
       const mockIdmIds: string[] = [];
 
       // Call the method
-      const result = await aggregator.getUsers(
+      const result = await aggregator.getPersons(
         mockIdmIds,
         mockOfferContext,
         mockParameters,
@@ -338,7 +338,7 @@ describe('Aggregator', () => {
       mockEduplacesAdapter.getPersons.mockResolvedValue(mockEduplacesResponse);
 
       // Call the method
-      await aggregator.getUsers(mockIdmIds, mockOfferContext, mockParameters);
+      await aggregator.getPersons(mockIdmIds, mockOfferContext, mockParameters);
 
       // Assertions
       // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -357,7 +357,7 @@ describe('Aggregator', () => {
       const mockIdmIds = ['non-existent'];
 
       // Call the method
-      await aggregator.getUsers(mockIdmIds, mockOfferContext, mockParameters);
+      await aggregator.getPersons(mockIdmIds, mockOfferContext, mockParameters);
 
       // Assertions
       // eslint-disable-next-line @typescript-eslint/unbound-method

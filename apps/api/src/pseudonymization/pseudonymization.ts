@@ -10,7 +10,7 @@ import { OfferContext } from '../offers/model/offer-context';
 /**
  * Pseudonymization
  *
- * @todo: Add a good description of the process.
+ * @todo: Add a good description of the process, after the process is fully implemented.
  *
  * Note:  The pseudonymization could POTENTIALLY create duplicate UUIDs for different IDMs.
  */

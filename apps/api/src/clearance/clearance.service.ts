@@ -26,7 +26,15 @@ export class ClearanceService extends EntityService<Clearance> {
     clearance: Clearance,
     transactionManager?: EntityManager,
   ): Promise<Clearance> {
-    return this.getRepository(transactionManager).save(clearance);
+    await this.getRepository(transactionManager)
+      .createQueryBuilder()
+      .insert()
+      .into(Clearance)
+      .values(clearance)
+      .orIgnore()
+      .execute();
+
+    return clearance;
   }
 
   async delete(

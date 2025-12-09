@@ -1,5 +1,7 @@
 # Clearance process
 
+@todo: Write proper documentation as soon as the feature is complete!
+
 ...
 
 ## tmp notes (to be converted into proper documentation)

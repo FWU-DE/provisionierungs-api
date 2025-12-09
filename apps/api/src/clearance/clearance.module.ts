@@ -5,9 +5,10 @@ import { ClearanceService } from './clearance.service';
 import { ClearanceAllQuery } from './graphql/clearance-all.query';
 import { ClearanceCreateMutation } from './graphql/clearance-create.mutation';
 import { ClearanceDeleteMutation } from './graphql/clearance-delete.mutation';
+import { LogModule } from '../common/logger';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Clearance])],
+  imports: [LogModule, TypeOrmModule.forFeature([Clearance])],
   providers: [
     ClearanceService,
     ClearanceAllQuery,
