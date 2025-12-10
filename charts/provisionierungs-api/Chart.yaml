@@ -1,6 +1,6 @@
 apiVersion: v2
-name: vidis-rostering
-description: VIDIS Rostering API
+name: vidis-provisionierungs-api
+description: VIDIS Provisioning API
 
 # A chart can be either an 'application' or a 'library' chart.
 #

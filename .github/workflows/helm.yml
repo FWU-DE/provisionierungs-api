@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE: ${{ github.event.repository.name }}
+  IMAGE: vidis-provisionierungs-api
   REPOSITORY: ${{ github.repository_owner }}
 
 jobs:
@@ -41,6 +41,6 @@ jobs:
           repository: ${{ env.REPOSITORY }}
           name: ${{ env.IMAGE }}
           tag: ${{ inputs.chart_version }}
-          path: helm/vidis-rostering
+          path: charts/provisionierungs-api
           registry_username: ${{ github.actor }}
           registry_password: ${{ secrets.GITHUB_TOKEN }}
