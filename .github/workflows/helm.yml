@@ -1,0 +1,38 @@
+name: Build and Push Helm Chart
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - v*
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE: ${{ github.repository }}
+
+jobs:
+  build:
+    name: Build Helm Chart
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE }}-helm
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha
+      - name: Push Chart
+        uses: appany/helm-oci-chart-releaser@v0.5.0
+        with:
+          name: vidis-rostering
+          repository: vidis
+          tag: ${{ steps.meta.outputs.tags }}
+          path: helm/vidis-rostering
+          registry: ghcr.io
