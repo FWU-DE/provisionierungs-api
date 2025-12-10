@@ -1,13 +1,15 @@
 name: Build and Push Helm Chart
 on:
   workflow_dispatch:
-  push:
-    tags:
-      - v*
+    inputs:
+      chart_version:
+        description: 'Chart version to set'
+        required: true
 
 env:
   REGISTRY: ghcr.io
-  IMAGE: ${{ github.repository }}
+  IMAGE: ${{ github.event.repository.name }}
+  REPOSITORY: ${{ github.repository_owner }}
 
 jobs:
   build:
@@ -17,11 +19,15 @@ jobs:
       contents: read
       packages: write
     steps:
+      - name: lowercase repository
+        run: echo "REPOSITORY=${REPOSITORY,,}" >> $GITHUB_ENV
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Extract metadata for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE }}-helm
+          images: ${{ env.REGISTRY }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -31,8 +37,10 @@ jobs:
       - name: Push Chart
         uses: appany/helm-oci-chart-releaser@v0.5.0
         with:
-          name: vidis-rostering
-          repository: vidis
-          tag: ${{ steps.meta.outputs.tags }}
+          registry: ${{ env.REGISTRY }}
+          repository: ${{ env.REPOSITORY }}
+          name: ${{ env.IMAGE }}
+          tag: ${{ inputs.chart_version }}
           path: helm/vidis-rostering
-          registry: ghcr.io
+          registry_username: ${{ github.actor }}
+          registry_password: ${{ secrets.GITHUB_TOKEN }}
