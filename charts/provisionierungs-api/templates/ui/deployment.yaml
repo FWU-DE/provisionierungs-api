@@ -73,11 +73,8 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.ui.existingSecret.name }}
                   key: {{ .Values.ui.existingSecret.keySessionSecret }}
-            - name: AUTH_COOKIE_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.ui.existingSecret.name }}
-                  key: {{ .Values.ui.existingSecret.keyCookieSecret }}
+            - name: SELF_BASE_URL
+              value: {{ .Values.ui.selfBaseUrl }}
           {{- with .Values.ui.resources }}
           resources:
             {{- toYaml . | nindent 12 }}

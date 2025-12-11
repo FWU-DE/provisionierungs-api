@@ -128,6 +128,20 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.api.existingSecret.name }}
                   key: {{ .Values.api.existingSecret.keyIdmEduplacesStagingClientSecret }}
+            - name: IDM_DE_BY_VIDIS_IDP_TOKEN_ENDPOINT
+              value: {{ .Values.api.options.idmDeByVidisIdpTokenEndpoint | quote }}
+            - name: IDM_DE_BY_VIDIS_IDP_API_ENDPOINT
+              value: {{ .Values.api.options.idmDeByVidisIdpApiEndpoint | quote }}
+            - name: IDM_DE_BY_VIDIS_IDP_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.api.existingSecret.name }}
+                  key: {{ .Values.api.existingSecret.keyIdmDeByVidisIdpClientId }}
+            - name: IDM_DE_BY_VIDIS_IDP_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.api.existingSecret.name }}
+                  key: {{ .Values.api.existingSecret.keyIdmDeByVidisIdpClientSecret }}
           {{- with .Values.api.resources }}
           resources:
             {{- toYaml . | nindent 12 }}

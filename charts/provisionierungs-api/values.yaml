@@ -124,32 +124,36 @@ api:
   affinity: {}
 
   options:
-    logLevel: "log"
-    logFormat: "plain"  # or json
-    authValidationType: "verify-jwt"  # Options: off | verify-jwt | introspect
-    authWellKnownUrl: "https://aai-test.vidis.schule/auth/realms/vidis/.well-known/openid-configuration"
-    offersApiEndpoint: "https://service-stage.vidis.schule/o/vidis-rest/v1.0"
-    idmEduplacesTokenEndpoint: "https://nothing-to-see-here.org"
-    idmEduplacesApiEndpoint: "https://nothing-to-see-here.org"
-    idmEduplacesStagingTokenEndpoint: "https://nothing-to-see-here.org"
-    idmEduplacesStagingApiEndpoint: "https://nothing-to-see-here.org"
-    
+    logLevel: 'log'
+    logFormat: 'plain' # or json
+    authValidationType: 'verify-jwt' # Options: off | verify-jwt | introspect
+    authWellKnownUrl: 'https://aai-test.vidis.schule/auth/realms/vidis/.well-known/openid-configuration'
+    offersApiEndpoint: 'https://service-stage.vidis.schule/o/vidis-rest/v1.0'
+    idmEduplacesTokenEndpoint: 'https://nothing-to-see-here.org'
+    idmEduplacesApiEndpoint: 'https://nothing-to-see-here.org'
+    idmEduplacesStagingTokenEndpoint: 'https://nothing-to-see-here.org'
+    idmEduplacesStagingApiEndpoint: 'https://nothing-to-see-here.org'
+    idmDeByVidisIdpTokenEndpoint: 'https://nothing-to-see-here.org'
+    idmDeByVidisIdpApiEndpoint: 'https://nothing-to-see-here.org'
+
   existingSecret:
     name: vidis-rostering-api-secrets
-    keyAuthClientId: "authClientId"
-    keyAuthClientSecret: "authClientSecret"
-    keyDbMainUrl: "dbMainUrl"
-    keyDbReplicaUrl: "dbReplicaUrl"
-    keyOffersClientId: "offersClientId"
-    keyOffersClientSecret: "offersClientSecret"
-    keyIdmEduplacesClientId: "idmEduplacesClientId"
-    keyIdmEduplacesClientSecret: "idmEduplacesClientSecret"
-    keyIdmEduplacesStagingClientId: "idmEduplacesStagingClientId"
-    keyIdmEduplacesStagingClientSecret: "idmEduplacesStagingClientSecret"
-    keyPseudonymizationSaltEndpoint: "pseudonymizationSaltEndpoint"
-
+    keyAuthClientId: 'authClientId'
+    keyAuthClientSecret: 'authClientSecret'
+    keyDbMainUrl: 'dbMainUrl'
+    keyDbReplicaUrl: 'dbReplicaUrl'
+    keyOffersClientId: 'offersClientId'
+    keyOffersClientSecret: 'offersClientSecret'
+    keyIdmEduplacesClientId: 'idmEduplacesClientId'
+    keyIdmEduplacesClientSecret: 'idmEduplacesClientSecret'
+    keyIdmEduplacesStagingClientId: 'idmEduplacesStagingClientId'
+    keyIdmEduplacesStagingClientSecret: 'idmEduplacesStagingClientSecret'
+    keyIdmDeByVidisIdpClientId: 'idmDeByVidisIdpClientId'
+    keyIdmDeByVidisIdpClientSecret: 'idmDeByVidisIdpClientSecret'
+    keyPseudonymizationSaltEndpoint: 'pseudonymizationSaltEndpoint'
 
 ui:
+  selfBaseUrl: 'http://vidis-ui.local'
   replicaCount: 1
   image:
     repository: vidis-rostering-ui
@@ -269,8 +273,8 @@ ui:
 
   existingSecret:
     name: vidis-rostering-ui-secrets
-    keyAuthClientId: "authClientId"
-    keyAuthUrl: "authUrl"
-    keyAuthClientSecret: "authClientSecret"
-    keySessionSecret: "sessionSecret"
-    keyCookieSecret: "cookieSecret"
+    keyAuthClientId: 'authClientId'
+    keyAuthUrl: 'authUrl'
+    keyAuthClientSecret: 'authClientSecret'
+    keySessionSecret: 'sessionSecret'
+    keyCookieSecret: 'cookieSecret'
