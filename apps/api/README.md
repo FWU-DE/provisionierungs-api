@@ -165,3 +165,27 @@ query AllGroups {
 	}
 }
 ```
+
+## Tracing
+
+The API is instrumented with OpenTelemetry.
+To enable tracing, set the following environment variables in your `.env` file:
+
+```
+OTEL_SDK_DISABLED=false
+```
+
+Refer to the OpenTelemetry documentation for more configuration options:
+
+- https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/
+- https://opentelemetry.io/docs/specs/otel/protocol/exporter/
+
+### Tracing locally
+
+To start a local Grafana and Tempo instance, run:
+
+```bash
+COMPOSE_PROFILES=monitoring pnpm infra:up
+```
+
+Grafana will be available at `http://localhost:4000`.
