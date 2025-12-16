@@ -2,7 +2,7 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { PostRequestFilter } from './post-request-filter';
 import type { SchulconnexPersonsResponse } from '../dto/schulconnex/schulconnex-persons-response.dto';
-import { SchulconnexQueryParameters } from '../../controller/parameters/schulconnex-query-parameters';
+import { SchulconnexPersonsQueryParameters } from '../../controller/parameters/schulconnex-persons-query-parameters';
 import type { SchulconnexPerson } from '../dto/schulconnex/schulconnex-person.dto';
 import type { SchulconnexPersonContext } from '../dto/schulconnex/schulconnex-person-context.dto';
 import type { SchulconnexOrganization } from '../dto/schulconnex/schulconnex-organization.dto';
@@ -38,7 +38,7 @@ describe('PostRequestFilter', () => {
         personenkontexte: [
           {
             id: 'context-1',
-            rolle: 'LEHR',
+            rolle: 'Lehr',
             organisation: {
               id: 'org-1',
               name: 'School 1',
@@ -70,7 +70,7 @@ describe('PostRequestFilter', () => {
         personenkontexte: [
           {
             id: 'context-2',
-            rolle: 'LERN',
+            rolle: 'Lern',
             organisation: {
               id: 'org-2',
               name: 'School 2',
@@ -97,7 +97,7 @@ describe('PostRequestFilter', () => {
 
   describe('filterByQueryParameters', () => {
     it('should return all entries with the bare minimum of data when no filters are applied', () => {
-      const parameters = new SchulconnexQueryParameters();
+      const parameters = new SchulconnexPersonsQueryParameters();
       const result = filter.filterByQueryParameters(
         mockPersonsData,
         parameters,
@@ -109,7 +109,10 @@ describe('PostRequestFilter', () => {
     });
 
     it('should filter by pid', () => {
-      const parameters = new SchulconnexQueryParameters(undefined, 'person-1');
+      const parameters = new SchulconnexPersonsQueryParameters(
+        undefined,
+        'person-1',
+      );
       const result = filter.filterByQueryParameters(
         mockPersonsData,
         parameters,
@@ -119,7 +122,7 @@ describe('PostRequestFilter', () => {
     });
 
     it('should filter by personenkontext.id', () => {
-      const parameters = new SchulconnexQueryParameters(
+      const parameters = new SchulconnexPersonsQueryParameters(
         undefined,
         undefined,
         'context-2',
@@ -133,7 +136,7 @@ describe('PostRequestFilter', () => {
     });
 
     it('should filter by gruppe.id', () => {
-      const parameters = new SchulconnexQueryParameters(
+      const parameters = new SchulconnexPersonsQueryParameters(
         undefined,
         undefined,
         undefined,
@@ -148,7 +151,7 @@ describe('PostRequestFilter', () => {
     });
 
     it('should filter by organisation.id', () => {
-      const parameters = new SchulconnexQueryParameters(
+      const parameters = new SchulconnexPersonsQueryParameters(
         undefined,
         undefined,
         undefined,
@@ -164,7 +167,7 @@ describe('PostRequestFilter', () => {
     });
 
     it('should filter for completion with personen', () => {
-      const parameters = new SchulconnexQueryParameters('personen');
+      const parameters = new SchulconnexPersonsQueryParameters('personen');
       const result = filter.filterByQueryParameters(
         mockPersonsData,
         parameters,
@@ -180,7 +183,9 @@ describe('PostRequestFilter', () => {
     });
 
     it('should filter for completion with personenkontexte', () => {
-      const parameters = new SchulconnexQueryParameters('personenkontexte');
+      const parameters = new SchulconnexPersonsQueryParameters(
+        'personenkontexte',
+      );
       const result = filter.filterByQueryParameters(
         mockPersonsData,
         parameters,
@@ -198,7 +203,9 @@ describe('PostRequestFilter', () => {
     });
 
     it('should filter for completion with organisationen', () => {
-      const parameters = new SchulconnexQueryParameters('organisationen');
+      const parameters = new SchulconnexPersonsQueryParameters(
+        'organisationen',
+      );
       const result = filter.filterByQueryParameters(
         mockPersonsData,
         parameters,
@@ -213,7 +220,7 @@ describe('PostRequestFilter', () => {
     });
 
     it('should filter for completion with gruppen', () => {
-      const parameters = new SchulconnexQueryParameters('gruppen');
+      const parameters = new SchulconnexPersonsQueryParameters('gruppen');
       const result = filter.filterByQueryParameters(
         mockPersonsData,
         parameters,
@@ -228,7 +235,7 @@ describe('PostRequestFilter', () => {
     });
 
     it('should filter for completion with multiple values', () => {
-      const parameters = new SchulconnexQueryParameters(
+      const parameters = new SchulconnexPersonsQueryParameters(
         'personen,organisationen,gruppen,personenkontexte',
       );
       const result = filter.filterByQueryParameters(
@@ -252,7 +259,7 @@ describe('PostRequestFilter', () => {
     });
 
     it('should apply multiple filters together', () => {
-      const parameters = new SchulconnexQueryParameters(
+      const parameters = new SchulconnexPersonsQueryParameters(
         'personen',
         undefined,
         undefined,
@@ -271,7 +278,7 @@ describe('PostRequestFilter', () => {
     });
 
     it('should handle persons with no person data and empty context data', () => {
-      const parameters = new SchulconnexQueryParameters(
+      const parameters = new SchulconnexPersonsQueryParameters(
         'personen,personenkontexte',
       );
       const result = filter.filterByQueryParameters(

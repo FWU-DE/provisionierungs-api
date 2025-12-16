@@ -3,7 +3,7 @@ import { EduplacesAdapter } from '../adapter/eduplaces/eduplaces-adapter';
 import { EduplacesStagingAdapter } from '../adapter/eduplaces-staging/eduplaces-staging-adapter';
 import { Pseudonymization } from '../../pseudonymization/pseudonymization';
 import { Logger } from '../../common/logger';
-import { SchulconnexQueryParameters } from '../../controller/parameters/schulconnex-query-parameters';
+import { SchulconnexPersonsQueryParameters } from '../../controller/parameters/schulconnex-persons-query-parameters';
 import { type AdapterGetPersonsReturnType } from '../adapter/adapter-interface';
 import {
   createTestingInfrastructure,
@@ -89,8 +89,8 @@ describe('Aggregator', () => {
   describe('getUsers', () => {
     it('should aggregate users from multiple adapters', async () => {
       // Mock data
-      const mockParameters: SchulconnexQueryParameters =
-        new SchulconnexQueryParameters('personen, personenkontexte');
+      const mockParameters: SchulconnexPersonsQueryParameters =
+        new SchulconnexPersonsQueryParameters('personen, personenkontexte');
       const mockOfferContext = new OfferContext(12345678, 'test-client');
 
       const mockIdmIds = ['eduplaces', 'eduplaces-staging'];
@@ -179,8 +179,8 @@ describe('Aggregator', () => {
 
     it('should handle adapters that return null response', async () => {
       // Mock data
-      const mockParameters: SchulconnexQueryParameters =
-        new SchulconnexQueryParameters('personen, personenkontexte');
+      const mockParameters: SchulconnexPersonsQueryParameters =
+        new SchulconnexPersonsQueryParameters('personen, personenkontexte');
       const mockOfferContext = new OfferContext(12345678, 'test-client');
       const mockIdmIds = ['eduplaces', 'eduplaces-staging'];
 
@@ -215,6 +215,7 @@ describe('Aggregator', () => {
         mockIdmIds,
         mockOfferContext,
         mockParameters,
+        [],
       );
 
       // Assertions
@@ -237,8 +238,8 @@ describe('Aggregator', () => {
 
     it('should handle non-existent adapter IDs', async () => {
       // Mock data
-      const mockParameters: SchulconnexQueryParameters =
-        new SchulconnexQueryParameters('personen, personenkontexte');
+      const mockParameters: SchulconnexPersonsQueryParameters =
+        new SchulconnexPersonsQueryParameters('personen, personenkontexte');
       const mockOfferContext = new OfferContext(12345678, 'test-client');
       const mockIdmIds = ['non-existent', 'eduplaces-staging'];
 
@@ -289,8 +290,8 @@ describe('Aggregator', () => {
 
     it('should handle empty idmIds array', async () => {
       // Mock data
-      const mockParameters: SchulconnexQueryParameters =
-        new SchulconnexQueryParameters();
+      const mockParameters: SchulconnexPersonsQueryParameters =
+        new SchulconnexPersonsQueryParameters();
       const mockOfferContext = new OfferContext(12345678, 'test-client');
       const mockIdmIds: string[] = [];
 
@@ -314,8 +315,8 @@ describe('Aggregator', () => {
   describe('adapter management', () => {
     it('should find adapter by ID when it exists', async () => {
       // Mock data
-      const mockParameters: SchulconnexQueryParameters =
-        new SchulconnexQueryParameters();
+      const mockParameters: SchulconnexPersonsQueryParameters =
+        new SchulconnexPersonsQueryParameters();
       const mockOfferContext = new OfferContext(12345678, 'test-client');
       const mockIdmIds = ['eduplaces'];
 
@@ -338,7 +339,12 @@ describe('Aggregator', () => {
       mockEduplacesAdapter.getPersons.mockResolvedValue(mockEduplacesResponse);
 
       // Call the method
-      await aggregator.getPersons(mockIdmIds, mockOfferContext, mockParameters);
+      await aggregator.getPersons(
+        mockIdmIds,
+        mockOfferContext,
+        mockParameters,
+        [],
+      );
 
       // Assertions
       // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -346,18 +352,24 @@ describe('Aggregator', () => {
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockEduplacesAdapter.getPersons).toHaveBeenCalledWith(
         mockParameters,
+        [],
       );
     });
 
     it('should not find adapter by ID when it does not exist', async () => {
       // Mock data
-      const mockParameters: SchulconnexQueryParameters =
-        new SchulconnexQueryParameters();
+      const mockParameters: SchulconnexPersonsQueryParameters =
+        new SchulconnexPersonsQueryParameters();
       const mockOfferContext = new OfferContext(12345678, 'test-client');
       const mockIdmIds = ['non-existent'];
 
       // Call the method
-      await aggregator.getPersons(mockIdmIds, mockOfferContext, mockParameters);
+      await aggregator.getPersons(
+        mockIdmIds,
+        mockOfferContext,
+        mockParameters,
+        [],
+      );
 
       // Assertions
       // eslint-disable-next-line @typescript-eslint/unbound-method

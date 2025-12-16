@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SchulconnexPersonsResponse } from '../dto/schulconnex/schulconnex-persons-response.dto';
-import { SchulconnexQueryParameters } from '../../controller/parameters/schulconnex-query-parameters';
+import { SchulconnexPersonsQueryParameters } from '../../controller/parameters/schulconnex-persons-query-parameters';
 import { plainToInstance } from 'class-transformer';
 import type { SchulconnexPerson } from '../dto/schulconnex/schulconnex-person.dto';
 import type { SchulconnexPersonContext } from '../dto/schulconnex/schulconnex-person-context.dto';
@@ -26,7 +26,7 @@ export interface SchulconnexShowFields {
 export class PostRequestFilter {
   public filterByQueryParameters(
     data: SchulconnexPersonsResponse[],
-    parameters: SchulconnexQueryParameters,
+    parameters: SchulconnexPersonsQueryParameters,
   ): SchulconnexPersonsResponse[] {
     if (parameters.pid) {
       data = this.filterForPid(data, parameters.pid);
@@ -92,7 +92,7 @@ export class PostRequestFilter {
 
   private filterForCompletion(
     identities: SchulconnexPersonsResponse[],
-    complete: SchulconnexQueryParameters['vollstaendig'],
+    complete: SchulconnexPersonsQueryParameters['vollstaendig'],
   ): SchulconnexPersonsResponse[] {
     const showFields = {
       users: complete.has('personen'),

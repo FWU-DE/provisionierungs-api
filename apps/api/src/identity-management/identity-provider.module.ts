@@ -14,14 +14,18 @@ import { PseudonymizationModule } from '../pseudonymization/pseudonymization.mod
 import { GroupAllQuery } from './graphql/group-all.query';
 import { DeByVidisIdpAdapter } from './adapter/DE-BY-vidis-idp/de-by-vidis-idp-adapter';
 import idmDEBYVidisIdpConfig from './config/idm.DE-BY-vidis-idp.config';
+import idmSaarlandConfig from './config/idm.saarland.config';
+import { SaarlandAdapter } from './adapter/saarland/saarland-adapter';
+import { FormUrlEncodedProvider } from './authentication/form-url-encoded';
 
 @Module({
   imports: [
-    LogModule,
     ClearanceModule,
+    ConfigModule.forFeature(idmDEBYVidisIdpConfig),
     ConfigModule.forFeature(idmEduplacesConfig),
     ConfigModule.forFeature(idmEduplacesStagingConfig),
-    ConfigModule.forFeature(idmDEBYVidisIdpConfig),
+    ConfigModule.forFeature(idmSaarlandConfig),
+    LogModule,
     PseudonymizationModule,
   ],
   providers: [
@@ -31,8 +35,14 @@ import idmDEBYVidisIdpConfig from './config/idm.DE-BY-vidis-idp.config';
     DeByVidisIdpAdapter,
     Aggregator,
     ClientCredentialsProvider,
-    PostRequestFilter,
+    DeByVidisIdpAdapter,
+    EduplacesAdapter,
+    EduplacesStagingAdapter,
+    FormUrlEncodedProvider,
+    SaarlandAdapter,
     GroupAllQuery,
+    PostRequestFilter,
+    SchulconnexFetcher,
   ],
   exports: [Aggregator, PostRequestFilter],
 })

@@ -70,7 +70,7 @@ describe('ClearanceAllQuery', () => {
   it('fetches clearances', async () => {
     await infra.addFixtures(
       fixture(Clearance, {
-        offerId: 34567,
+        offerId: 67890,
         schoolId: 'school-1',
         idmId: 'idm-1',
         groupId: 'group-1' + String(Math.random()),
@@ -94,7 +94,7 @@ describe('ClearanceAllQuery', () => {
 
     expect(result.data.allClearances).toHaveLength(1);
     expect(result.data.allClearances[0]).toEqual({
-      offerId: 34567,
+      offerId: 67890,
       schoolId: 'school-1',
       idmId: 'idm-1',
     });

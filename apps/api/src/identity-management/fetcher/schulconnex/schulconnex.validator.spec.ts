@@ -1,4 +1,4 @@
-import { schulconnexUsersResponseSchema } from './schulconnex.validator';
+import { schulconnexPersonsResponseSchema } from './schulconnex.validator';
 import { type SchulconnexPersonsResponse } from './schulconnex-response.interface';
 
 describe('SchulconnexValidator', () => {
@@ -15,14 +15,14 @@ describe('SchulconnexValidator', () => {
             },
             stammorganisation: {
               id: 'org1',
-              typ: 'SCHULE',
+              typ: 'Schule',
             },
           },
         },
       ];
 
       // Validate the data
-      const result = schulconnexUsersResponseSchema.safeParse(mockResponse);
+      const result = schulconnexPersonsResponseSchema.safeParse(mockResponse);
 
       // Assertions
       expect(result.success).toBe(true);
@@ -43,7 +43,7 @@ describe('SchulconnexValidator', () => {
               id: 'org1',
               kennung: 'ORG1',
               name: 'Organization 1',
-              typ: 'SCHULE',
+              typ: 'Schule',
             },
             geburt: {
               datum: '2000-01-01',
@@ -65,9 +65,9 @@ describe('SchulconnexValidator', () => {
                   postleitzahl: '12345',
                   ort: 'Berlin',
                 },
-                typ: 'SCHULE',
+                typ: 'Schule',
               },
-              rolle: 'LERN',
+              rolle: 'Lern',
               personenstatus: 'Aktiv',
               erreichbarkeiten: [
                 {
@@ -85,6 +85,11 @@ describe('SchulconnexValidator', () => {
                     beschreibung: 'Description',
                     typ: 'Sonstig',
                     bereich: 'Pflicht',
+                    laufzeit: {
+                      von: '2021-01-01',
+                      bis: '2022-12-31',
+                    },
+                    // @todo: Add complete schema in order to fully test the validation!
                   },
                 },
               ],
@@ -94,7 +99,7 @@ describe('SchulconnexValidator', () => {
       ];
 
       // Validate the data
-      const result = schulconnexUsersResponseSchema.safeParse(mockResponse);
+      const result = schulconnexPersonsResponseSchema.safeParse(mockResponse);
 
       // Assertions
       expect(result.success).toBe(true);
@@ -119,7 +124,7 @@ describe('SchulconnexValidator', () => {
       ];
 
       // Validate the data
-      const result = schulconnexUsersResponseSchema.safeParse(mockResponse);
+      const result = schulconnexPersonsResponseSchema.safeParse(mockResponse);
 
       // Assertions
       expect(result.success).toBe(false);
@@ -143,7 +148,7 @@ describe('SchulconnexValidator', () => {
       ];
 
       // Validate the data
-      const result = schulconnexUsersResponseSchema.safeParse(mockResponse);
+      const result = schulconnexPersonsResponseSchema.safeParse(mockResponse);
 
       // Assertions
       expect(result.success).toBe(false);
@@ -168,7 +173,7 @@ describe('SchulconnexValidator', () => {
       ];
 
       // Validate the data
-      const result = schulconnexUsersResponseSchema.safeParse(mockResponse);
+      const result = schulconnexPersonsResponseSchema.safeParse(mockResponse);
 
       // Assertions
       expect(result.success).toBe(false);
@@ -185,7 +190,7 @@ describe('SchulconnexValidator', () => {
       ];
 
       // Validate the data
-      const result = schulconnexUsersResponseSchema.safeParse(mockResponse);
+      const result = schulconnexPersonsResponseSchema.safeParse(mockResponse);
 
       // Assertions
       expect(result.success).toBe(true);
@@ -197,7 +202,7 @@ describe('SchulconnexValidator', () => {
       const mockResponse: SchulconnexPersonsResponse[] = [];
 
       // Validate the data
-      const result = schulconnexUsersResponseSchema.safeParse(mockResponse);
+      const result = schulconnexPersonsResponseSchema.safeParse(mockResponse);
 
       // Assertions
       expect(result.success).toBe(true);
@@ -211,7 +216,7 @@ describe('SchulconnexValidator', () => {
       };
 
       // Validate the data
-      const result = schulconnexUsersResponseSchema.safeParse(mockResponse);
+      const result = schulconnexPersonsResponseSchema.safeParse(mockResponse);
 
       // Assertions
       expect(result.success).toBe(false);

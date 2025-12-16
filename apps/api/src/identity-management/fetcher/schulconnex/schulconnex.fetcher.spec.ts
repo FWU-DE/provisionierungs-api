@@ -1,8 +1,8 @@
 import { SchulconnexFetcher } from './schulconnex.fetcher';
 import { Logger } from '../../../common/logger';
-import { SchulconnexQueryParameters } from '../../../controller/parameters/schulconnex-query-parameters';
+import { SchulconnexPersonsQueryParameters } from '../../../controller/parameters/schulconnex-persons-query-parameters';
 import { type BearerToken } from '../../authentication/bearer-token';
-import { schulconnexUsersResponseSchema } from './schulconnex.validator';
+import { schulconnexPersonsResponseSchema } from './schulconnex.validator';
 import {
   createTestingInfrastructure,
   type TestingInfrastructure,
@@ -48,8 +48,8 @@ describe('SchulconnexFetcher', () => {
     it('should fetch persons successfully', async () => {
       // Mock data
       const mockEndpointUrl = 'https://api.example.local';
-      const mockParameters: SchulconnexQueryParameters =
-        new SchulconnexQueryParameters('personenkontexte');
+      const mockParameters: SchulconnexPersonsQueryParameters =
+        new SchulconnexPersonsQueryParameters('personenkontexte');
       const mockToken: BearerToken = { token: 'test-token' };
       const mockResponse = [
         {
@@ -96,8 +96,8 @@ describe('SchulconnexFetcher', () => {
     it('should return null when fetch fails', async () => {
       // Mock data
       const mockEndpointUrl = 'https://api.example.local';
-      const mockParameters: SchulconnexQueryParameters =
-        new SchulconnexQueryParameters();
+      const mockParameters: SchulconnexPersonsQueryParameters =
+        new SchulconnexPersonsQueryParameters();
       const mockToken: BearerToken = { token: 'test-token' };
 
       // Setup mock response
@@ -124,8 +124,8 @@ describe('SchulconnexFetcher', () => {
     it('should return null when validation fails', async () => {
       // Mock data
       const mockEndpointUrl = 'https://api.example.local';
-      const mockParameters: SchulconnexQueryParameters =
-        new SchulconnexQueryParameters();
+      const mockParameters: SchulconnexPersonsQueryParameters =
+        new SchulconnexPersonsQueryParameters();
       const mockToken: BearerToken = { token: 'test-token' };
       const mockResponse = [{ invalid: 'data' }]; // Invalid response structure
 
@@ -152,10 +152,10 @@ describe('SchulconnexFetcher', () => {
   describe('getValidator', () => {
     it('should return the schulconnex users response schema', () => {
       // Use reflection to access a protected method
-      const validator = fetcher.getValidator();
+      const validator = fetcher.getPersonsValidator();
 
       // Assertions
-      expect(validator).toBe(schulconnexUsersResponseSchema);
+      expect(validator).toBe(schulconnexPersonsResponseSchema);
     });
   });
 });

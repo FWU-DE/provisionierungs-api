@@ -1,17 +1,20 @@
 import {
   AdapterGetGroupsReturnType,
+  AdapterGetOrganizationsReturnType,
   AdapterGetPersonsReturnType,
   AdapterInterface,
 } from '../adapter-interface';
 import { Inject, Injectable } from '@nestjs/common';
 import { SchulconnexFetcher } from '../../fetcher/schulconnex/schulconnex.fetcher';
-import { SchulconnexQueryParameters } from '../../../controller/parameters/schulconnex-query-parameters';
+import { SchulconnexPersonsQueryParameters } from '../../../controller/parameters/schulconnex-persons-query-parameters';
 import { transformSchulconnexPersonsResponse } from '../../fetcher/schulconnex/schulconnex.transformer';
 import { ClientCredentialsProvider } from '../../authentication/client-credentials';
 import idmBY_DE_vidis_idpConfig, {
   type DE_BY_vidis_idpConfig,
 } from '../../config/idm.DE-BY-vidis-idp.config';
 import { BearerToken } from '../../authentication/bearer-token';
+import { SchulconnexOrganizationQueryParameters } from '../../../controller/parameters/schulconnex-organisations-query-parameters';
+import type { Clearance } from '../../../clearance/entity/clearance.entity';
 
 @Injectable()
 export class DeByVidisIdpAdapter implements AdapterInterface {
@@ -39,8 +42,11 @@ export class DeByVidisIdpAdapter implements AdapterInterface {
   }
 
   async getPersons(
-    parameters: SchulconnexQueryParameters,
+    parameters: SchulconnexPersonsQueryParameters,
+    clearance?: Clearance[],
   ): Promise<AdapterGetPersonsReturnType> {
+    void clearance;
+
     const response = await this.schulconnexFetcher.fetchPersons(
       this.idmBY_DE_vidis_idpConfig.IDM_DE_BY_VIDIS_IDP_API_ENDPOINT,
       parameters,
@@ -53,7 +59,22 @@ export class DeByVidisIdpAdapter implements AdapterInterface {
     };
   }
 
-  async getGroups(): Promise<AdapterGetGroupsReturnType> {
+  async getOrganizations(
+    parameters: SchulconnexOrganizationQueryParameters,
+  ): Promise<AdapterGetOrganizationsReturnType> {
+    // @todo: Implement!
+    void parameters;
+    return new Promise(() => {
+      return {
+        idm: this.getIdentifier(),
+        response: null,
+      };
+    });
+  }
+
+  async getGroups(schoolIds?: string[]): Promise<AdapterGetGroupsReturnType> {
+    void schoolIds;
+
     const response = await this.schulconnexFetcher.fetchGroups(
       this.idmBY_DE_vidis_idpConfig.IDM_DE_BY_VIDIS_IDP_API_ENDPOINT,
       await this.getAuthToken(),

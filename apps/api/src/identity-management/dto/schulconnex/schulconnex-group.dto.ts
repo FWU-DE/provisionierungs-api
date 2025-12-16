@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { SchulconnexDuration } from './schulconnex-duration.dto';
+import { SchulconnexFach } from './schulconnex-fach.dto';
 
 export class SchulconnexGroup {
   @ApiProperty({
@@ -93,9 +94,8 @@ export class SchulconnexGroup {
     description: 'The school subjects of the group.',
     nullable: true,
     isArray: true,
-    example: ['NAT', 'EN', 'SP'],
   })
-  faecher?: string[] | null;
+  faecher?: SchulconnexFach[] | null;
 
   @ApiProperty({
     description: 'The duration of the group.',

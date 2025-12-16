@@ -31,9 +31,23 @@ export class SchulconnexOrganization {
 
   @ApiProperty({
     description: 'The type of the organization',
-    enum: ['SCHULE', 'ANBIETER', 'SONSTIGE'],
+    enum: [
+      'Schule',
+      'Anbieter',
+      'Medienzentrum',
+      'Behoerde',
+      'SchTrae',
+      'Sonstige',
+    ],
   })
-  typ?: 'SCHULE' | 'ANBIETER' | 'SONSTIGE' | null;
+  typ?:
+    | 'Schule'
+    | 'Anbieter'
+    | 'Medienzentrum'
+    | 'Behoerde'
+    | 'SchTrae'
+    | 'Sonstige'
+    | null;
 
   @ApiProperty({
     description: 'The authority/operator of the organization',

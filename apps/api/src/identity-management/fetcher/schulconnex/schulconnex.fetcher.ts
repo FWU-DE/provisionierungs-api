@@ -1,18 +1,23 @@
 import { AbstractFetcher } from '../abstract-fetcher';
 import { Injectable } from '@nestjs/common';
-import { SchulconnexQueryParameters } from '../../../controller/parameters/schulconnex-query-parameters';
+import { SchulconnexPersonsQueryParameters } from '../../../controller/parameters/schulconnex-persons-query-parameters';
 import { SchulconnexPersonsResponse } from './schulconnex-response.interface';
-import { schulconnexUsersResponseSchema } from './schulconnex.validator';
+import {
+  schulconnexOrganizationsResponseSchema,
+  schulconnexPersonsResponseSchema,
+} from './schulconnex.validator';
 import { BearerToken } from '../../authentication/bearer-token';
 import type { ZodArray, ZodObject } from 'zod';
 import { SchulconnexGroup } from '../../dto/schulconnex/schulconnex-group.dto';
 import { ensureError } from '@fwu-rostering/utils/error';
+import { SchulconnexOrganization } from '../../dto/schulconnex/schulconnex-organization.dto';
+import { SchulconnexOrganizationQueryParameters } from '../../../controller/parameters/schulconnex-organisations-query-parameters';
 
 @Injectable()
 export class SchulconnexFetcher extends AbstractFetcher<BearerToken> {
   public async fetchPersons(
     endpointUrl: string,
-    parameters: SchulconnexQueryParameters,
+    parameters: SchulconnexPersonsQueryParameters,
     { token }: BearerToken,
   ): Promise<null | SchulconnexPersonsResponse[]> {
     // Always include "personenkontexte" in the query parameters.
@@ -34,22 +39,54 @@ export class SchulconnexFetcher extends AbstractFetcher<BearerToken> {
       queryParams.vollstaendig.add('gruppen');
     }
 
-    const response = await fetch(
-      endpointUrl + '/personen-info?' + queryParams.toUrlSearchParams(),
-      {
-        method: 'GET',
-        headers: {
-          Authorization: 'Bearer ' + token,
-        },
+    const fullEndpointUrl =
+      endpointUrl + '/personen-info?' + queryParams.toUrlSearchParams();
+    const response = await fetch(fullEndpointUrl, {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + token,
       },
+    });
+
+    const data = await this.handleData<SchulconnexPersonsResponse[]>(
+      response,
+      fullEndpointUrl,
     );
 
-    const data = await this.handleData<SchulconnexPersonsResponse[]>(response);
+    try {
+      return this.validatePersonsData<SchulconnexPersonsResponse[]>(data);
+    } catch (error: unknown) {
+      this.logger.error(
+        `Error while validating data fetched from ${endpointUrl}: ${ensureError(error).message}`,
+      );
+      return null;
+    }
+  }
+
+  public async fetchOrganizations(
+    endpointUrl: string,
+    parameters: SchulconnexOrganizationQueryParameters,
+    { token }: BearerToken,
+  ): Promise<null | SchulconnexOrganization[]> {
+    const queryParams = parameters.clone();
+
+    const fullEndpointUrl =
+      endpointUrl + '/organisationen-info?' + queryParams.toUrlSearchParams();
+    const response = await fetch(fullEndpointUrl, {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+    });
+
+    const data = await this.handleData<SchulconnexOrganization[]>(
+      response,
+      fullEndpointUrl,
+    );
 
     try {
-      return this.validateData<SchulconnexPersonsResponse[]>(data);
+      return this.validateOrganizationsData<SchulconnexOrganization[]>(data);
     } catch (error: unknown) {
-      ensureError(error);
       this.logger.error(
         `Error while validating data fetched from ${endpointUrl}: ${ensureError(error).message}`,
       );
@@ -60,10 +97,18 @@ export class SchulconnexFetcher extends AbstractFetcher<BearerToken> {
   public async fetchGroups(
     endpointUrl: string,
     bearerToken: BearerToken,
+    organizationId?: string,
   ): Promise<SchulconnexGroup[]> {
+    const personsQueryParameters = new SchulconnexPersonsQueryParameters(
+      'personenkontexte,gruppen',
+    );
+    if (organizationId) {
+      personsQueryParameters['organisation.id'] = organizationId;
+    }
+
     const data: SchulconnexPersonsResponse[] | null = await this.fetchPersons(
       endpointUrl,
-      new SchulconnexQueryParameters('personenkontexte,gruppen'),
+      personsQueryParameters,
       bearerToken,
     );
     if (!data) {
@@ -93,7 +138,11 @@ export class SchulconnexFetcher extends AbstractFetcher<BearerToken> {
     }, []);
   }
 
-  public getValidator(): ZodObject | ZodArray {
-    return schulconnexUsersResponseSchema;
+  public getPersonsValidator(): ZodObject | ZodArray {
+    return schulconnexPersonsResponseSchema;
+  }
+
+  public getOrganizationsValidator(): ZodObject | ZodArray {
+    return schulconnexOrganizationsResponseSchema;
   }
 }

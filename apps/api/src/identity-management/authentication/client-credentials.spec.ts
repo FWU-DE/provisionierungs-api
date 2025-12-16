@@ -97,7 +97,7 @@ describe('ClientCredentialsProvider', () => {
           'test-username',
           'test-password',
         ),
-      ).rejects.toThrow('Authorization towards Schulconnex failed.');
+      ).rejects.toThrow('Authorization towards IDM failed.');
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockLogger.error).toHaveBeenCalled();
     });
@@ -119,7 +119,7 @@ describe('ClientCredentialsProvider', () => {
           'test-username',
           'test-password',
         ),
-      ).rejects.toThrow('Authorization towards Schulconnex failed.');
+      ).rejects.toThrow('Authorization towards IDM failed.');
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockLogger.error).toHaveBeenCalled();
     });

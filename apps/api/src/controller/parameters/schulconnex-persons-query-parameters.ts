@@ -1,5 +1,5 @@
 /**
- * Schulconnex query parameters
+ * Schulconnex persons query parameters
  *
  * The schulconnex API allows the usage of query parameters for data filtration.
  * Documentation: https://schulconnex.de/docs/generated/openapi/dienste/read-personen-info
@@ -15,7 +15,7 @@ export const schulconnexQueryParameterCompleteOptions = [
 export type SchulconnexQueryParameterComplete =
   (typeof schulconnexQueryParameterCompleteOptions)[number];
 
-export class SchulconnexQueryParameters {
+export class SchulconnexPersonsQueryParameters {
   vollstaendig: Set<SchulconnexQueryParameterComplete>;
   pid?: string;
   'personenkontext.id'?: string;
@@ -46,8 +46,8 @@ export class SchulconnexQueryParameters {
     }
   }
 
-  public clone(): SchulconnexQueryParameters {
-    return new SchulconnexQueryParameters(
+  public clone(): SchulconnexPersonsQueryParameters {
+    return new SchulconnexPersonsQueryParameters(
       Array.from(this.vollstaendig).join(','),
       this.pid,
       this['personenkontext.id'],

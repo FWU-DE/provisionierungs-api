@@ -1,7 +1,7 @@
 import { EduplacesStagingAdapter } from './eduplaces-staging-adapter';
 import { SchulconnexFetcher } from '../../fetcher/schulconnex/schulconnex.fetcher';
 import { ClientCredentialsProvider } from '../../authentication/client-credentials';
-import { SchulconnexQueryParameters } from '../../../controller/parameters/schulconnex-query-parameters';
+import { SchulconnexPersonsQueryParameters } from '../../../controller/parameters/schulconnex-persons-query-parameters';
 import { type BearerToken } from '../../authentication/bearer-token';
 import { type SchulconnexPersonsResponse } from '../../fetcher/schulconnex/schulconnex-response.interface';
 import {
@@ -58,8 +58,8 @@ describe('EduplacesStagingAdapter', () => {
   describe('getPersons', () => {
     it('should authenticate, fetch persons, and transform the response', async () => {
       // Mock data
-      const mockParameters: SchulconnexQueryParameters =
-        new SchulconnexQueryParameters();
+      const mockParameters: SchulconnexPersonsQueryParameters =
+        new SchulconnexPersonsQueryParameters();
       const mockAuthToken: BearerToken = {
         token: 'test-auth-token',
       };

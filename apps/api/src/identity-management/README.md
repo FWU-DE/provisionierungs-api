@@ -2,6 +2,8 @@
 
 This module incorporates the data retrieval from IDMs and its processing into the schulconnex data schema.
 
+@todo: Add proper content!
+
 ## Fetchers
 
 ... t.b.d. ...

@@ -6,7 +6,7 @@ export class SchulconnexDuration {
     nullable: true,
     example: '2024-01-01',
   })
-  von?: Date | null;
+  von?: string | Date | null;
 
   @ApiProperty({
     description: 'The start learning period',
@@ -20,7 +20,7 @@ export class SchulconnexDuration {
     nullable: true,
     example: '2024-07-31',
   })
-  bis?: Date | null;
+  bis?: string | Date | null;
 
   @ApiProperty({
     description: 'The end learning period',

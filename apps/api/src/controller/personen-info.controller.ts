@@ -12,7 +12,7 @@ import { ScopeIdentifier } from '../common/auth/scope/scope-identifier';
 import { SchulconnexPersonsResponse } from '../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
 import { Aggregator } from '../identity-management/aggregator/aggregator';
 import { ClearanceService } from '../clearance/clearance.service';
-import { SchulconnexQueryParameters } from './parameters/schulconnex-query-parameters';
+import { SchulconnexPersonsQueryParameters } from './parameters/schulconnex-persons-query-parameters';
 import { OffersFetcher } from '../offers/fetcher/offers.fetcher';
 import { OfferContext } from '../offers/model/offer-context';
 import { Logger } from '../common/logger';
@@ -95,7 +95,7 @@ export class PersonenInfoController {
     @Query('organisation.id')
     organizationIdFilter?: string,
   ): Promise<SchulconnexPersonsResponse[]> {
-    const filterParameters = new SchulconnexQueryParameters(
+    const filterParameters = new SchulconnexPersonsQueryParameters(
       completeRaw,
       pidFilter,
       userContextIdFilter,

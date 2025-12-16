@@ -2,25 +2,17 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Clearance {
-  createdAt: DateTime!
-  deletedAt: DateTime
-  groupId: String!
-  id: ID!
-  idmId: String!
-  offerId: Float!
-  schoolId: String!
-  updatedAt: DateTime!
-}
-
 type ClearanceDeleteResponse {
   deleted: Boolean!
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
+type ClearanceResponse {
+  groupId: String!
+  id: String!
+  idmId: String!
+  offerId: Float!
+  schoolId: String!
+}
 
 type Group {
   id: String!
@@ -28,7 +20,7 @@ type Group {
 }
 
 type Mutation {
-  createClearance(groupId: String!, idmId: String!, offerId: Int!, schoolId: String!): Clearance!
+  createClearance(groupId: String!, idmId: String!, offerId: Int!, schoolId: String!): ClearanceResponse!
   deleteClearance(id: String!): ClearanceDeleteResponse!
 }
 
@@ -46,7 +38,7 @@ type OffersDto {
 }
 
 type Query {
-  allClearances: [Clearance!]!
+  allClearances: [ClearanceResponse!]!
   allGroups: [Group!]!
   allOffers: [OffersDto!]!
 }

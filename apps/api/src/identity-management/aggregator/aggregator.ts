@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { SchulconnexQueryParameters } from '../../controller/parameters/schulconnex-query-parameters';
+import { SchulconnexPersonsQueryParameters } from '../../controller/parameters/schulconnex-persons-query-parameters';
 import { EduplacesAdapter } from '../adapter/eduplaces/eduplaces-adapter';
 import {
   AdapterGetGroupsReturnType,
@@ -17,13 +17,15 @@ import { PostRequestFilter } from '../post-request-filter/post-request-filter';
 import { applyClearancePersonsGroupFilter } from '../../clearance/filter/clearance-group.filter';
 import { OfferContext } from '../../offers/model/offer-context';
 import { DeByVidisIdpAdapter } from '../adapter/DE-BY-vidis-idp/de-by-vidis-idp-adapter';
+import { SaarlandAdapter } from '../adapter/saarland/saarland-adapter';
 
 @Injectable()
 export class Aggregator {
   constructor(
+    private readonly deByVidisIdpAdapter: DeByVidisIdpAdapter,
     private readonly eduplacesAdapter: EduplacesAdapter,
     private readonly eduplacesStagingAdapter: EduplacesStagingAdapter,
-    private readonly deByVidisIdpAdapter: DeByVidisIdpAdapter,
+    private readonly saarlandAdapter: SaarlandAdapter,
     @Inject(Pseudonymization)
     private readonly pseudonymization: Pseudonymization,
     private readonly logger: Logger,
@@ -32,9 +34,10 @@ export class Aggregator {
 
   private getAvailableAdapters(): AdapterInterface[] {
     return [
+      this.deByVidisIdpAdapter,
       this.eduplacesAdapter,
       this.eduplacesStagingAdapter,
-      this.deByVidisIdpAdapter,
+      this.saarlandAdapter,
     ];
   }
 
@@ -47,7 +50,7 @@ export class Aggregator {
   public async getPersons(
     idmIds: string[],
     offerContext: OfferContext,
-    parameters: SchulconnexQueryParameters,
+    parameters: SchulconnexPersonsQueryParameters,
     clearance?: Clearance[],
   ): Promise<SchulconnexPersonsResponse[]> {
     // Request data from all IDMs in parallel
@@ -58,23 +61,23 @@ export class Aggregator {
         this.logger.error(`No adapter found for IDM: ${idmId}`);
         return [];
       }
-      idmRequests.push(adapter.getPersons(parameters));
+      idmRequests.push(adapter.getPersons(parameters, clearance));
     });
 
     // Merge all responses into one array on retrieval
-    const rawIdentities: SchulconnexPersonsResponse[] = (
+    const rawPersons: SchulconnexPersonsResponse[] = (
       await Promise.all(idmRequests)
-    ).reduce((acc: SchulconnexPersonsResponse[], identities) => {
-      if (identities.response === null) {
-        this.logger.error('No data received from IDM: ' + identities.idm);
+    ).reduce((acc: SchulconnexPersonsResponse[], person) => {
+      if (person.response === null) {
+        this.logger.error('No data received from IDM: ' + person.idm);
         return acc;
       }
-      return [...acc, ...identities.response];
+      return [...acc, ...person.response];
     }, []);
 
     // Firstly, remove all entries the client does not have clearance for.
     const clearedDataByGroup = applyClearancePersonsGroupFilter(
-      rawIdentities,
+      rawPersons,
       clearance,
     );
 
@@ -99,7 +102,10 @@ export class Aggregator {
     );
   }
 
-  public async getGroups(idmIds: string[]): Promise<GroupsPerIdmModel[]> {
+  public async getGroups(
+    idmIds: string[],
+    schoolIds?: string[],
+  ): Promise<GroupsPerIdmModel[]> {
     // Request data from all IDMs in parallel
     const idmRequests: Promise<AdapterGetGroupsReturnType>[] = [];
     idmIds.forEach((idmId) => {
@@ -108,7 +114,7 @@ export class Aggregator {
         this.logger.error(`No adapter found for IDM: ${idmId}`);
         return [];
       }
-      idmRequests.push(adapter.getGroups());
+      idmRequests.push(adapter.getGroups(schoolIds));
     });
 
     // Merge all responses into one array on retrieval

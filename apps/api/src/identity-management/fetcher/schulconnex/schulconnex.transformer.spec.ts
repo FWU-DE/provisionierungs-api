@@ -21,7 +21,7 @@ describe('SchulconnexTransformer', () => {
               kennung: null,
               name: '',
               anschrift: null,
-              typ: 'SCHULE',
+              typ: 'Schule',
               traegerschaft: null,
             },
             geburt: null,
@@ -79,7 +79,7 @@ describe('SchulconnexTransformer', () => {
               kennung: 'ORG1',
               name: 'Organization 1',
               anschrift: null,
-              typ: 'SCHULE',
+              typ: 'Schule',
               traegerschaft: null,
             },
             geburt: {
@@ -103,10 +103,10 @@ describe('SchulconnexTransformer', () => {
                   ort: 'Berlin',
                   ortsteil: null,
                 },
-                typ: 'SCHULE',
+                typ: 'Schule',
                 traegerschaft: null,
               },
-              rolle: 'LERN',
+              rolle: 'Lern',
               personenstatus: null,
               beziehungen: null,
               loeschung: null,
@@ -124,7 +124,7 @@ describe('SchulconnexTransformer', () => {
       // Check that the result is a valid SchulconnexPersonsResponse[]
       expect(result[0].pid).toBe('person1');
       expect(result[0].person?.name?.vorname).toBe('Test');
-      expect(result[0].personenkontexte?.[0]?.rolle).toBe('LERN');
+      expect(result[0].personenkontexte?.[0]?.rolle).toBe('Lern');
     });
   });
 });

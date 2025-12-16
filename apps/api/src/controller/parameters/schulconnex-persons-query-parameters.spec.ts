@@ -1,17 +1,17 @@
 import {
-  SchulconnexQueryParameters,
+  SchulconnexPersonsQueryParameters,
   schulconnexQueryParameterCompleteOptions,
-} from './schulconnex-query-parameters';
+} from './schulconnex-persons-query-parameters';
 
 describe('SchulconnexQueryParameters', () => {
   it('should be defined', () => {
-    const params = new SchulconnexQueryParameters();
+    const params = new SchulconnexPersonsQueryParameters();
     expect(params).toBeDefined();
   });
 
   describe('constructor', () => {
     it('should initialize with default values', () => {
-      const params = new SchulconnexQueryParameters();
+      const params = new SchulconnexPersonsQueryParameters();
       expect(params.vollstaendig).toBeInstanceOf(Set);
       expect(params.vollstaendig.size).toBe(0);
       expect(params.pid).toBeUndefined();
@@ -21,7 +21,7 @@ describe('SchulconnexQueryParameters', () => {
     });
 
     it('should initialize with provided values', () => {
-      const params = new SchulconnexQueryParameters(
+      const params = new SchulconnexPersonsQueryParameters(
         'personen,personenkontexte',
         'test-pid',
         'test-personenkontext',
@@ -38,7 +38,7 @@ describe('SchulconnexQueryParameters', () => {
     });
 
     it('should filter out invalid vollstaendig values', () => {
-      const params = new SchulconnexQueryParameters(
+      const params = new SchulconnexPersonsQueryParameters(
         'personen,invalid,personenkontexte',
       );
       expect(params.vollstaendig.size).toBe(2);
@@ -51,7 +51,7 @@ describe('SchulconnexQueryParameters', () => {
 
   describe('clone', () => {
     it('should create a new instance with the same values', () => {
-      const original = new SchulconnexQueryParameters(
+      const original = new SchulconnexPersonsQueryParameters(
         'personen,personenkontexte',
         'test-pid',
         'test-personenkontext',
@@ -77,12 +77,12 @@ describe('SchulconnexQueryParameters', () => {
 
   describe('toUrlSearchParams', () => {
     it('should return empty string for empty parameters', () => {
-      const params = new SchulconnexQueryParameters();
+      const params = new SchulconnexPersonsQueryParameters();
       expect(params.toUrlSearchParams()).toBe('');
     });
 
     it('should include vollstaendig parameter when set', () => {
-      const params = new SchulconnexQueryParameters(
+      const params = new SchulconnexPersonsQueryParameters(
         'personen,personenkontexte',
       );
       expect(params.toUrlSearchParams()).toBe(
@@ -91,12 +91,15 @@ describe('SchulconnexQueryParameters', () => {
     });
 
     it('should include pid parameter when set', () => {
-      const params = new SchulconnexQueryParameters(undefined, 'test-pid');
+      const params = new SchulconnexPersonsQueryParameters(
+        undefined,
+        'test-pid',
+      );
       expect(params.toUrlSearchParams()).toBe('pid=test-pid');
     });
 
     it('should include personenkontext.id parameter when set', () => {
-      const params = new SchulconnexQueryParameters(
+      const params = new SchulconnexPersonsQueryParameters(
         undefined,
         undefined,
         'test-personenkontext',
@@ -107,7 +110,7 @@ describe('SchulconnexQueryParameters', () => {
     });
 
     it('should include gruppe.id parameter when set', () => {
-      const params = new SchulconnexQueryParameters(
+      const params = new SchulconnexPersonsQueryParameters(
         undefined,
         undefined,
         undefined,
@@ -117,7 +120,7 @@ describe('SchulconnexQueryParameters', () => {
     });
 
     it('should include organisation.id parameter when set', () => {
-      const params = new SchulconnexQueryParameters(
+      const params = new SchulconnexPersonsQueryParameters(
         undefined,
         undefined,
         undefined,
@@ -130,7 +133,7 @@ describe('SchulconnexQueryParameters', () => {
     });
 
     it('should include all parameters when all are set', () => {
-      const params = new SchulconnexQueryParameters(
+      const params = new SchulconnexPersonsQueryParameters(
         'personen',
         'test-pid',
         'test-personenkontext',
@@ -152,12 +155,12 @@ describe('SchulconnexQueryParameters', () => {
     it('should only accept valid vollstaendig values', () => {
       // Test all valid values
       schulconnexQueryParameterCompleteOptions.forEach((option) => {
-        const params = new SchulconnexQueryParameters(option);
+        const params = new SchulconnexPersonsQueryParameters(option);
         expect(params.vollstaendig.has(option)).toBeTruthy();
       });
 
       // Test invalid value
-      const params = new SchulconnexQueryParameters('invalid');
+      const params = new SchulconnexPersonsQueryParameters('invalid');
       expect(params.vollstaendig.size).toBe(0);
     });
   });

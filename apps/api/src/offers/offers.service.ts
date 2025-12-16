@@ -12,7 +12,7 @@ export class OffersService {
       await this.fetcher.fetchActiveOffers(schoolId)
     ).filter((response) => response !== null);
 
-    const offers = offersResponse.flatMap((response) => {
+    return offersResponse.flatMap((response) => {
       return response.items.map((item) => {
         const dto = new OffersDto();
         dto.educationProviderOrganizationName =
@@ -29,7 +29,5 @@ export class OffersService {
         return dto;
       });
     });
-
-    return offers;
   }
 }

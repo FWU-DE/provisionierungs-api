@@ -1,20 +1,61 @@
 import z from 'zod';
 
-export const schulconnexUsersResponseSchema = z.array(
+export const schulconnexOrganizationResponseSchema = z.object({
+  id: z.string(),
+  kennung: z.string().nullable().optional(),
+  name: z.string().nullable().optional(),
+  anschrift: z
+    .object({
+      postleitzahl: z.string().nullable().optional(),
+      ort: z.string().nullable().optional(),
+      ortsteil: z.string().nullable().optional(),
+    })
+    .nullable()
+    .optional(),
+  typ: z
+    .enum([
+      'Schule',
+      'Anbieter',
+      'Medienzentrum',
+      'Behoerde',
+      'SchTrae',
+      'Sonstige',
+    ])
+    .nullable()
+    .optional(),
+});
+
+export const schulconnexOrganizationsResponseSchema = z.array(
+  schulconnexOrganizationResponseSchema,
+);
+
+export const schulconnextGroupAffiliationSchema = z.object({
+  ktid: z.string().nullable().optional(),
+  rollen: z
+    .array(
+      z.enum([
+        'Lern',
+        'Lehr',
+        'KlLeit',
+        'Foerd',
+        'VLehr',
+        'SchB',
+        'GMit',
+        'GLeit',
+      ]),
+    )
+    .nullable()
+    .optional(),
+  von: z.union([z.iso.datetime(), z.iso.date()]).nullable().optional(),
+  bis: z.union([z.iso.datetime(), z.iso.date()]).nullable().optional(),
+});
+
+export const schulconnexPersonsResponseSchema = z.array(
   z.object({
     pid: z.string(),
     person: z
       .object({
-        stammorganisation: z
-          .object({
-            id: z.string(),
-            kennung: z.string().nullable().optional(),
-            name: z.string().nullable().optional(),
-            typ: z
-              .enum(['SCHULE', 'ANBIETER', 'SONSTIGE'])
-              .nullable()
-              .optional(),
-          })
+        stammorganisation: schulconnexOrganizationResponseSchema
           .nullable()
           .optional(),
         name: z
@@ -45,35 +86,20 @@ export const schulconnexUsersResponseSchema = z.array(
       .array(
         z.object({
           id: z.string().optional(),
-          organisation: z
-            .object({
-              id: z.string(),
-              kennung: z.string().nullable().optional(),
-              name: z.string().nullable().optional(),
-              anschrift: z
-                .object({
-                  postleitzahl: z.string().nullable().optional(),
-                  ort: z.string().nullable().optional(),
-                  ortsteil: z.string().nullable().optional(),
-                })
-                .nullable()
-                .optional(),
-              typ: z
-                .enum(['SCHULE', 'ANBIETER', 'SONSTIGE'])
-                .nullable()
-                .optional(),
-            })
+          organisation: schulconnexOrganizationResponseSchema
             .nullable()
             .optional(),
           rolle: z
             .enum([
-              'LERN',
-              'LEHR',
-              'SORGBER',
-              'EXTERN',
-              'ORGADMIN',
-              'LEIT',
-              'SYSADMIN',
+              'Lern',
+              'Lehr',
+              'SorgBer',
+              'Extern',
+              'OrgAdmin',
+              'Leit',
+              'SysAdmin',
+              'SchB',
+              'NLehr',
             ])
             .nullable()
             .optional(),
@@ -112,12 +138,28 @@ export const schulconnexUsersResponseSchema = z.array(
                     differenzierung: z.string().nullable().optional(),
                     bildungsziele: z.array(z.string()).nullable().optional(),
                     jahrgangsstufen: z.array(z.string()).nullable().optional(),
-                    faecher: z.array(z.string()).nullable().optional(),
+                    faecher: z
+                      .array(
+                        z
+                          .object({
+                            bezeichnung: z.string(),
+                          })
+                          .nullable()
+                          .optional(),
+                      )
+                      .nullable()
+                      .optional(),
                     laufzeit: z
                       .object({
-                        von: z.iso.datetime().nullable().optional(),
+                        von: z
+                          .union([z.iso.datetime(), z.iso.date()])
+                          .nullable()
+                          .optional(),
                         vonlernperiode: z.string().nullable().optional(),
-                        bis: z.iso.datetime().nullable().optional(),
+                        bis: z
+                          .union([z.iso.datetime(), z.iso.date()])
+                          .nullable()
+                          .optional(),
                         bislernperiode: z.string().nullable().optional(),
                       })
                       .nullable()
@@ -125,52 +167,11 @@ export const schulconnexUsersResponseSchema = z.array(
                   })
                   .nullable()
                   .optional(),
-                gruppenzugehoerigkeit: z
-                  .object({
-                    ktid: z.string().nullable().optional(),
-                    rollen: z
-                      .array(
-                        z.enum([
-                          'Lern',
-                          'Lehr',
-                          'KlLeit',
-                          'Foerd',
-                          'VLehr',
-                          'SchB',
-                          'GMit',
-                          'GLeit',
-                        ]),
-                      )
-                      .nullable()
-                      .optional(),
-                    von: z.iso.datetime().nullable().optional(),
-                    bis: z.iso.datetime().nullable().optional(),
-                  })
+                gruppenzugehoerigkeit: schulconnextGroupAffiliationSchema
                   .nullable()
                   .optional(),
                 sonstige_gruppenzugehoerige: z
-                  .array(
-                    z.object({
-                      ktid: z.string().nullable().optional(),
-                      rollen: z
-                        .array(
-                          z.enum([
-                            'Lern',
-                            'Lehr',
-                            'KlLeit',
-                            'Foerd',
-                            'VLehr',
-                            'SchB',
-                            'GMit',
-                            'GLeit',
-                          ]),
-                        )
-                        .nullable()
-                        .optional(),
-                      von: z.iso.datetime().nullable().optional(),
-                      bis: z.iso.datetime().nullable().optional(),
-                    }),
-                  )
+                  .array(schulconnextGroupAffiliationSchema)
                   .nullable()
                   .optional(),
               }),
@@ -196,7 +197,10 @@ export const schulconnexUsersResponseSchema = z.array(
             .optional(),
           loeschung: z
             .object({
-              zeitpunkt: z.iso.datetime().nullable().optional(),
+              zeitpunkt: z
+                .union([z.iso.datetime(), z.iso.date()])
+                .nullable()
+                .optional(),
             })
             .nullable()
             .optional(),

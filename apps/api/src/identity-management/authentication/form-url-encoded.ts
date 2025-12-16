@@ -3,15 +3,14 @@ import z from 'zod';
 import { Inject, Injectable } from '@nestjs/common';
 import { Logger } from '../../common/logger';
 
-export const clientCredentialsResponseSchema = z.object({
+export const formUrlEncodedResponseSchema = z.object({
   access_token: z.string(),
   expires_in: z.number(),
-  scope: z.string(),
-  token_type: z.enum(['bearer']),
+  token_type: z.enum(['Bearer']),
 });
 
 @Injectable()
-export class ClientCredentialsProvider {
+export class FormUrlEncodedProvider {
   constructor(
     @Inject(Logger)
     private readonly logger: Logger,
@@ -21,20 +20,23 @@ export class ClientCredentialsProvider {
 
   async authenticate(
     endpointUrl: string,
-    username: string,
-    password: string,
+    clientId: string,
+    clientSecret: string,
     grantType = 'client_credentials',
     scope = '',
+    resource = '',
   ): Promise<BearerToken> {
     const response = await fetch(endpointUrl, {
       method: 'POST',
       headers: {
-        Authorization:
-          'Basic ' + Buffer.from(`${username}:${password}`).toString('base64'),
+        ContentType: 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
+        client_id: clientId,
+        client_secret: clientSecret,
         grant_type: grantType,
         scope: scope,
+        resource: resource,
       }),
     });
 
@@ -50,7 +52,7 @@ export class ClientCredentialsProvider {
 
     // Validate response schema
     const { error, data: parsedData } =
-      clientCredentialsResponseSchema.safeParse(data);
+      formUrlEncodedResponseSchema.safeParse(data);
     if (error || !parsedData.access_token) {
       this.logger.error(`IDM response is invalid: ${error?.message ?? ''}`);
       throw new Error('Authorization towards IDM failed.');

@@ -2,15 +2,18 @@ import { AbstractFetcher } from './abstract-fetcher';
 import { Logger } from '../../common/logger';
 import { type ZodObject, z } from 'zod';
 import { type SchulconnexPersonsResponse } from './schulconnex/schulconnex-response.interface';
-import { type SchulconnexQueryParameters } from '../../controller/parameters/schulconnex-query-parameters';
+import { type SchulconnexPersonsQueryParameters } from '../../controller/parameters/schulconnex-persons-query-parameters';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { type SchulconnexGroup } from '../dto/schulconnex/schulconnex-group.dto';
+import { type SchulconnexOrganizationQueryParameters } from '../../controller/parameters/schulconnex-organisations-query-parameters';
+import { type BearerToken } from '../authentication/bearer-token';
+import { type SchulconnexOrganization } from '../dto/schulconnex/schulconnex-organization.dto';
 
 // Create a concrete implementation of AbstractFetcher for testing
 class TestFetcher extends AbstractFetcher<{ token: string }> {
   public async fetchPersons(
     endpointUrl: string,
-    parameters: SchulconnexQueryParameters,
+    parameters: SchulconnexPersonsQueryParameters,
     credentials: { token: string },
   ): Promise<null | SchulconnexPersonsResponse[]> {
     void endpointUrl;
@@ -20,6 +23,19 @@ class TestFetcher extends AbstractFetcher<{ token: string }> {
     // This method is not tested directly in this file
     return Promise.resolve(null);
   }
+
+  public async fetchOrganizations(
+    endpointUrl: string,
+    parameters: SchulconnexOrganizationQueryParameters,
+    { token }: BearerToken,
+  ): Promise<null | SchulconnexOrganization[]> {
+    void endpointUrl;
+    void parameters;
+    void token;
+
+    return Promise.resolve(null);
+  }
+
   public async fetchGroups(
     endpointUrl: string,
     credentials: { token: string },
@@ -31,10 +47,14 @@ class TestFetcher extends AbstractFetcher<{ token: string }> {
     return Promise.resolve([]);
   }
 
-  public getValidator(): ZodObject {
+  public getPersonsValidator(): ZodObject {
     return z.object({
       test: z.string(),
     });
+  }
+
+  public override getOrganizationsValidator(): ZodObject | z.ZodArray {
+    throw new Error('Method not implemented.');
   }
 
   // Expose protected methods for testing
@@ -43,7 +63,7 @@ class TestFetcher extends AbstractFetcher<{ token: string }> {
   }
 
   public testValidateData<T>(data: T | null): T | null {
-    return this.validateData<T>(data);
+    return this.validatePersonsData<T>(data);
   }
 }
 
@@ -107,7 +127,7 @@ describe('AbstractFetcher', () => {
       expect(result).toBeNull();
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockLogger.error).toHaveBeenCalledWith(
-        'Failed to fetch IDM data: 404 Not Found',
+        'Failed to fetch IDM data: 404 Not Found (unknown endpoint URL)',
       );
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockLogger.error).toHaveBeenCalledWith('Response: Not found');

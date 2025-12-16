@@ -20,20 +20,32 @@ export class SchulconnexPersonContext {
   })
   organisation?: SchulconnexOrganization | null;
 
+  // s. https://schulconnex.de/docs/codelisten/#rolle
   @ApiProperty({
-    description:
-      'The role of the user in this context. Currently only roles "LERN" and "LEHR" are supported.',
-    enum: ['LERN', 'LEHR', 'SORGBER', 'EXTERN', 'ORGADMIN', 'LEIT', 'SYSADMIN'],
+    description: 'The role of the user in this context.',
+    enum: [
+      'Lern',
+      'Lehr',
+      'SorgBer',
+      'Extern',
+      'OrgAdmin',
+      'Leit',
+      'SysAdmin',
+      'SchB',
+      'NLehr',
+    ],
     nullable: true,
   })
   rolle?:
-    | 'LERN'
-    | 'LEHR'
-    | 'SORGBER'
-    | 'EXTERN'
-    | 'ORGADMIN'
-    | 'LEIT'
-    | 'SYSADMIN'
+    | 'Lern'
+    | 'Lehr'
+    | 'SorgBer'
+    | 'Extern'
+    | 'OrgAdmin'
+    | 'Leit'
+    | 'SysAdmin'
+    | 'SchB'
+    | 'NLehr'
     | null;
 
   @ApiProperty({

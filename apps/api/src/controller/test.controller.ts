@@ -21,6 +21,12 @@ interface TestResponse {
   offerIdForClientId: OfferItem['offerId'] | undefined;
 }
 
+const TEST_CLIENT_ID = 'bettermarks-o';
+const BETTERMARKS_OFFER_ID = 1703890;
+const VIDIS_TEST_OFFER_ID = 2528476;
+
+const AVAILABLE_SCHOOL_IDS = ['SL_00099', 'SL_98108'];
+
 @Controller('/')
 export class TestController {
   constructor(
@@ -33,15 +39,15 @@ export class TestController {
   @AllowResourceOwnerType(ResourceOwnerType.CLIENT)
   @RequireScope(ScopeIdentifier.SCHULCONNEX_ACCESS)
   async test(): Promise<TestResponse> {
-    const groups = await this.fetchGroups();
+    const groups = await this.fetchGroups(AVAILABLE_SCHOOL_IDS);
 
-    await this.createEntriesForGroups(groups);
+    await this.createTestClearanceEntriesForGroups(groups);
 
     // Retrieve all clearance entries
     const clearanceEntries = await this.clearanceService.findAll();
 
     const offerForClientId =
-      await this.offersFetcher.fetchOfferForClientId('springboot-demo');
+      await this.offersFetcher.fetchOfferForClientId(TEST_CLIENT_ID);
 
     return {
       offerIdForClientId: offerForClientId?.offerId,
@@ -50,27 +56,16 @@ export class TestController {
     };
   }
 
-  private async fetchGroups(): Promise<GroupsPerIdmModel[]> {
-    const availableIdms = ['eduplaces', 'eduplaces-staging', 'DE-BY-vidis-idp'];
-
-    const selectedIdms = availableIdms
-      .sort(() => Math.random() - 0.5)
-      .slice(0, Math.floor(Math.random() * availableIdms.length) + 1);
-
-    return await this.aggregator.getGroups(selectedIdms);
+  private async fetchGroups(
+    schoolIds?: string[],
+  ): Promise<GroupsPerIdmModel[]> {
+    return await this.aggregator.getGroups(['saarland'], schoolIds);
   }
 
-  private async createEntriesForGroups(
+  private async createTestClearanceEntriesForGroups(
     groups: GroupsPerIdmModel[],
   ): Promise<void> {
-    const availableOfferIds = [87654321, 12345678];
-
-    const availableSchoolIds = [
-      'DE-BY-1234',
-      'test-school-' + Math.random().toString(),
-      'test-school-' + Math.random().toString(),
-      'test-school-' + Math.random().toString(),
-    ];
+    const availableOfferIds = [BETTERMARKS_OFFER_ID, VIDIS_TEST_OFFER_ID];
 
     await Promise.all(
       groups.map((groupSet: GroupsPerIdmModel) => {
@@ -81,8 +76,8 @@ export class TestController {
                 Math.floor(Math.random() * availableOfferIds.length)
               ];
             const schoolId =
-              availableSchoolIds[
-                Math.floor(Math.random() * availableSchoolIds.length)
+              AVAILABLE_SCHOOL_IDS[
+                Math.floor(Math.random() * AVAILABLE_SCHOOL_IDS.length)
               ];
 
             const clearance = new Clearance();
