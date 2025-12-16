@@ -1,5 +1,5 @@
-import type { SchulconnexPerson } from '../../dto/schulconnex/schulconnex-person.dto';
 import type { SchulconnexPersonContext } from '../../dto/schulconnex/schulconnex-person-context.dto';
+import type { SchulconnexPerson } from '../../dto/schulconnex/schulconnex-person.dto';
 
 export interface SchulconnexPersonsResponse {
   pid: string;

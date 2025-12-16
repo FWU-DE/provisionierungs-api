@@ -1,21 +1,20 @@
+import { Inject, Injectable } from '@nestjs/common';
+
+import type { Clearance } from '../../../clearance/entity/clearance.entity';
+import { SchulconnexOrganizationQueryParameters } from '../../../controller/parameters/schulconnex-organisations-query-parameters';
+import { SchulconnexPersonsQueryParameters } from '../../../controller/parameters/schulconnex-persons-query-parameters';
+import { BearerToken } from '../../authentication/bearer-token';
+import { FormUrlEncodedProvider } from '../../authentication/form-url-encoded';
+import idmSaarlandConfig, { type SaarlandConfig } from '../../config/idm.saarland.config';
+import { SchulconnexOrganization } from '../../dto/schulconnex/schulconnex-organization.dto';
+import { SchulconnexFetcher } from '../../fetcher/schulconnex/schulconnex.fetcher';
+import { transformSchulconnexPersonsResponse } from '../../fetcher/schulconnex/schulconnex.transformer';
 import {
   AdapterGetGroupsReturnType,
   AdapterGetOrganizationsReturnType,
   AdapterGetPersonsReturnType,
   AdapterInterface,
 } from '../adapter-interface';
-import { Inject, Injectable } from '@nestjs/common';
-import { SchulconnexFetcher } from '../../fetcher/schulconnex/schulconnex.fetcher';
-import { SchulconnexPersonsQueryParameters } from '../../../controller/parameters/schulconnex-persons-query-parameters';
-import { transformSchulconnexPersonsResponse } from '../../fetcher/schulconnex/schulconnex.transformer';
-import idmSaarlandConfig, {
-  type SaarlandConfig,
-} from '../../config/idm.saarland.config';
-import { BearerToken } from '../../authentication/bearer-token';
-import { FormUrlEncodedProvider } from '../../authentication/form-url-encoded';
-import { SchulconnexOrganizationQueryParameters } from '../../../controller/parameters/schulconnex-organisations-query-parameters';
-import type { Clearance } from '../../../clearance/entity/clearance.entity';
-import { SchulconnexOrganization } from '../../dto/schulconnex/schulconnex-organization.dto';
 
 @Injectable()
 export class SaarlandAdapter implements AdapterInterface {
@@ -63,14 +62,14 @@ export class SaarlandAdapter implements AdapterInterface {
     // Get organizations per schulkennung from clearance.
     const schoolIds = clearance?.map((clearance) => clearance.schoolId) ?? [];
 
-    const availableOrganizations: AdapterGetOrganizationsReturnType =
-      await this.getOrganizations(new SchulconnexOrganizationQueryParameters());
+    const availableOrganizations: AdapterGetOrganizationsReturnType = await this.getOrganizations(
+      new SchulconnexOrganizationQueryParameters(),
+    );
 
     const organizationIds = (availableOrganizations.response ?? [])
       .filter(
         (organizationResponse: SchulconnexOrganization) =>
-          organizationResponse.kennung &&
-          schoolIds.includes(organizationResponse.kennung),
+          organizationResponse.kennung && schoolIds.includes(organizationResponse.kennung),
       )
       .map((organization) => organization.id);
 
@@ -89,9 +88,7 @@ export class SaarlandAdapter implements AdapterInterface {
     );
 
     // Get the unique associated persons
-    const response = [
-      ...new Set(rawPersons.filter((person) => person !== null).flat()),
-    ];
+    const response = [...new Set(rawPersons.filter((person) => person !== null).flat())];
 
     return {
       idm: this.getIdentifier(),
@@ -130,10 +127,7 @@ export class SaarlandAdapter implements AdapterInterface {
         new SchulconnexOrganizationQueryParameters(),
       );
       organizationIds = organizations.response
-        ?.filter(
-          (organization) =>
-            organization.kennung && schoolIds.includes(organization.kennung),
-        )
+        ?.filter((organization) => organization.kennung && schoolIds.includes(organization.kennung))
         .map((organization) => organization.id);
     }
 

@@ -1,10 +1,11 @@
-import { SchulconnexPersonsResponse } from '../../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
-import { type SchulconnexPersonContext } from '../../identity-management/dto/schulconnex/schulconnex-person-context.dto';
-import { type SchulconnexClearanceVisibleFields } from '../schulconnex-clearance-options.interface';
-import { type SchulconnexPerson } from '../../identity-management/dto/schulconnex/schulconnex-person.dto';
-import { type SchulconnexOrganization } from '../../identity-management/dto/schulconnex/schulconnex-organization.dto';
-import { type SchulconnexGroupdataset } from '../../identity-management/dto/schulconnex/schulconnex-groupdataset.dto';
 import { plainToInstance } from 'class-transformer';
+
+import { type SchulconnexGroupdataset } from '../../identity-management/dto/schulconnex/schulconnex-groupdataset.dto';
+import { type SchulconnexOrganization } from '../../identity-management/dto/schulconnex/schulconnex-organization.dto';
+import { type SchulconnexPersonContext } from '../../identity-management/dto/schulconnex/schulconnex-person-context.dto';
+import { type SchulconnexPerson } from '../../identity-management/dto/schulconnex/schulconnex-person.dto';
+import { SchulconnexPersonsResponse } from '../../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
+import { type SchulconnexClearanceVisibleFields } from '../schulconnex-clearance-options.interface';
 
 export function applyClearancePersonsFieldFilter(
   offerId: number,
@@ -24,9 +25,7 @@ export function applyClearancePersonsFieldFilter(
   );
 }
 
-function getClearedProperties(
-  offerId: number,
-): SchulconnexClearanceVisibleFields {
+function getClearedProperties(offerId: number): SchulconnexClearanceVisibleFields {
   // @todo: Implement clearance table with dummy data
   // @todo: Get clearance for client
   void offerId;
@@ -69,10 +68,7 @@ function filterPersonContext(
     context.organisation = undefined;
   }
   if (context.organisation && visibleProperties.organization) {
-    context.organisation = filterOrganization(
-      context.organisation,
-      visibleProperties,
-    );
+    context.organisation = filterOrganization(context.organisation, visibleProperties);
   }
   if (!visibleProperties.email) {
     context.erreichbarkeiten = undefined;
@@ -81,9 +77,7 @@ function filterPersonContext(
     context.gruppen = undefined;
   }
   if (context.gruppen && visibleProperties.groups) {
-    context.gruppen = context.gruppen.map((group) =>
-      filterGroup(group, visibleProperties),
-    );
+    context.gruppen = context.gruppen.map((group) => filterGroup(group, visibleProperties));
   }
   return context;
 }

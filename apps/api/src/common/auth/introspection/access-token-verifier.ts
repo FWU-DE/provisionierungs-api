@@ -1,8 +1,4 @@
-import {
-  type FlattenedJWSInput,
-  type JWSHeaderParameters,
-  type JWTPayload,
-} from 'jose';
+import { type FlattenedJWSInput, type JWSHeaderParameters, type JWTPayload } from 'jose';
 import z, { safeParse } from 'zod';
 
 const openIdConnectSchema = z.object({
@@ -44,20 +40,14 @@ export class AccessTokenVerifier {
     >,
   ) {}
 
-  static async createFromOpenidConfigurationUrl(
-    openidConfigurationUrl: string,
-  ) {
+  static async createFromOpenidConfigurationUrl(openidConfigurationUrl: string) {
     const response = await fetch(openidConfigurationUrl);
     const result = safeParse(openIdConnectSchema, await response.json());
     if (!result.success) {
-      throw new Error(
-        'Invalid OpenID Connect configuration: ' + result.error.message,
-      );
+      throw new Error('Invalid OpenID Connect configuration: ' + result.error.message);
     }
 
-    const jwks = (await import('jose')).createRemoteJWKSet(
-      new URL(result.data.jwks_uri),
-    );
+    const jwks = (await import('jose')).createRemoteJWKSet(new URL(result.data.jwks_uri));
     return new AccessTokenVerifier(jwks, result.data);
   }
 
@@ -73,23 +63,20 @@ export class AccessTokenVerifier {
 
     const jwtVerifyResult = await (
       await this.getJose()
-    ).jwtVerify<
-      JWTPayload & { sid?: string; events?: Record<string, unknown> }
-    >(logoutToken, this.jwks, {
-      issuer: this.openIDConnectConfig.issuer,
-      clockTolerance: 60,
-      algorithms,
-      requiredClaims: ['iss', 'iat', 'jti'],
-    });
-
-    const validatedResult = safeParse(
-      accessTokenSchema,
-      jwtVerifyResult.payload,
+    ).jwtVerify<JWTPayload & { sid?: string; events?: Record<string, unknown> }>(
+      logoutToken,
+      this.jwks,
+      {
+        issuer: this.openIDConnectConfig.issuer,
+        clockTolerance: 60,
+        algorithms,
+        requiredClaims: ['iss', 'iat', 'jti'],
+      },
     );
+
+    const validatedResult = safeParse(accessTokenSchema, jwtVerifyResult.payload);
     if (!validatedResult.success) {
-      throw new Error(
-        'Access token validation failed: ' + validatedResult.error.message,
-      );
+      throw new Error('Access token validation failed: ' + validatedResult.error.message);
     }
 
     return validatedResult.data;

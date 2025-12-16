@@ -1,6 +1,9 @@
+import { ensureError } from '@fwu-rostering/utils/error';
+import { assertUnreachable } from '@fwu-rostering/utils/typescript';
 import { ConsoleLogger, Inject, Injectable } from '@nestjs/common';
 import type { Request } from 'express';
 
+import authConfig, { type AuthConfig } from '../config/auth.config';
 import { ResourceOwnerType } from '../enums/resource-owner-type.enum';
 import type {
   Introspection,
@@ -8,11 +11,8 @@ import type {
   RequestWithIntrospection,
 } from '../interfaces/request-with-introspection.interface';
 import { isRequestWithIntrospection } from '../interfaces/request-with-introspection.interface';
-import { IntrospectionClient } from './introspection-client';
-import authConfig, { type AuthConfig } from '../config/auth.config';
 import { AccessTokenVerifierFactory } from './access-token-verifier.factory';
-import { ensureError } from '@fwu-rostering/utils/error';
-import { assertUnreachable } from '@fwu-rostering/utils/typescript';
+import { IntrospectionClient } from './introspection-client';
 
 @Injectable()
 export class IntrospectionProvider {
@@ -35,9 +35,7 @@ export class IntrospectionProvider {
     const accessToken = this.extractAccessTokenFromHeader(request);
 
     if (!accessToken && this.authConfig.AUTH_VALIDATION !== 'off') {
-      this.logger.debug(
-        'IntrospectionProvider: No access token found in request.',
-      );
+      this.logger.debug('IntrospectionProvider: No access token found in request.');
       return null;
     }
 
@@ -45,22 +43,16 @@ export class IntrospectionProvider {
     this.logger.debug(
       'IntrospectionProvider: Request contains access token. Performing introspection...',
     );
-    const introspection = await this.getIntrospectionFromConfiguredSource(
-      accessToken ?? null,
-    );
+    const introspection = await this.getIntrospectionFromConfiguredSource(accessToken ?? null);
 
     if (introspection === null) {
-      this.logger.log(
-        'IntrospectionProvider: Access token introspection unsuccessful.',
-      );
+      this.logger.log('IntrospectionProvider: Access token introspection unsuccessful.');
       return null;
     }
 
     // If the token is not an access token, access is denied
     if (introspection.typ !== 'Bearer') {
-      this.logger.log(
-        'IntrospectionProvider: Provided token is not an access token.',
-      );
+      this.logger.log('IntrospectionProvider: Provided token is not an access token.');
       return null;
     }
 
@@ -106,28 +98,21 @@ export class IntrospectionProvider {
     }
 
     if (accessToken === null) {
-      this.logger.log(
-        'IntrospectionProvider: No access token provided for introspection.',
-      );
+      this.logger.log('IntrospectionProvider: No access token provided for introspection.');
       return null;
     }
 
     if (this.authConfig.AUTH_VALIDATION === 'introspect') {
-      const result =
-        await this.introspectionClient.getIntrospectionResponse(accessToken);
+      const result = await this.introspectionClient.getIntrospectionResponse(accessToken);
 
       // If the token is expired or revoked, access is denied
       if (!result.active) {
-        this.logger.log(
-          'IntrospectionProvider: Provided token is expired or revoked.',
-        );
+        this.logger.log('IntrospectionProvider: Provided token is expired or revoked.');
         return null;
       }
 
       // Determine the resource owner type
-      const resourceOwnerType = result.sid
-        ? ResourceOwnerType.USER
-        : ResourceOwnerType.CLIENT;
+      const resourceOwnerType = result.sid ? ResourceOwnerType.USER : ResourceOwnerType.CLIENT;
 
       this.logger.debug(
         `IntrospectionProvider: Token is valid, resource owner type is ${resourceOwnerType}`,
@@ -146,10 +131,8 @@ export class IntrospectionProvider {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     } else if (this.authConfig.AUTH_VALIDATION === 'verify-jwt') {
       try {
-        const accessTokenVerifier =
-          await this.accessTokenVerifierFactory.create();
-        const jwtVerifyResult =
-          await accessTokenVerifier.verifyAccessToken(accessToken);
+        const accessTokenVerifier = await this.accessTokenVerifierFactory.create();
+        const jwtVerifyResult = await accessTokenVerifier.verifyAccessToken(accessToken);
 
         const scopes = jwtVerifyResult.scope?.split(' ') ?? [];
         // Determine the resource owner type
@@ -169,9 +152,7 @@ export class IntrospectionProvider {
         };
       } catch (error: unknown) {
         this.logger.warn(
-          `IntrospectionProvider: Error verifying JWT access token: ${
-            ensureError(error).message
-          }`,
+          `IntrospectionProvider: Error verifying JWT access token: ${ensureError(error).message}`,
         );
         return null;
       }

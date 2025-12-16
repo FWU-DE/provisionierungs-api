@@ -1,20 +1,19 @@
+import { Inject, Injectable } from '@nestjs/common';
+
+import { Clearance } from '../../../clearance/entity/clearance.entity';
+import { SchulconnexOrganizationQueryParameters } from '../../../controller/parameters/schulconnex-organisations-query-parameters';
+import { SchulconnexPersonsQueryParameters } from '../../../controller/parameters/schulconnex-persons-query-parameters';
+import { BearerToken } from '../../authentication/bearer-token';
+import { ClientCredentialsProvider } from '../../authentication/client-credentials';
+import idmEduplacesConfig, { type EduplacesConfig } from '../../config/idm.eduplaces.config';
+import { SchulconnexFetcher } from '../../fetcher/schulconnex/schulconnex.fetcher';
+import { transformSchulconnexPersonsResponse } from '../../fetcher/schulconnex/schulconnex.transformer';
 import {
   AdapterGetGroupsReturnType,
   AdapterGetOrganizationsReturnType,
   AdapterGetPersonsReturnType,
   AdapterInterface,
 } from '../adapter-interface';
-import { Inject, Injectable } from '@nestjs/common';
-import idmEduplacesConfig, {
-  type EduplacesConfig,
-} from '../../config/idm.eduplaces.config';
-import { SchulconnexFetcher } from '../../fetcher/schulconnex/schulconnex.fetcher';
-import { SchulconnexPersonsQueryParameters } from '../../../controller/parameters/schulconnex-persons-query-parameters';
-import { transformSchulconnexPersonsResponse } from '../../fetcher/schulconnex/schulconnex.transformer';
-import { ClientCredentialsProvider } from '../../authentication/client-credentials';
-import { BearerToken } from '../../authentication/bearer-token';
-import { Clearance } from '../../../clearance/entity/clearance.entity';
-import { SchulconnexOrganizationQueryParameters } from '../../../controller/parameters/schulconnex-organisations-query-parameters';
 
 @Injectable()
 export class EduplacesAdapter implements AdapterInterface {

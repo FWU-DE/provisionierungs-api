@@ -1,6 +1,7 @@
-import { OffersFetcher } from './fetcher/offers.fetcher';
-import { OffersDto } from './dto/offers.dto';
 import { Injectable } from '@nestjs/common';
+
+import { OffersDto } from './dto/offers.dto';
+import { OffersFetcher } from './fetcher/offers.fetcher';
 import { OffersResponse } from './model/response/offers.model';
 
 @Injectable()
@@ -15,8 +16,7 @@ export class OffersService {
     return offersResponse.flatMap((response) => {
       return response.items.map((item) => {
         const dto = new OffersDto();
-        dto.educationProviderOrganizationName =
-          item.educationProviderOrganizationName;
+        dto.educationProviderOrganizationName = item.educationProviderOrganizationName;
         dto.offerDescription = item.offerDescription ?? '';
         dto.offerId = item.offerId;
         dto.offerLink = item.offerLink ?? '';

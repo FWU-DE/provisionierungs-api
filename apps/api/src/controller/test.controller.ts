@@ -1,15 +1,12 @@
 import { Controller, Get, Inject } from '@nestjs/common';
-import { Clearance } from '../clearance/entity/clearance.entity';
+
 import { ClearanceService } from '../clearance/clearance.service';
-import { Aggregator } from '../identity-management/aggregator/aggregator';
-import { GroupsPerIdmModel } from '../identity-management/model/groups-per-idm.model';
-import { SchulconnexGroup } from '../identity-management/dto/schulconnex/schulconnex-group.dto';
-import {
-  AllowResourceOwnerType,
-  RequireScope,
-  ResourceOwnerType,
-} from '../common/auth';
+import { Clearance } from '../clearance/entity/clearance.entity';
+import { AllowResourceOwnerType, RequireScope, ResourceOwnerType } from '../common/auth';
 import { ScopeIdentifier } from '../common/auth/scope/scope-identifier';
+import { Aggregator } from '../identity-management/aggregator/aggregator';
+import { SchulconnexGroup } from '../identity-management/dto/schulconnex/schulconnex-group.dto';
+import { GroupsPerIdmModel } from '../identity-management/model/groups-per-idm.model';
 import { OffersFetcher } from '../offers/fetcher/offers.fetcher';
 import { OfferItem } from '../offers/model/response/offer-item.model';
 
@@ -46,8 +43,7 @@ export class TestController {
     // Retrieve all clearance entries
     const clearanceEntries = await this.clearanceService.findAll();
 
-    const offerForClientId =
-      await this.offersFetcher.fetchOfferForClientId(TEST_CLIENT_ID);
+    const offerForClientId = await this.offersFetcher.fetchOfferForClientId(TEST_CLIENT_ID);
 
     return {
       offerIdForClientId: offerForClientId?.offerId,
@@ -56,44 +52,31 @@ export class TestController {
     };
   }
 
-  private async fetchGroups(
-    schoolIds?: string[],
-  ): Promise<GroupsPerIdmModel[]> {
+  private async fetchGroups(schoolIds?: string[]): Promise<GroupsPerIdmModel[]> {
     return await this.aggregator.getGroups(['saarland'], schoolIds);
   }
 
-  private async createTestClearanceEntriesForGroups(
-    groups: GroupsPerIdmModel[],
-  ): Promise<void> {
+  private async createTestClearanceEntriesForGroups(groups: GroupsPerIdmModel[]): Promise<void> {
     const availableOfferIds = [BETTERMARKS_OFFER_ID, VIDIS_TEST_OFFER_ID];
 
     await Promise.all(
       groups.map((groupSet: GroupsPerIdmModel) => {
-        return groupSet.groups.map(
-          async (groupEntry: SchulconnexGroup): Promise<Clearance> => {
-            const offerId =
-              availableOfferIds[
-                Math.floor(Math.random() * availableOfferIds.length)
-              ];
-            const schoolId =
-              AVAILABLE_SCHOOL_IDS[
-                Math.floor(Math.random() * AVAILABLE_SCHOOL_IDS.length)
-              ];
+        return groupSet.groups.map(async (groupEntry: SchulconnexGroup): Promise<Clearance> => {
+          const offerId = availableOfferIds[Math.floor(Math.random() * availableOfferIds.length)];
+          const schoolId =
+            AVAILABLE_SCHOOL_IDS[Math.floor(Math.random() * AVAILABLE_SCHOOL_IDS.length)];
 
-            const clearance = new Clearance();
-            clearance.offerId = offerId;
-            clearance.schoolId = schoolId;
-            clearance.idmId = groupSet.idm;
-            clearance.groupId = groupEntry.id;
+          const clearance = new Clearance();
+          clearance.offerId = offerId;
+          clearance.schoolId = schoolId;
+          clearance.idmId = groupSet.idm;
+          clearance.groupId = groupEntry.id;
 
-            return (await this.clearanceService
-              .save(clearance)
-              .catch((e: unknown) => {
-                // eslint-disable-next-line
-                console.log(e);
-              })) as Clearance;
-          },
-        );
+          return (await this.clearanceService.save(clearance).catch((e: unknown) => {
+            // eslint-disable-next-line
+            console.log(e);
+          })) as Clearance;
+        });
       }),
     );
   }

@@ -12,22 +12,10 @@ export class SchulconnexGroupRelation {
     description: 'Roles of the person within the group.',
     nullable: true,
   })
-  rollen?:
-    | (
-        | 'Lern'
-        | 'Lehr'
-        | 'KlLeit'
-        | 'Foerd'
-        | 'VLehr'
-        | 'SchB'
-        | 'GMit'
-        | 'GLeit'
-      )[]
-    | null;
+  rollen?: ('Lern' | 'Lehr' | 'KlLeit' | 'Foerd' | 'VLehr' | 'SchB' | 'GMit' | 'GLeit')[] | null;
 
   @ApiProperty({
-    description:
-      'Start of group membership. This date may also be in the future.',
+    description: 'Start of group membership. This date may also be in the future.',
     nullable: true,
     example: '2024-01-01',
   })

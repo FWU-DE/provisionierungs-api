@@ -1,4 +1,5 @@
 import type { Request } from 'express';
+
 import type { ResourceOwnerType } from '../enums/resource-owner-type.enum';
 
 export interface Introspection {
@@ -16,9 +17,7 @@ export interface RequestWithIntrospection extends Request {
   introspection: Introspection;
 }
 
-export type RequestMaybeContainingIntrospection =
-  | Request
-  | RequestWithIntrospection;
+export type RequestMaybeContainingIntrospection = Request | RequestWithIntrospection;
 
 export function isRequestWithIntrospection(
   request: RequestMaybeContainingIntrospection,

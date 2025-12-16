@@ -1,11 +1,12 @@
 import { Controller, Get, type Type } from '@nestjs/common';
+import request from 'supertest';
+
 import { createTestingInfrastructure } from '../../../test/testing-module';
 import { AuthModule } from '../auth.module';
 import { IntrospectionClient } from '../introspection/introspection-client';
 import { TestIntrospectionClient } from '../introspection/introspection-client.test';
-
-import request from 'supertest';
 import { RequireScope } from '../route-decorators/require-scope.decorator';
+
 describe('ScopeGuard', () => {
   it('restricts access with wrong scope on class level', async () => {
     @Controller()
@@ -16,9 +17,7 @@ describe('ScopeGuard', () => {
         return 'ok';
       }
     }
-    const { infra, testClient } = await createInfrastructureWithController([
-      TestController,
-    ]);
+    const { infra, testClient } = await createInfrastructureWithController([TestController]);
     testClient.addUserToken('valid-user-token', ['wrong-scope']);
     try {
       await request((await infra.getApp()).getHttpServer())
@@ -39,9 +38,7 @@ describe('ScopeGuard', () => {
         return 'ok';
       }
     }
-    const { infra, testClient } = await createInfrastructureWithController([
-      TestController,
-    ]);
+    const { infra, testClient } = await createInfrastructureWithController([TestController]);
     testClient.addUserToken('valid-user-token', ['wrong-scope']);
     try {
       await request((await infra.getApp()).getHttpServer())
@@ -63,9 +60,7 @@ describe('ScopeGuard', () => {
         return 'ok';
       }
     }
-    const { infra, testClient } = await createInfrastructureWithController([
-      TestController,
-    ]);
+    const { infra, testClient } = await createInfrastructureWithController([TestController]);
     testClient.addUserToken('invalid-user-token', ['scope1']);
     testClient.addUserToken('valid-user-token', ['scope2']);
     try {
@@ -91,9 +86,7 @@ describe('ScopeGuard', () => {
         return 'ok';
       }
     }
-    const { infra, testClient } = await createInfrastructureWithController([
-      TestController,
-    ]);
+    const { infra, testClient } = await createInfrastructureWithController([TestController]);
     testClient.addUserToken('invalid-user-token', ['scope1']);
     testClient.addUserToken('valid-user-token', ['scope1', 'scope2']);
     try {
@@ -119,9 +112,7 @@ describe('ScopeGuard', () => {
         return 'ok';
       }
     }
-    const { infra, testClient } = await createInfrastructureWithController([
-      TestController,
-    ]);
+    const { infra, testClient } = await createInfrastructureWithController([TestController]);
     testClient.addUserToken('one-user-token', ['scope1']);
     testClient.addUserToken('two-user-token', ['scope2']);
     testClient.addUserToken('three-user-token', ['scope1', 'scope2']);
@@ -152,9 +143,7 @@ describe('ScopeGuard', () => {
         return 'ok';
       }
     }
-    const { infra, testClient } = await createInfrastructureWithController([
-      TestController,
-    ]);
+    const { infra, testClient } = await createInfrastructureWithController([TestController]);
     testClient.addUserToken('valid-user-token', ['scope1']);
     try {
       await request((await infra.getApp()).getHttpServer())
@@ -174,9 +163,7 @@ async function createInfrastructureWithController(controllers: Type<object>[]) {
     imports: [AuthModule],
     controllers,
   })
-    .configureModule((module) =>
-      module.overrideProvider(IntrospectionClient).useValue(testClient),
-    )
+    .configureModule((module) => module.overrideProvider(IntrospectionClient).useValue(testClient))
     .build();
 
   await infra.setUp();

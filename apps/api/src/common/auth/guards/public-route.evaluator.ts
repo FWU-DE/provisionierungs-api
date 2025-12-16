@@ -21,12 +21,8 @@ export class PublicRouteEvaluator {
     private readonly logger: ConsoleLogger,
   ) {}
 
-  isAuthenticationRequired(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> {
-    this.logger.debug(
-      'PublicRouteEvaluator: Checking if requested route is public...',
-    );
+  isAuthenticationRequired(context: ExecutionContext): boolean | Promise<boolean> {
+    this.logger.debug('PublicRouteEvaluator: Checking if requested route is public...');
     const handler = context.getHandler();
     const classRef = context.getClass();
 

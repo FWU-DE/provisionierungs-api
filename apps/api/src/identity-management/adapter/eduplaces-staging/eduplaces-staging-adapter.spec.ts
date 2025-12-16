@@ -1,14 +1,14 @@
-import { EduplacesStagingAdapter } from './eduplaces-staging-adapter';
-import { SchulconnexFetcher } from '../../fetcher/schulconnex/schulconnex.fetcher';
-import { ClientCredentialsProvider } from '../../authentication/client-credentials';
 import { SchulconnexPersonsQueryParameters } from '../../../controller/parameters/schulconnex-persons-query-parameters';
-import { type BearerToken } from '../../authentication/bearer-token';
-import { type SchulconnexPersonsResponse } from '../../fetcher/schulconnex/schulconnex-response.interface';
 import {
-  createTestingInfrastructure,
   type TestingInfrastructure,
+  createTestingInfrastructure,
 } from '../../../test/testing-module';
+import { type BearerToken } from '../../authentication/bearer-token';
+import { ClientCredentialsProvider } from '../../authentication/client-credentials';
+import { type SchulconnexPersonsResponse } from '../../fetcher/schulconnex/schulconnex-response.interface';
+import { SchulconnexFetcher } from '../../fetcher/schulconnex/schulconnex.fetcher';
 import { IdentityProviderModule } from '../../identity-provider.module';
+import { EduplacesStagingAdapter } from './eduplaces-staging-adapter';
 
 describe('EduplacesStagingAdapter', () => {
   let infra: TestingInfrastructure;
@@ -69,15 +69,10 @@ describe('EduplacesStagingAdapter', () => {
       const mockAuthToken: BearerToken = {
         token: 'test-auth-token',
       };
-      const mockResponse: SchulconnexPersonsResponse[] = [
-        { pid: 'person1' },
-        { pid: 'person2' },
-      ];
+      const mockResponse: SchulconnexPersonsResponse[] = [{ pid: 'person1' }, { pid: 'person2' }];
 
       // Setup mocks
-      mockClientCredentialsProvider.authenticate.mockResolvedValue(
-        mockAuthToken,
-      );
+      mockClientCredentialsProvider.authenticate.mockResolvedValue(mockAuthToken);
       mockSchulconnexFetcher.fetchPersons.mockResolvedValue(mockResponse);
 
       // Call the method

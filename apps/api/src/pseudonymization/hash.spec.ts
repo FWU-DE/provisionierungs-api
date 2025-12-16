@@ -24,9 +24,7 @@ describe('hash', () => {
     const hash1 = hasher.hash(localSubject, salt, sectorIdentifier);
     const hash2 = hasher.hash(localSubject, salt, sectorIdentifier);
     expect(hash1).toBe(hash2);
-    expect(hash1).toMatch(
-      /^[0-9a-f]{8}-[0-9a-f]{4}-3[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
-    );
+    expect(hash1).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-3[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
   });
 
   it('should generate different hashes for different localSubjects', () => {
@@ -56,9 +54,7 @@ describe('hash', () => {
   it('should handle invalid sectorIdentifierUri', () => {
     const hash = hasher.hash(localSubject, salt, 'invalid-url');
     // Should not throw an error, but should return a valid UUID
-    expect(hash).toMatch(
-      /^[0-9a-f]{8}-[0-9a-f]{4}-3[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
-    );
+    expect(hash).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-3[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
   });
 
   it('should throw an error when hash generation fails', () => {

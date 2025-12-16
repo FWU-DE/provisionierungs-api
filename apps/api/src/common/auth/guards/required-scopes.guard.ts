@@ -2,13 +2,13 @@ import type { CanActivate, ExecutionContext } from '@nestjs/common';
 import { ConsoleLogger, Inject, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
+import type { AuthConfig } from '../config/auth.config';
+import authConfig from '../config/auth.config';
 import type { RequestMaybeContainingIntrospection } from '../interfaces/request-with-introspection.interface';
+import { IntrospectionProvider } from '../introspection/introspection.provider';
 import type { RecursiveArray } from '../route-decorators/require-scope.decorator';
 import { RequireScope } from '../route-decorators/require-scope.decorator';
 import { transformIntoExpressContext } from '../util/graphql/express-context';
-import { IntrospectionProvider } from '../introspection/introspection.provider';
-import type { AuthConfig } from '../config/auth.config';
-import authConfig from '../config/auth.config';
 
 @Injectable()
 export class RequiredScopesGuard implements CanActivate {
@@ -35,10 +35,7 @@ export class RequiredScopesGuard implements CanActivate {
     const classRef = context.getClass();
 
     // Get the required scopes from the route
-    const requiredScopes = this.reflector.getAllAndOverride(RequireScope, [
-      handler,
-      classRef,
-    ]);
+    const requiredScopes = this.reflector.getAllAndOverride(RequireScope, [handler, classRef]);
 
     // Grant access if no scopes are required
     if (!requiredScopes || requiredScopes.length === 0) {
@@ -53,42 +50,27 @@ export class RequiredScopesGuard implements CanActivate {
       this.getRequest(context),
     );
     if (!introspection) {
-      this.logger.error(
-        'RequiredScopesGuard: Access token is invalid. Denying access.',
-      );
+      this.logger.error('RequiredScopesGuard: Access token is invalid. Denying access.');
       return false;
     }
 
-    const requiredScopesArray = Array.isArray(requiredScopes)
-      ? requiredScopes
-      : [requiredScopes];
+    const requiredScopesArray = Array.isArray(requiredScopes) ? requiredScopes : [requiredScopes];
     const grantedScopes = introspection.scopes;
 
     const canActivate = this.oneOfThem(requiredScopesArray, grantedScopes);
     if (!canActivate) {
-      this.logger.log(
-        'RequiredScopesGuard: Insufficient scopes to access route. Denying access.',
-      );
+      this.logger.log('RequiredScopesGuard: Insufficient scopes to access route. Denying access.');
       return false;
     }
-    this.logger.debug(
-      'RequiredScopesGuard: All required scopes are granted. Allowing access.',
-    );
+    this.logger.debug('RequiredScopesGuard: All required scopes are granted. Allowing access.');
     return true;
   }
 
-  private getRequest(
-    context: ExecutionContext,
-  ): RequestMaybeContainingIntrospection {
-    return transformIntoExpressContext<RequestMaybeContainingIntrospection>(
-      context,
-    ).req;
+  private getRequest(context: ExecutionContext): RequestMaybeContainingIntrospection {
+    return transformIntoExpressContext<RequestMaybeContainingIntrospection>(context).req;
   }
 
-  private oneOfThem(
-    requiredScopes: RecursiveArray<string>,
-    grantedScopes: string[],
-  ): boolean {
+  private oneOfThem(requiredScopes: RecursiveArray<string>, grantedScopes: string[]): boolean {
     return requiredScopes.some((scope) => {
       if (Array.isArray(scope)) {
         return this.allOfThem(scope, grantedScopes);
@@ -97,10 +79,7 @@ export class RequiredScopesGuard implements CanActivate {
     });
   }
 
-  private allOfThem(
-    requiredScopes: RecursiveArray<string>,
-    grantedScopes: string[],
-  ): boolean {
+  private allOfThem(requiredScopes: RecursiveArray<string>, grantedScopes: string[]): boolean {
     return requiredScopes.every((scope) => {
       if (Array.isArray(scope)) {
         return this.oneOfThem(scope, grantedScopes);

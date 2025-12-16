@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { SchulconnexPersonsResponse } from '../dto/schulconnex/schulconnex-persons-response.dto';
-import { SchulconnexPersonsQueryParameters } from '../../controller/parameters/schulconnex-persons-query-parameters';
 import { plainToInstance } from 'class-transformer';
-import type { SchulconnexPerson } from '../dto/schulconnex/schulconnex-person.dto';
-import type { SchulconnexPersonContext } from '../dto/schulconnex/schulconnex-person-context.dto';
-import type { SchulconnexOrganization } from '../dto/schulconnex/schulconnex-organization.dto';
+
+import { SchulconnexPersonsQueryParameters } from '../../controller/parameters/schulconnex-persons-query-parameters';
 import type { SchulconnexGroupdataset } from '../dto/schulconnex/schulconnex-groupdataset.dto';
+import type { SchulconnexOrganization } from '../dto/schulconnex/schulconnex-organization.dto';
+import type { SchulconnexPersonContext } from '../dto/schulconnex/schulconnex-person-context.dto';
+import type { SchulconnexPerson } from '../dto/schulconnex/schulconnex-person.dto';
+import { SchulconnexPersonsResponse } from '../dto/schulconnex/schulconnex-persons-response.dto';
 
 // Visible according to schulconnex spec
 export interface SchulconnexShowFields {
@@ -33,10 +34,7 @@ export class PostRequestFilter {
     }
 
     if (parameters['personenkontext.id']) {
-      data = this.filterForPersonContextId(
-        data,
-        parameters['personenkontext.id'],
-      );
+      data = this.filterForPersonContextId(data, parameters['personenkontext.id']);
     }
 
     if (parameters['gruppe.id']) {
@@ -84,9 +82,7 @@ export class PostRequestFilter {
     organizationId: string,
   ): SchulconnexPersonsResponse[] {
     return data.filter((item) =>
-      item.personenkontexte?.some(
-        (context) => context.organisation?.id === organizationId,
-      ),
+      item.personenkontexte?.some((context) => context.organisation?.id === organizationId),
     );
   }
 
@@ -154,15 +150,10 @@ export class PostRequestFilter {
 
     filteredContext.rolle = context.rolle;
     if (context.organisation) {
-      filteredContext.organisation = this.filterOrganization(
-        context.organisation,
-        showFields,
-      );
+      filteredContext.organisation = this.filterOrganization(context.organisation, showFields);
     }
     if (context.gruppen) {
-      filteredContext.gruppen = context.gruppen.map((group) =>
-        this.filterGroup(group, showFields),
-      );
+      filteredContext.gruppen = context.gruppen.map((group) => this.filterGroup(group, showFields));
     }
     filteredContext.erreichbarkeiten = context.erreichbarkeiten;
     return filteredContext;

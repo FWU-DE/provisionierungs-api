@@ -1,11 +1,12 @@
 import { Query, Resolver } from '@nestjs/graphql';
+
 import { AllowResourceOwnerType, ResourceOwnerType } from '../../common/auth';
 import {
-  UserCtx,
   type UserContext,
+  UserCtx,
 } from '../../common/auth/param-decorators/user-context.decorator';
-import { OffersService } from '../offers.service';
 import { OffersDto } from '../dto/offers.dto';
+import { OffersService } from '../offers.service';
 
 @Resolver()
 export class OffersQuery {

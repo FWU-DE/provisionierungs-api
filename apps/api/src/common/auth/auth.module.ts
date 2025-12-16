@@ -1,9 +1,9 @@
 import { Global, Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 
-import { ConfigModule } from '@nestjs/config';
-import authConfig from './config/auth.config';
 import { LogModule } from '../logger';
+import authConfig from './config/auth.config';
 import { AccessTokenGuard } from './guards/access-token.guard';
 import { AllowedResourceOwnerTypesGuard } from './guards/allowed-resource-owner-types.guard';
 import { PublicRouteEvaluator } from './guards/public-route.evaluator';

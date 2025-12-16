@@ -30,8 +30,7 @@ export class SchulconnexName {
   initialenvorname?: string | null;
 
   @ApiProperty({
-    description:
-      'The call name of the person, in case of multiple given names.',
+    description: 'The call name of the person, in case of multiple given names.',
     nullable: true,
     example: 'Max',
   })

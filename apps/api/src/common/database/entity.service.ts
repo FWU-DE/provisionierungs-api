@@ -6,9 +6,7 @@ export abstract class EntityService<T extends BaseEntity> {
   constructor(private readonly repository: Repository<T>) {}
 
   protected getRepository(manager?: EntityManager): Repository<T> {
-    return manager
-      ? manager.getRepository(this.repository.target)
-      : this.repository;
+    return manager ? manager.getRepository(this.repository.target) : this.repository;
   }
 
   protected async runInTransaction<T>(

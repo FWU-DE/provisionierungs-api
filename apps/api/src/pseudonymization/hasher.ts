@@ -1,7 +1,7 @@
-import { createHmac } from 'crypto';
-import type { v3 as uuidv3Type } from 'uuid';
-import debug from 'debug';
 import { ensureError } from '@fwu-rostering/utils/error';
+import { createHmac } from 'crypto';
+import debug from 'debug';
+import type { v3 as uuidv3Type } from 'uuid';
 
 export class Hasher {
   // Will hold the imported UUID v3 function
@@ -29,13 +29,8 @@ export class Hasher {
     return this.uuidv3Fun(name, namespace);
   }
 
-  hash(
-    localSubject: string,
-    salt: string,
-    sectorIdentifierUri: string,
-  ): string {
-    const sectorIdentifier =
-      this.resolveValidSectorIdentifier(sectorIdentifierUri);
+  hash(localSubject: string, salt: string, sectorIdentifierUri: string): string {
+    const sectorIdentifier = this.resolveValidSectorIdentifier(sectorIdentifierUri);
     try {
       const hmac = createHmac('sha512', Buffer.from(salt, 'utf8'));
       hmac.update(Buffer.from(sectorIdentifier ?? '', 'utf8'));
@@ -49,9 +44,7 @@ export class Hasher {
   }
 
   // Reimplemented from https://github.com/keycloak/keycloak/blob/85afd624528bbf8850b2def460e06c70e965de54/services/src/main/java/org/keycloak/protocol/oidc/utils/PairwiseSubMapperUtils.java#L54
-  private resolveValidSectorIdentifier(
-    sectorIdentifierUri: string,
-  ): string | null {
+  private resolveValidSectorIdentifier(sectorIdentifierUri: string): string | null {
     try {
       const url = new URL(sectorIdentifierUri);
       return url.hostname;

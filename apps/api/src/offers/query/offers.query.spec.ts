@@ -4,16 +4,13 @@
 import request from 'supertest';
 
 import { AuthModule } from '../../common/auth';
+import { IntrospectionClient } from '../../common/auth/introspection/introspection-client';
 import { TestIntrospectionClient } from '../../common/auth/introspection/introspection-client.test';
 import { GraphQLModule } from '../../common/graphql/graphql.module';
-import { IntrospectionClient } from '../../common/auth/introspection/introspection-client';
-import {
-  type TestingInfrastructure,
-  createTestingInfrastructure,
-} from '../../test/testing-module';
+import { type TestingInfrastructure, createTestingInfrastructure } from '../../test/testing-module';
+import { OffersDto } from '../dto/offers.dto';
 import { OffersModule } from '../offers.module';
 import { OffersService } from '../offers.service';
-import { OffersDto } from '../dto/offers.dto';
 
 const mockOffersService = {
   getOffers: async (schoolId: string[]): Promise<OffersDto[]> => {
@@ -74,9 +71,9 @@ describe('OffersQuery', () => {
         }`,
       })
       .expect((res) => {
-        expect(
-          (res.body as { errors: { message: string }[] }).errors[0].message,
-        ).toBe('Forbidden resource');
+        expect((res.body as { errors: { message: string }[] }).errors[0].message).toBe(
+          'Forbidden resource',
+        );
       });
   });
 

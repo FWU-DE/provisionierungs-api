@@ -1,9 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { OffersResponse } from '../model/response/offers.model';
-import offersConfig, { type OffersConfig } from '../config/offers.config';
-import { activatedOffersBySchoolResponseSchema } from '../offers.validator';
+
 import { Logger } from '../../common/logger';
+import offersConfig, { type OffersConfig } from '../config/offers.config';
 import { OfferItem } from '../model/response/offer-item.model';
+import { OffersResponse } from '../model/response/offers.model';
+import { activatedOffersBySchoolResponseSchema } from '../offers.validator';
 
 enum OfferFetchMode {
   ALL = 'all',
@@ -36,18 +37,14 @@ export class OffersFetcher {
     }
 
     const endpointUrl =
-      this.offersConfig.OFFERS_API_ENDPOINT +
-      '/offers/' +
-      mode +
-      (options?.schoolId ?? '');
+      this.offersConfig.OFFERS_API_ENDPOINT + '/offers/' + mode + (options?.schoolId ?? '');
     const username = this.offersConfig.OFFERS_CLIENT_ID;
     const password = this.offersConfig.OFFERS_CLIENT_SECRET;
 
     const response = await fetch(endpointUrl, {
       method: 'GET',
       headers: {
-        Authorization:
-          'Basic ' + Buffer.from(`${username}:${password}`).toString('base64'),
+        Authorization: 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64'),
       },
     });
 
@@ -65,9 +62,7 @@ export class OffersFetcher {
     return this.validateData(data);
   }
 
-  public async fetchActiveOffers(
-    schoolIds: string[],
-  ): Promise<(OffersResponse | null)[]> {
+  public async fetchActiveOffers(schoolIds: string[]): Promise<(OffersResponse | null)[]> {
     return await Promise.all(
       schoolIds.map(async (schoolId) => {
         return await this.fetchOffers(OfferFetchMode.ACTIVATED_BY_SCHOOL, {
@@ -77,24 +72,15 @@ export class OffersFetcher {
     );
   }
 
-  public async fetchOfferForClientId(
-    clientId: string,
-  ): Promise<OfferItem | null> {
+  public async fetchOfferForClientId(clientId: string): Promise<OfferItem | null> {
     const offerData = await this.fetchOffers(OfferFetchMode.ALL);
-    return (
-      offerData?.items.find((offerItem) =>
-        offerItem.clientId.includes(clientId),
-      ) ?? null
-    );
+    return offerData?.items.find((offerItem) => offerItem.clientId.includes(clientId)) ?? null;
   }
 
   private validateData(data: OffersResponse): OffersResponse | null {
-    const { error, data: parsedData } =
-      activatedOffersBySchoolResponseSchema.safeParse(data);
+    const { error, data: parsedData } = activatedOffersBySchoolResponseSchema.safeParse(data);
     if (error) {
-      throw new Error(
-        `Schema Validation | Offers response is invalid: ${error.message}`,
-      );
+      throw new Error(`Schema Validation | Offers response is invalid: ${error.message}`);
     }
     return new OffersResponse(parsedData);
   }

@@ -10,10 +10,7 @@ import { transformIntoExpressContext } from '../util/graphql/express-context';
  */
 export const SubOptional = createParamDecorator<never, string | undefined>(
   (_, context: ExecutionContext) => {
-    const req =
-      transformIntoExpressContext<RequestMaybeContainingIntrospection>(
-        context,
-      ).req;
+    const req = transformIntoExpressContext<RequestMaybeContainingIntrospection>(context).req;
     return isRequestWithIntrospection(req) ? req.introspection.sub : undefined;
   },
 );

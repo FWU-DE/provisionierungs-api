@@ -1,17 +1,14 @@
-import { Aggregator } from './aggregator';
-import { EduplacesAdapter } from '../adapter/eduplaces/eduplaces-adapter';
-import { EduplacesStagingAdapter } from '../adapter/eduplaces-staging/eduplaces-staging-adapter';
-import { Pseudonymization } from '../../pseudonymization/pseudonymization';
+import type { Clearance } from '../../clearance/entity/clearance.entity';
 import { Logger } from '../../common/logger';
 import { SchulconnexPersonsQueryParameters } from '../../controller/parameters/schulconnex-persons-query-parameters';
-import { type AdapterGetPersonsReturnType } from '../adapter/adapter-interface';
-import {
-  createTestingInfrastructure,
-  type TestingInfrastructure,
-} from '../../test/testing-module';
-import { IdentityProviderModule } from '../identity-provider.module';
-import type { Clearance } from '../../clearance/entity/clearance.entity';
 import { OfferContext } from '../../offers/model/offer-context';
+import { Pseudonymization } from '../../pseudonymization/pseudonymization';
+import { type TestingInfrastructure, createTestingInfrastructure } from '../../test/testing-module';
+import { type AdapterGetPersonsReturnType } from '../adapter/adapter-interface';
+import { EduplacesStagingAdapter } from '../adapter/eduplaces-staging/eduplaces-staging-adapter';
+import { EduplacesAdapter } from '../adapter/eduplaces/eduplaces-adapter';
+import { IdentityProviderModule } from '../identity-provider.module';
+import { Aggregator } from './aggregator';
 
 // Mock the clearance filter modules
 jest.mock('../../clearance/filter/clearance-field.filter', () => ({
@@ -137,16 +134,10 @@ describe('Aggregator', () => {
 
       // Setup mocks
       mockEduplacesAdapter.getPersons.mockResolvedValue(mockEduplacesResponse);
-      mockEduplacesStagingAdapter.getPersons.mockResolvedValue(
-        mockStagingResponse,
-      );
+      mockEduplacesStagingAdapter.getPersons.mockResolvedValue(mockStagingResponse);
 
       // Call the method
-      const result = await aggregator.getPersons(
-        mockIdmIds,
-        mockOfferContext,
-        mockParameters,
-      );
+      const result = await aggregator.getPersons(mockIdmIds, mockOfferContext, mockParameters);
 
       // Assertions
       expect(result).toEqual([
@@ -208,23 +199,14 @@ describe('Aggregator', () => {
 
       // Setup mocks
       mockEduplacesAdapter.getPersons.mockResolvedValue(mockEduplacesResponse);
-      mockEduplacesStagingAdapter.getPersons.mockResolvedValue(
-        mockStagingResponse,
-      );
+      mockEduplacesStagingAdapter.getPersons.mockResolvedValue(mockStagingResponse);
 
       // Call the method
-      const result = await aggregator.getPersons(
-        mockIdmIds,
-        mockOfferContext,
-        mockParameters,
-        [],
-      );
+      const result = await aggregator.getPersons(mockIdmIds, mockOfferContext, mockParameters, []);
 
       // Assertions
       // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        'No data received from IDM: eduplaces',
-      );
+      expect(mockLogger.error).toHaveBeenCalledWith('No data received from IDM: eduplaces');
       expect(result).toEqual([
         {
           pid: 'user2',
@@ -261,22 +243,14 @@ describe('Aggregator', () => {
       };
 
       // Setup mocks
-      mockEduplacesStagingAdapter.getPersons.mockResolvedValue(
-        mockStagingResponse,
-      );
+      mockEduplacesStagingAdapter.getPersons.mockResolvedValue(mockStagingResponse);
 
       // Call the method
-      const result = await aggregator.getPersons(
-        mockIdmIds,
-        mockOfferContext,
-        mockParameters,
-      );
+      const result = await aggregator.getPersons(mockIdmIds, mockOfferContext, mockParameters);
 
       // Assertions
       // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        'No adapter found for IDM: non-existent',
-      );
+      expect(mockLogger.error).toHaveBeenCalledWith('No adapter found for IDM: non-existent');
       expect(result).toEqual([
         {
           pid: 'user2',
@@ -298,11 +272,7 @@ describe('Aggregator', () => {
       const mockIdmIds: string[] = [];
 
       // Call the method
-      const result = await aggregator.getPersons(
-        mockIdmIds,
-        mockOfferContext,
-        mockParameters,
-      );
+      const result = await aggregator.getPersons(mockIdmIds, mockOfferContext, mockParameters);
 
       // Assertions
       expect(result).toEqual([]);
@@ -341,21 +311,13 @@ describe('Aggregator', () => {
       mockEduplacesAdapter.getPersons.mockResolvedValue(mockEduplacesResponse);
 
       // Call the method
-      await aggregator.getPersons(
-        mockIdmIds,
-        mockOfferContext,
-        mockParameters,
-        [],
-      );
+      await aggregator.getPersons(mockIdmIds, mockOfferContext, mockParameters, []);
 
       // Assertions
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockEduplacesAdapter.getIdentifier).toHaveBeenCalled();
       // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(mockEduplacesAdapter.getPersons).toHaveBeenCalledWith(
-        mockParameters,
-        [],
-      );
+      expect(mockEduplacesAdapter.getPersons).toHaveBeenCalledWith(mockParameters, []);
     });
 
     it('should not find adapter by ID when it does not exist', async () => {
@@ -366,12 +328,7 @@ describe('Aggregator', () => {
       const mockIdmIds = ['non-existent'];
 
       // Call the method
-      await aggregator.getPersons(
-        mockIdmIds,
-        mockOfferContext,
-        mockParameters,
-        [],
-      );
+      await aggregator.getPersons(mockIdmIds, mockOfferContext, mockParameters, []);
 
       // Assertions
       // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -379,9 +336,7 @@ describe('Aggregator', () => {
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockEduplacesStagingAdapter.getIdentifier).toHaveBeenCalled();
       // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        'No adapter found for IDM: non-existent',
-      );
+      expect(mockLogger.error).toHaveBeenCalledWith('No adapter found for IDM: non-existent');
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockEduplacesAdapter.getPersons).not.toHaveBeenCalled();
       // eslint-disable-next-line @typescript-eslint/unbound-method

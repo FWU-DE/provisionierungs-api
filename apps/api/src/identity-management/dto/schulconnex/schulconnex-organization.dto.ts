@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+
 import { SchulconnexAddress } from './schulconnex-address.dto';
 
 export class SchulconnexOrganization {
@@ -31,23 +32,9 @@ export class SchulconnexOrganization {
 
   @ApiProperty({
     description: 'The type of the organization',
-    enum: [
-      'Schule',
-      'Anbieter',
-      'Medienzentrum',
-      'Behoerde',
-      'SchTrae',
-      'Sonstige',
-    ],
+    enum: ['Schule', 'Anbieter', 'Medienzentrum', 'Behoerde', 'SchTrae', 'Sonstige'],
   })
-  typ?:
-    | 'Schule'
-    | 'Anbieter'
-    | 'Medienzentrum'
-    | 'Behoerde'
-    | 'SchTrae'
-    | 'Sonstige'
-    | null;
+  typ?: 'Schule' | 'Anbieter' | 'Medienzentrum' | 'Behoerde' | 'SchTrae' | 'Sonstige' | null;
 
   @ApiProperty({
     description: 'The authority/operator of the organization',

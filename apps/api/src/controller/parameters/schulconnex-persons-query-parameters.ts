@@ -16,13 +16,13 @@ export type SchulconnexQueryParameterComplete =
   (typeof schulconnexQueryParameterCompleteOptions)[number];
 
 export class SchulconnexPersonsQueryParameters {
-  vollstaendig: Set<SchulconnexQueryParameterComplete>;
-  pid?: string;
+  'vollstaendig': Set<SchulconnexQueryParameterComplete>;
+  'pid'?: string;
   'personenkontext.id'?: string;
   'gruppe.id'?: string;
   'organisation.id'?: string;
 
-  constructor(
+  'constructor'(
     vollstaendig: undefined | string = undefined,
     pid: undefined | string = undefined,
     personenkontextId: undefined | string = undefined,
@@ -38,15 +38,13 @@ export class SchulconnexPersonsQueryParameters {
     if (vollstaendig) {
       const values = vollstaendig.split(',');
       const validValues = values.filter((value) =>
-        (
-          schulconnexQueryParameterCompleteOptions as readonly string[]
-        ).includes(value),
+        (schulconnexQueryParameterCompleteOptions as readonly string[]).includes(value),
       ) as SchulconnexQueryParameterComplete[];
       validValues.forEach((value) => this.vollstaendig.add(value));
     }
   }
 
-  public clone(): SchulconnexPersonsQueryParameters {
+  public 'clone'(): SchulconnexPersonsQueryParameters {
     return new SchulconnexPersonsQueryParameters(
       Array.from(this.vollstaendig).join(','),
       this.pid,
@@ -56,7 +54,7 @@ export class SchulconnexPersonsQueryParameters {
     );
   }
 
-  public toUrlSearchParams(): string {
+  public 'toUrlSearchParams'(): string {
     const parameters: Record<string, string> = {};
     if (this.vollstaendig.size > 0) {
       parameters.vollstaendig = Array.from(this.vollstaendig).join(',');

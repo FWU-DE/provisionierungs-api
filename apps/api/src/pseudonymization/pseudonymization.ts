@@ -1,11 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
+
+import { SchulconnexPersonContext } from '../identity-management/dto/schulconnex/schulconnex-person-context.dto';
+import { type SchulconnexPersonsResponse } from '../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
+import { OfferContext } from '../offers/model/offer-context';
 import pseudonymizationConfig, {
   type PseudonymizationConfig,
 } from './config/pseudonymization.config';
-import { SchulconnexPersonContext } from '../identity-management/dto/schulconnex/schulconnex-person-context.dto';
-import { type SchulconnexPersonsResponse } from '../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
 import { Hasher } from './hasher';
-import { OfferContext } from '../offers/model/offer-context';
 
 /**
  * Pseudonymization
@@ -27,15 +28,11 @@ export class Pseudonymization {
     identities: SchulconnexPersonsResponse[],
   ): Promise<SchulconnexPersonsResponse[]> {
     const salt = await this.getSalt(offerContext.clientId);
-    const sectorIdentifier = await this.getSectorIdentifier(
-      offerContext.clientId,
-    );
+    const sectorIdentifier = await this.getSectorIdentifier(offerContext.clientId);
 
     return await Promise.all(
       identities.map(
-        async (
-          identity: SchulconnexPersonsResponse,
-        ): Promise<SchulconnexPersonsResponse> => {
+        async (identity: SchulconnexPersonsResponse): Promise<SchulconnexPersonsResponse> => {
           identity.pid = this.hasher.hash(identity.pid, salt, sectorIdentifier);
 
           if (identity.person?.stammorganisation?.id) {
@@ -47,14 +44,8 @@ export class Pseudonymization {
           }
 
           identity.personenkontexte?.map(
-            (
-              personenkontext: SchulconnexPersonContext,
-            ): SchulconnexPersonContext => {
-              personenkontext.id = this.hasher.hash(
-                personenkontext.id,
-                salt,
-                sectorIdentifier,
-              );
+            (personenkontext: SchulconnexPersonContext): SchulconnexPersonContext => {
+              personenkontext.id = this.hasher.hash(personenkontext.id, salt, sectorIdentifier);
 
               return personenkontext;
             },

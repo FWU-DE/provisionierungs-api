@@ -1,4 +1,5 @@
 import { Query, Resolver } from '@nestjs/graphql';
+
 import { AllowResourceOwnerType, ResourceOwnerType } from '../../common/auth';
 import {
   type UserContext,
@@ -17,10 +18,7 @@ export class GroupAllQuery {
     // @todo: Test again after proper test data is available.
 
     return (
-      await this.aggregator.getGroups(
-        [userContext.heimatorganisation],
-        userContext.schulkennung,
-      )
+      await this.aggregator.getGroups([userContext.heimatorganisation], userContext.schulkennung)
     )
       .flatMap((groups) => groups.groups)
       .map((group) => new Group(group.id, group.bezeichnung));

@@ -1,17 +1,18 @@
-import { AbstractFetcher } from '../abstract-fetcher';
+import { ensureError } from '@fwu-rostering/utils/error';
 import { Injectable } from '@nestjs/common';
+import type { ZodArray, ZodObject } from 'zod';
+
+import { SchulconnexOrganizationQueryParameters } from '../../../controller/parameters/schulconnex-organisations-query-parameters';
 import { SchulconnexPersonsQueryParameters } from '../../../controller/parameters/schulconnex-persons-query-parameters';
+import { BearerToken } from '../../authentication/bearer-token';
+import { SchulconnexGroup } from '../../dto/schulconnex/schulconnex-group.dto';
+import { SchulconnexOrganization } from '../../dto/schulconnex/schulconnex-organization.dto';
+import { AbstractFetcher } from '../abstract-fetcher';
 import { SchulconnexPersonsResponse } from './schulconnex-response.interface';
 import {
   schulconnexOrganizationsResponseSchema,
   schulconnexPersonsResponseSchema,
 } from './schulconnex.validator';
-import { BearerToken } from '../../authentication/bearer-token';
-import type { ZodArray, ZodObject } from 'zod';
-import { SchulconnexGroup } from '../../dto/schulconnex/schulconnex-group.dto';
-import { ensureError } from '@fwu-rostering/utils/error';
-import { SchulconnexOrganization } from '../../dto/schulconnex/schulconnex-organization.dto';
-import { SchulconnexOrganizationQueryParameters } from '../../../controller/parameters/schulconnex-organisations-query-parameters';
 
 @Injectable()
 export class SchulconnexFetcher extends AbstractFetcher<BearerToken> {
@@ -39,8 +40,7 @@ export class SchulconnexFetcher extends AbstractFetcher<BearerToken> {
       queryParams.vollstaendig.add('gruppen');
     }
 
-    const fullEndpointUrl =
-      endpointUrl + '/personen-info?' + queryParams.toUrlSearchParams();
+    const fullEndpointUrl = endpointUrl + '/personen-info?' + queryParams.toUrlSearchParams();
     const response = await fetch(fullEndpointUrl, {
       method: 'GET',
       headers: {
@@ -48,10 +48,7 @@ export class SchulconnexFetcher extends AbstractFetcher<BearerToken> {
       },
     });
 
-    const data = await this.handleData<SchulconnexPersonsResponse[]>(
-      response,
-      fullEndpointUrl,
-    );
+    const data = await this.handleData<SchulconnexPersonsResponse[]>(response, fullEndpointUrl);
 
     try {
       return this.validatePersonsData<SchulconnexPersonsResponse[]>(data);
@@ -70,8 +67,7 @@ export class SchulconnexFetcher extends AbstractFetcher<BearerToken> {
   ): Promise<null | SchulconnexOrganization[]> {
     const queryParams = parameters.clone();
 
-    const fullEndpointUrl =
-      endpointUrl + '/organisationen-info?' + queryParams.toUrlSearchParams();
+    const fullEndpointUrl = endpointUrl + '/organisationen-info?' + queryParams.toUrlSearchParams();
     const response = await fetch(fullEndpointUrl, {
       method: 'GET',
       headers: {
@@ -79,10 +75,7 @@ export class SchulconnexFetcher extends AbstractFetcher<BearerToken> {
       },
     });
 
-    const data = await this.handleData<SchulconnexOrganization[]>(
-      response,
-      fullEndpointUrl,
-    );
+    const data = await this.handleData<SchulconnexOrganization[]>(response, fullEndpointUrl);
 
     try {
       return this.validateOrganizationsData<SchulconnexOrganization[]>(data);
@@ -120,10 +113,7 @@ export class SchulconnexFetcher extends AbstractFetcher<BearerToken> {
       .flatMap((person) => person.personenkontexte ?? [])
       .flatMap((context) => context.gruppen ?? [])
       .reduce<SchulconnexGroup[]>((acc, groupData) => {
-        if (
-          groupData.gruppe !== null &&
-          typeof groupData.gruppe !== 'undefined'
-        ) {
+        if (groupData.gruppe !== null && typeof groupData.gruppe !== 'undefined') {
           acc.push(groupData.gruppe);
         }
         return acc;

@@ -1,7 +1,8 @@
-import { Resolver, Mutation, Args, Int } from '@nestjs/graphql';
-import { Clearance } from '../entity/clearance.entity';
+import { Args, Int, Mutation, Resolver } from '@nestjs/graphql';
+
 import { ClearanceService } from '../clearance.service';
 import { ClearanceResponse } from '../dto/clearance-response.dto';
+import { Clearance } from '../entity/clearance.entity';
 
 @Resolver(() => ClearanceResponse)
 export class ClearanceCreateMutation {
@@ -22,8 +23,6 @@ export class ClearanceCreateMutation {
     clearanceEntry.schoolId = schoolId;
     clearanceEntry.idmId = idmId;
 
-    return new ClearanceResponse(
-      await this.clearanceService.save(clearanceEntry),
-    );
+    return new ClearanceResponse(await this.clearanceService.save(clearanceEntry));
   }
 }

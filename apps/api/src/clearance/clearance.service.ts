@@ -9,9 +9,10 @@ import {
   In,
   type Repository,
 } from 'typeorm';
-import { Clearance } from './entity/clearance.entity';
+
 import { EntityService } from '../common/database/entity.service';
 import type { ResolveRelations } from '../common/database/typeorm';
+import { Clearance } from './entity/clearance.entity';
 
 @Injectable()
 export class ClearanceService extends EntityService<Clearance> {
@@ -22,10 +23,7 @@ export class ClearanceService extends EntityService<Clearance> {
     super(clearanceRepository);
   }
 
-  async save(
-    clearance: Clearance,
-    transactionManager?: EntityManager,
-  ): Promise<Clearance> {
+  async save(clearance: Clearance, transactionManager?: EntityManager): Promise<Clearance> {
     await this.getRepository(transactionManager)
       .createQueryBuilder()
       .insert()
@@ -37,10 +35,7 @@ export class ClearanceService extends EntityService<Clearance> {
     return clearance;
   }
 
-  async delete(
-    id: Clearance['id'],
-    transactionManager?: EntityManager,
-  ): Promise<DeleteResult> {
+  async delete(id: Clearance['id'], transactionManager?: EntityManager): Promise<DeleteResult> {
     return this.getRepository(transactionManager).delete(id);
   }
 

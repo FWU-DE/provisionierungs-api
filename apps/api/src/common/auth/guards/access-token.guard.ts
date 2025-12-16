@@ -2,8 +2,8 @@ import type { CanActivate, ExecutionContext } from '@nestjs/common';
 import { ConsoleLogger, Injectable } from '@nestjs/common';
 
 import type { RequestMaybeContainingIntrospection } from '../interfaces/request-with-introspection.interface';
-import { transformIntoExpressContext } from '../util/graphql/express-context';
 import { IntrospectionProvider } from '../introspection/introspection.provider';
+import { transformIntoExpressContext } from '../util/graphql/express-context';
 import { PublicRouteEvaluator } from './public-route.evaluator';
 
 @Injectable()
@@ -29,9 +29,7 @@ export class AccessTokenGuard implements CanActivate {
       this.getRequest<RequestMaybeContainingIntrospection>(context),
     );
     if (introspection === null) {
-      this.logger.error(
-        'AccessTokenGuard: Access token is invalid. Denying access.',
-      );
+      this.logger.error('AccessTokenGuard: Access token is invalid. Denying access.');
       return false;
     }
 

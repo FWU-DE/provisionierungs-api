@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+
 import { SchulconnexRelation } from './schulconnex-relation.dto';
 
 export class SchulconnexRelations {

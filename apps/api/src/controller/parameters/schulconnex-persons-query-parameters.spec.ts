@@ -38,9 +38,7 @@ describe('SchulconnexQueryParameters', () => {
     });
 
     it('should filter out invalid vollstaendig values', () => {
-      const params = new SchulconnexPersonsQueryParameters(
-        'personen,invalid,personenkontexte',
-      );
+      const params = new SchulconnexPersonsQueryParameters('personen,invalid,personenkontexte');
       expect(params.vollstaendig.size).toBe(2);
       expect(params.vollstaendig.has('personen')).toBeTruthy();
       expect(params.vollstaendig.has('personenkontexte')).toBeTruthy();
@@ -65,9 +63,7 @@ describe('SchulconnexQueryParameters', () => {
 
       // Verify values are the same
       expect(clone.vollstaendig.size).toBe(original.vollstaendig.size);
-      expect(Array.from(clone.vollstaendig)).toEqual(
-        Array.from(original.vollstaendig),
-      );
+      expect(Array.from(clone.vollstaendig)).toEqual(Array.from(original.vollstaendig));
       expect(clone.pid).toBe(original.pid);
       expect(clone['personenkontext.id']).toBe(original['personenkontext.id']);
       expect(clone['gruppe.id']).toBe(original['gruppe.id']);
@@ -82,19 +78,12 @@ describe('SchulconnexQueryParameters', () => {
     });
 
     it('should include vollstaendig parameter when set', () => {
-      const params = new SchulconnexPersonsQueryParameters(
-        'personen,personenkontexte',
-      );
-      expect(params.toUrlSearchParams()).toBe(
-        'vollstaendig=personen%2Cpersonenkontexte',
-      );
+      const params = new SchulconnexPersonsQueryParameters('personen,personenkontexte');
+      expect(params.toUrlSearchParams()).toBe('vollstaendig=personen%2Cpersonenkontexte');
     });
 
     it('should include pid parameter when set', () => {
-      const params = new SchulconnexPersonsQueryParameters(
-        undefined,
-        'test-pid',
-      );
+      const params = new SchulconnexPersonsQueryParameters(undefined, 'test-pid');
       expect(params.toUrlSearchParams()).toBe('pid=test-pid');
     });
 
@@ -104,9 +93,7 @@ describe('SchulconnexQueryParameters', () => {
         undefined,
         'test-personenkontext',
       );
-      expect(params.toUrlSearchParams()).toBe(
-        'personenkontext.id=test-personenkontext',
-      );
+      expect(params.toUrlSearchParams()).toBe('personenkontext.id=test-personenkontext');
     });
 
     it('should include gruppe.id parameter when set', () => {
@@ -127,9 +114,7 @@ describe('SchulconnexQueryParameters', () => {
         undefined,
         'test-organisation',
       );
-      expect(params.toUrlSearchParams()).toBe(
-        'organisation.id=test-organisation',
-      );
+      expect(params.toUrlSearchParams()).toBe('organisation.id=test-organisation');
     });
 
     it('should include all parameters when all are set', () => {

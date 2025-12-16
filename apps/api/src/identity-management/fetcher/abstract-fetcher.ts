@@ -1,12 +1,13 @@
-import type { ZodArray, ZodObject } from 'zod';
-import { Logger } from '../../common/logger';
-import { type SchulconnexPersonsResponse } from './schulconnex/schulconnex-response.interface';
-import { type SchulconnexPersonsQueryParameters } from '../../controller/parameters/schulconnex-persons-query-parameters';
 import { Inject } from '@nestjs/common';
-import { SchulconnexGroup } from '../dto/schulconnex/schulconnex-group.dto';
+import type { ZodArray, ZodObject } from 'zod';
+
+import { Logger } from '../../common/logger';
 import { SchulconnexOrganizationQueryParameters } from '../../controller/parameters/schulconnex-organisations-query-parameters';
+import { type SchulconnexPersonsQueryParameters } from '../../controller/parameters/schulconnex-persons-query-parameters';
 import { BearerToken } from '../authentication/bearer-token';
+import { SchulconnexGroup } from '../dto/schulconnex/schulconnex-group.dto';
 import { SchulconnexOrganization } from '../dto/schulconnex/schulconnex-organization.dto';
+import { type SchulconnexPersonsResponse } from './schulconnex/schulconnex-response.interface';
 
 /**
  * Fetcher
@@ -47,10 +48,7 @@ export abstract class AbstractFetcher<Credentials> {
   /**
    * Common wrapper method to handle common request issues.
    */
-  protected async handleData<T>(
-    response: Response,
-    endpointUrl?: string,
-  ): Promise<T | null> {
+  protected async handleData<T>(response: Response, endpointUrl?: string): Promise<T | null> {
     if (!response.ok) {
       this.logger.error(
         `Failed to fetch IDM data: ${String(response.status)} ${response.statusText} (${endpointUrl ?? 'unknown endpoint URL'})`,
@@ -65,9 +63,7 @@ export abstract class AbstractFetcher<Credentials> {
     const validator = this.getPersonsValidator();
     const { error, data: parsedData } = validator.safeParse(data);
     if (error) {
-      throw new Error(
-        `Schema Validation | IDM response is invalid: ${error.message}`,
-      );
+      throw new Error(`Schema Validation | IDM response is invalid: ${error.message}`);
     }
     return parsedData as T;
   }
@@ -76,9 +72,7 @@ export abstract class AbstractFetcher<Credentials> {
     const validator = this.getOrganizationsValidator();
     const { error, data: parsedData } = validator.safeParse(data);
     if (error) {
-      throw new Error(
-        `Schema Validation | IDM response is invalid: ${error.message}`,
-      );
+      throw new Error(`Schema Validation | IDM response is invalid: ${error.message}`);
     }
     return parsedData as T;
   }

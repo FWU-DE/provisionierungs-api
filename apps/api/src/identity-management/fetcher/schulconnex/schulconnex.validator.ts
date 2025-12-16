@@ -13,14 +13,7 @@ export const schulconnexOrganizationResponseSchema = z.object({
     .nullable()
     .optional(),
   typ: z
-    .enum([
-      'Schule',
-      'Anbieter',
-      'Medienzentrum',
-      'Behoerde',
-      'SchTrae',
-      'Sonstige',
-    ])
+    .enum(['Schule', 'Anbieter', 'Medienzentrum', 'Behoerde', 'SchTrae', 'Sonstige'])
     .nullable()
     .optional(),
 });
@@ -32,18 +25,7 @@ export const schulconnexOrganizationsResponseSchema = z.array(
 export const schulconnextGroupAffiliationSchema = z.object({
   ktid: z.string().nullable().optional(),
   rollen: z
-    .array(
-      z.enum([
-        'Lern',
-        'Lehr',
-        'KlLeit',
-        'Foerd',
-        'VLehr',
-        'SchB',
-        'GMit',
-        'GLeit',
-      ]),
-    )
+    .array(z.enum(['Lern', 'Lehr', 'KlLeit', 'Foerd', 'VLehr', 'SchB', 'GMit', 'GLeit']))
     .nullable()
     .optional(),
   von: z.union([z.iso.datetime(), z.iso.date()]).nullable().optional(),
@@ -55,9 +37,7 @@ export const schulconnexPersonsResponseSchema = z.array(
     pid: z.string(),
     person: z
       .object({
-        stammorganisation: schulconnexOrganizationResponseSchema
-          .nullable()
-          .optional(),
+        stammorganisation: schulconnexOrganizationResponseSchema.nullable().optional(),
         name: z
           .object({
             vorname: z.string(),
@@ -75,10 +55,7 @@ export const schulconnexPersonsResponseSchema = z.array(
           .optional(),
         geschlecht: z.enum(['m', 'w', 'd', 'x']).nullable().optional(),
         lokalisierung: z.string().nullable().optional(),
-        vertrauensstufe: z
-          .enum(['Kein', 'Unbe', 'Teil', 'Voll'])
-          .nullable()
-          .optional(),
+        vertrauensstufe: z.enum(['Kein', 'Unbe', 'Teil', 'Voll']).nullable().optional(),
       })
       .nullable()
       .optional(),
@@ -86,9 +63,7 @@ export const schulconnexPersonsResponseSchema = z.array(
       .array(
         z.object({
           id: z.string().optional(),
-          organisation: schulconnexOrganizationResponseSchema
-            .nullable()
-            .optional(),
+          organisation: schulconnexOrganizationResponseSchema.nullable().optional(),
           rolle: z
             .enum([
               'Lern',
@@ -125,13 +100,7 @@ export const schulconnexPersonsResponseSchema = z.array(
                     beschreibung: z.string().nullable().optional(),
                     typ: z.string().nullable().optional(),
                     bereich: z
-                      .enum([
-                        'Pflicht',
-                        'Wahl',
-                        'Wahlpflicht',
-                        'Grundkurs',
-                        'Leistungskurs',
-                      ])
+                      .enum(['Pflicht', 'Wahl', 'Wahlpflicht', 'Grundkurs', 'Leistungskurs'])
                       .nullable()
                       .optional(),
                     optionen: z.array(z.string()).nullable().optional(),
@@ -151,15 +120,9 @@ export const schulconnexPersonsResponseSchema = z.array(
                       .optional(),
                     laufzeit: z
                       .object({
-                        von: z
-                          .union([z.iso.datetime(), z.iso.date()])
-                          .nullable()
-                          .optional(),
+                        von: z.union([z.iso.datetime(), z.iso.date()]).nullable().optional(),
                         vonlernperiode: z.string().nullable().optional(),
-                        bis: z
-                          .union([z.iso.datetime(), z.iso.date()])
-                          .nullable()
-                          .optional(),
+                        bis: z.union([z.iso.datetime(), z.iso.date()]).nullable().optional(),
                         bislernperiode: z.string().nullable().optional(),
                       })
                       .nullable()
@@ -167,9 +130,7 @@ export const schulconnexPersonsResponseSchema = z.array(
                   })
                   .nullable()
                   .optional(),
-                gruppenzugehoerigkeit: schulconnextGroupAffiliationSchema
-                  .nullable()
-                  .optional(),
+                gruppenzugehoerigkeit: schulconnextGroupAffiliationSchema.nullable().optional(),
                 sonstige_gruppenzugehoerige: z
                   .array(schulconnextGroupAffiliationSchema)
                   .nullable()
@@ -197,10 +158,7 @@ export const schulconnexPersonsResponseSchema = z.array(
             .optional(),
           loeschung: z
             .object({
-              zeitpunkt: z
-                .union([z.iso.datetime(), z.iso.date()])
-                .nullable()
-                .optional(),
+              zeitpunkt: z.union([z.iso.datetime(), z.iso.date()]).nullable().optional(),
             })
             .nullable()
             .optional(),

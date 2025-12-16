@@ -1,8 +1,5 @@
-import type {
-  AdapterGetGroupsReturnType,
-  AdapterInterface,
-} from './adapter-interface';
 import { SchulconnexPersonsQueryParameters } from '../../controller/parameters/schulconnex-persons-query-parameters';
+import type { AdapterGetGroupsReturnType, AdapterInterface } from './adapter-interface';
 
 describe('AdapterInterface', () => {
   it('should handle getPersons method correctly', async () => {

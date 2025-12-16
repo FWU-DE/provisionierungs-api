@@ -1,13 +1,9 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiExcludeController } from '@nestjs/swagger';
-import {
-  HealthCheck,
-  HealthCheckResult,
-  HealthCheckService,
-} from '@nestjs/terminus';
+import { HealthCheck, HealthCheckResult, HealthCheckService } from '@nestjs/terminus';
 
-import { DatabaseReadonlyHealthIndicator } from './database-readonly.health';
 import { NoAccessTokenAuthRequired } from '../common/auth';
+import { DatabaseReadonlyHealthIndicator } from './database-readonly.health';
 
 @Controller('health')
 @ApiExcludeController()
@@ -21,8 +17,6 @@ export class HealthController {
   @Get()
   @HealthCheck()
   check(): Promise<HealthCheckResult> {
-    return this.health.check([
-      () => this.databaseReadonlyHealthIndicator.isHealthy(),
-    ]);
+    return this.health.check([() => this.databaseReadonlyHealthIndicator.isHealthy()]);
   }
 }

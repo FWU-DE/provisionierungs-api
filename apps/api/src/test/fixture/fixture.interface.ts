@@ -2,7 +2,6 @@
 // type Exact<TObj, TProps> = {
 //   [k in keyof TProps]: k extends keyof TObj ? TProps[k] : never;
 // };
-
 import type { BaseEntity } from '../../common/database/base.entity';
 
 export function fixture<T extends BaseEntity, P extends Partial<T>>(

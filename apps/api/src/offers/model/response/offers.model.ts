@@ -13,10 +13,7 @@ export class OffersResponse {
 
   constructor(
     data: Partial<
-      Pick<
-        OffersResponse,
-        'lastPage' | 'totalCount' | 'pageSize' | 'actions' | 'page'
-      > & {
+      Pick<OffersResponse, 'lastPage' | 'totalCount' | 'pageSize' | 'actions' | 'page'> & {
         items: ConstructorParameters<typeof OfferItem>[0][];
         facets: Facet[];
       }

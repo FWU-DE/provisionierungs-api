@@ -1,6 +1,6 @@
 import { registerAs } from '@nestjs/config';
-
 import z from 'zod';
+
 import type { IdmApiWithClientCredentialConfig } from './idm-config.interface';
 
 export type EduplacesConfig = IdmApiWithClientCredentialConfig<'IDM_EDUPLACES'>;

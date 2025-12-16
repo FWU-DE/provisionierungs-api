@@ -23,17 +23,7 @@ export class SchulconnexPersonContext {
   // s. https://schulconnex.de/docs/codelisten/#rolle
   @ApiProperty({
     description: 'The role of the user in this context.',
-    enum: [
-      'Lern',
-      'Lehr',
-      'SorgBer',
-      'Extern',
-      'OrgAdmin',
-      'Leit',
-      'SysAdmin',
-      'SchB',
-      'NLehr',
-    ],
+    enum: ['Lern', 'Lehr', 'SorgBer', 'Extern', 'OrgAdmin', 'Leit', 'SysAdmin', 'SchB', 'NLehr'],
     nullable: true,
   })
   rolle?:

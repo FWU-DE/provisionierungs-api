@@ -1,5 +1,5 @@
-import { schulconnexPersonsResponseSchema } from './schulconnex.validator';
 import { type SchulconnexPersonsResponse } from './schulconnex-response.interface';
+import { schulconnexPersonsResponseSchema } from './schulconnex.validator';
 
 describe('SchulconnexValidator', () => {
   describe('schulconnexUsersResponseSchema', () => {

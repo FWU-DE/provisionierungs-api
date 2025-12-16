@@ -1,20 +1,21 @@
+import { Inject, Injectable } from '@nestjs/common';
+
+import type { Clearance } from '../../../clearance/entity/clearance.entity';
+import { SchulconnexOrganizationQueryParameters } from '../../../controller/parameters/schulconnex-organisations-query-parameters';
+import { SchulconnexPersonsQueryParameters } from '../../../controller/parameters/schulconnex-persons-query-parameters';
+import { BearerToken } from '../../authentication/bearer-token';
+import { ClientCredentialsProvider } from '../../authentication/client-credentials';
+import idmEduplacesStagingConfig, {
+  type EduplacesStagingConfig,
+} from '../../config/idm.eduplaces-staging.config';
+import { SchulconnexFetcher } from '../../fetcher/schulconnex/schulconnex.fetcher';
+import { transformSchulconnexPersonsResponse } from '../../fetcher/schulconnex/schulconnex.transformer';
 import {
   AdapterGetGroupsReturnType,
   AdapterGetOrganizationsReturnType,
   AdapterGetPersonsReturnType,
   AdapterInterface,
 } from '../adapter-interface';
-import { Inject, Injectable } from '@nestjs/common';
-import { SchulconnexFetcher } from '../../fetcher/schulconnex/schulconnex.fetcher';
-import { SchulconnexPersonsQueryParameters } from '../../../controller/parameters/schulconnex-persons-query-parameters';
-import { transformSchulconnexPersonsResponse } from '../../fetcher/schulconnex/schulconnex.transformer';
-import { ClientCredentialsProvider } from '../../authentication/client-credentials';
-import idmEduplacesStagingConfig, {
-  type EduplacesStagingConfig,
-} from '../../config/idm.eduplaces-staging.config';
-import { BearerToken } from '../../authentication/bearer-token';
-import { SchulconnexOrganizationQueryParameters } from '../../../controller/parameters/schulconnex-organisations-query-parameters';
-import type { Clearance } from '../../../clearance/entity/clearance.entity';
 
 @Injectable()
 export class EduplacesStagingAdapter implements AdapterInterface {
@@ -32,9 +33,7 @@ export class EduplacesStagingAdapter implements AdapterInterface {
   }
 
   isEnabled(): boolean {
-    return (
-      this.idmEduplacesStagingConfig.IDM_EDUPLACES_STAGING_ENABLED ?? false
-    );
+    return this.idmEduplacesStagingConfig.IDM_EDUPLACES_STAGING_ENABLED ?? false;
   }
 
   private async getAuthToken(): Promise<BearerToken> {

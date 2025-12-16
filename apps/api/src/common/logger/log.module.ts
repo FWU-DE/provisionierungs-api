@@ -18,8 +18,6 @@ import { Logger } from './logger';
 })
 export class LogModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(HttpLoggingMiddleware)
-      .forRoutes({ path: '*', method: RequestMethod.ALL });
+    consumer.apply(HttpLoggingMiddleware).forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }

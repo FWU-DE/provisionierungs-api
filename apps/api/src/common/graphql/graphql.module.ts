@@ -4,9 +4,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule as NestGraphQLModule } from '@nestjs/graphql';
 
+import appConfig, { type AppConfig, NodeEnv } from '../../config/app.config';
 import { LogModule } from '../logger';
 import { LoggingPlugin } from './logging.plugin';
-import appConfig, { NodeEnv, type AppConfig } from '../../config/app.config';
 
 @Module({
   imports: [
@@ -17,8 +17,7 @@ import appConfig, { NodeEnv, type AppConfig } from '../../config/app.config';
       useFactory: (appConfig: AppConfig) => ({
         playground: appConfig.NODE_ENV === NodeEnv.DEVELOPMENT,
         resolverValidationOptions: {
-          requireResolversToMatchSchema:
-            appConfig.NODE_ENV !== NodeEnv.TEST ? 'error' : 'ignore',
+          requireResolversToMatchSchema: appConfig.NODE_ENV !== NodeEnv.TEST ? 'error' : 'ignore',
         },
         autoSchemaFile:
           appConfig.NODE_ENV === NodeEnv.DEVELOPMENT

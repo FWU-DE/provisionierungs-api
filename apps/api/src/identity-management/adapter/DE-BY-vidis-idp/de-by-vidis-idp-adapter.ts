@@ -1,20 +1,21 @@
+import { Inject, Injectable } from '@nestjs/common';
+
+import type { Clearance } from '../../../clearance/entity/clearance.entity';
+import { SchulconnexOrganizationQueryParameters } from '../../../controller/parameters/schulconnex-organisations-query-parameters';
+import { SchulconnexPersonsQueryParameters } from '../../../controller/parameters/schulconnex-persons-query-parameters';
+import { BearerToken } from '../../authentication/bearer-token';
+import { ClientCredentialsProvider } from '../../authentication/client-credentials';
+import idmBY_DE_vidis_idpConfig, {
+  type DE_BY_vidis_idpConfig,
+} from '../../config/idm.DE-BY-vidis-idp.config';
+import { SchulconnexFetcher } from '../../fetcher/schulconnex/schulconnex.fetcher';
+import { transformSchulconnexPersonsResponse } from '../../fetcher/schulconnex/schulconnex.transformer';
 import {
   AdapterGetGroupsReturnType,
   AdapterGetOrganizationsReturnType,
   AdapterGetPersonsReturnType,
   AdapterInterface,
 } from '../adapter-interface';
-import { Inject, Injectable } from '@nestjs/common';
-import { SchulconnexFetcher } from '../../fetcher/schulconnex/schulconnex.fetcher';
-import { SchulconnexPersonsQueryParameters } from '../../../controller/parameters/schulconnex-persons-query-parameters';
-import { transformSchulconnexPersonsResponse } from '../../fetcher/schulconnex/schulconnex.transformer';
-import { ClientCredentialsProvider } from '../../authentication/client-credentials';
-import idmBY_DE_vidis_idpConfig, {
-  type DE_BY_vidis_idpConfig,
-} from '../../config/idm.DE-BY-vidis-idp.config';
-import { BearerToken } from '../../authentication/bearer-token';
-import { SchulconnexOrganizationQueryParameters } from '../../../controller/parameters/schulconnex-organisations-query-parameters';
-import type { Clearance } from '../../../clearance/entity/clearance.entity';
 
 @Injectable()
 export class DeByVidisIdpAdapter implements AdapterInterface {

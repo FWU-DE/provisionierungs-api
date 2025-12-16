@@ -1,10 +1,10 @@
 import { Controller, Get, type Type } from '@nestjs/common';
+import request from 'supertest';
+
 import { createTestingInfrastructure } from '../../../test/testing-module';
 import { AuthModule } from '../auth.module';
 import { IntrospectionClient } from '../introspection/introspection-client';
 import { TestIntrospectionClient } from '../introspection/introspection-client.test';
-
-import request from 'supertest';
 import { AccessTokenAuthRequired } from '../route-decorators/access-token-auth-required.decorator';
 import { NoAccessTokenAuthRequired } from '../route-decorators/no-access-token-auth-required.decorator';
 
@@ -17,9 +17,7 @@ describe('AccessTokenGuard', () => {
         return 'ok';
       }
     }
-    const { infra } = await createInfrastructureWithController([
-      TestController,
-    ]);
+    const { infra } = await createInfrastructureWithController([TestController]);
 
     try {
       const response = await request((await infra.getApp()).getHttpServer())
@@ -43,9 +41,7 @@ describe('AccessTokenGuard', () => {
         return 'ok';
       }
     }
-    const { infra, testClient } = await createInfrastructureWithController([
-      TestController,
-    ]);
+    const { infra, testClient } = await createInfrastructureWithController([TestController]);
     testClient.addUserToken('valid-user-token', []);
     try {
       await request((await infra.getApp()).getHttpServer())
@@ -67,9 +63,7 @@ describe('AccessTokenGuard', () => {
         return 'ok';
       }
     }
-    const { infra } = await createInfrastructureWithController([
-      TestController,
-    ]);
+    const { infra } = await createInfrastructureWithController([TestController]);
     try {
       await request((await infra.getApp()).getHttpServer())
         .get('/')
@@ -93,9 +87,7 @@ describe('AccessTokenGuard', () => {
         return 'ok';
       }
     }
-    const { infra } = await createInfrastructureWithController([
-      TestController,
-    ]);
+    const { infra } = await createInfrastructureWithController([TestController]);
     try {
       await request((await infra.getApp()).getHttpServer())
         .get('/')
@@ -124,9 +116,7 @@ describe('AccessTokenGuard', () => {
         return 'ok';
       }
     }
-    const { infra } = await createInfrastructureWithController([
-      TestController,
-    ]);
+    const { infra } = await createInfrastructureWithController([TestController]);
 
     try {
       await request((await infra.getApp()).getHttpServer())
@@ -148,9 +138,7 @@ async function createInfrastructureWithController(controllers: Type<object>[]) {
     imports: [AuthModule],
     controllers,
   })
-    .configureModule((module) =>
-      module.overrideProvider(IntrospectionClient).useValue(testClient),
-    )
+    .configureModule((module) => module.overrideProvider(IntrospectionClient).useValue(testClient))
     .build();
 
   await infra.setUp();

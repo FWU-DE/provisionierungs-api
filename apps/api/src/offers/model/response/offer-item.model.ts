@@ -21,18 +21,14 @@ export class OfferItem {
   ['x-class-name']?: string;
 
   constructor(
-    data: Omit<
-      OfferItem,
-      'convertClientIds' | 'clientId' | 'offerCategories'
-    > & {
+    data: Omit<OfferItem, 'convertClientIds' | 'clientId' | 'offerCategories'> & {
       clientId?: undefined | string | unknown[];
       offerCategories?: ConstructorParameters<typeof OfferCategories>[0];
     },
   ) {
     this.clientId = this.convertClientIds(data.clientId);
     this.educationProviderOrganizationId = data.educationProviderOrganizationId;
-    this.educationProviderOrganizationName =
-      data.educationProviderOrganizationName;
+    this.educationProviderOrganizationName = data.educationProviderOrganizationName;
     this.educationProviderUserEmail = data.educationProviderUserEmail;
     this.educationProviderUserId = data.educationProviderUserId;
     this.educationProviderUserName = data.educationProviderUserName;
@@ -50,14 +46,10 @@ export class OfferItem {
     this['x-class-name'] = data['x-class-name'];
   }
 
-  private convertClientIds(
-    rawClientIds: undefined | string | unknown[],
-  ): string[] {
+  private convertClientIds(rawClientIds: undefined | string | unknown[]): string[] {
     try {
       if (Array.isArray(rawClientIds)) {
-        return rawClientIds.filter(
-          (id): id is string => typeof id === 'string',
-        );
+        return rawClientIds.filter((id): id is string => typeof id === 'string');
       } else if (typeof rawClientIds === 'string') {
         const parsed: unknown = JSON.parse(rawClientIds);
         return Array.isArray(parsed)

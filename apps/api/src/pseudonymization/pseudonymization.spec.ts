@@ -1,11 +1,12 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { Pseudonymization } from './pseudonymization';
-import { Hasher } from './hasher';
+
+import { type SchulconnexPersonsResponse } from '../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
+import { OfferContext } from '../offers/model/offer-context';
 import pseudonymizationConfig, {
   type PseudonymizationConfig,
 } from './config/pseudonymization.config';
-import { type SchulconnexPersonsResponse } from '../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
-import { OfferContext } from '../offers/model/offer-context';
+import { Hasher } from './hasher';
+import { Pseudonymization } from './pseudonymization';
 
 describe('Pseudonymization', () => {
   let pseudonymization: Pseudonymization;

@@ -10,12 +10,7 @@ import { transformIntoExpressContext } from '../util/graphql/express-context';
  */
 export const ClientIdOptional = createParamDecorator<never, string | undefined>(
   (_, context: ExecutionContext) => {
-    const req =
-      transformIntoExpressContext<RequestMaybeContainingIntrospection>(
-        context,
-      ).req;
-    return isRequestWithIntrospection(req)
-      ? (req.introspection.clientId ?? undefined)
-      : undefined;
+    const req = transformIntoExpressContext<RequestMaybeContainingIntrospection>(context).req;
+    return isRequestWithIntrospection(req) ? (req.introspection.clientId ?? undefined) : undefined;
   },
 );

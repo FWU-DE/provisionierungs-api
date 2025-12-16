@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+
 import { SchulconnexDuration } from './schulconnex-duration.dto';
 import { SchulconnexFach } from './schulconnex-fach.dto';
 
@@ -37,8 +38,7 @@ export class SchulconnexGroup {
   beschreibung?: string | null;
 
   @ApiProperty({
-    description:
-      'The type of the group. Currently, only "Sonstig" is supported.',
+    description: 'The type of the group. Currently, only "Sonstig" is supported.',
     nullable: true,
     enum: ['Sonstig', 'Klasse', 'Kurs'],
     example: 'Sonstig',
@@ -51,13 +51,7 @@ export class SchulconnexGroup {
     enum: ['Pflicht', 'Wahl', 'Wahlpflicht', 'Grundkurs', 'Leistungskurs'],
     example: 'Wahl',
   })
-  bereich?:
-    | 'Pflicht'
-    | 'Wahl'
-    | 'Wahlpflicht'
-    | 'Grundkurs'
-    | 'Leistungskurs'
-    | null;
+  bereich?: 'Pflicht' | 'Wahl' | 'Wahlpflicht' | 'Grundkurs' | 'Leistungskurs' | null;
 
   @ApiProperty({
     description: 'Additional descriptors of the group',

@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import authConfig, { type AuthConfig } from '../config/auth.config';
-import { Logger } from '../../logger';
 import z from 'zod';
+
+import { Logger } from '../../logger';
+import authConfig, { type AuthConfig } from '../config/auth.config';
 
 export const keycloakIntrospectionSchema = z.discriminatedUnion('active', [
   z.object({ active: z.literal(false) }),
@@ -27,13 +28,9 @@ export class IntrospectionClient {
     private readonly logger: Logger,
   ) {}
 
-  async getIntrospectionResponse(
-    accessToken: string,
-  ): Promise<KeycloakIntrospection> {
+  async getIntrospectionResponse(accessToken: string): Promise<KeycloakIntrospection> {
     if (this.authConfig.AUTH_VALIDATION !== 'introspect') {
-      throw new Error(
-        'IntrospectionClient: AUTH_VALIDATION is not set to introspect.',
-      );
+      throw new Error('IntrospectionClient: AUTH_VALIDATION is not set to introspect.');
     }
 
     const response = await fetch(this.authConfig.AUTH_INTROSPECTION_URL, {
@@ -58,12 +55,9 @@ export class IntrospectionClient {
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const data = await response.json();
-    const { error, data: parsedData } =
-      keycloakIntrospectionSchema.safeParse(data);
+    const { error, data: parsedData } = keycloakIntrospectionSchema.safeParse(data);
     if (error) {
-      this.logger.error(
-        `Token introspection response is invalid: ${error.message}`,
-      );
+      this.logger.error(`Token introspection response is invalid: ${error.message}`);
       return { active: false };
     }
 

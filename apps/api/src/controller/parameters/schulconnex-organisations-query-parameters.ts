@@ -24,12 +24,7 @@ export class SchulconnexOrganizationQueryParameters {
   }
 
   public clone(): SchulconnexOrganizationQueryParameters {
-    return new SchulconnexOrganizationQueryParameters(
-      this.id,
-      this.kennung,
-      this.name,
-      this.typ,
-    );
+    return new SchulconnexOrganizationQueryParameters(this.id, this.kennung, this.name, this.typ);
   }
 
   public toUrlSearchParams(): string {

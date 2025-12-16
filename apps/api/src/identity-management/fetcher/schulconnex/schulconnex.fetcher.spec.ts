@@ -1,13 +1,13 @@
-import { SchulconnexFetcher } from './schulconnex.fetcher';
 import { Logger } from '../../../common/logger';
 import { SchulconnexPersonsQueryParameters } from '../../../controller/parameters/schulconnex-persons-query-parameters';
-import { type BearerToken } from '../../authentication/bearer-token';
-import { schulconnexPersonsResponseSchema } from './schulconnex.validator';
 import {
-  createTestingInfrastructure,
   type TestingInfrastructure,
+  createTestingInfrastructure,
 } from '../../../test/testing-module';
+import { type BearerToken } from '../../authentication/bearer-token';
 import { IdentityProviderModule } from '../../identity-provider.module';
+import { SchulconnexFetcher } from './schulconnex.fetcher';
+import { schulconnexPersonsResponseSchema } from './schulconnex.validator';
 
 describe('SchulconnexFetcher', () => {
   let infra: TestingInfrastructure;
@@ -74,11 +74,7 @@ describe('SchulconnexFetcher', () => {
       } as unknown as Response);
 
       // Call the method
-      const result = await fetcher.fetchPersons(
-        mockEndpointUrl,
-        mockParameters,
-        mockToken,
-      );
+      const result = await fetcher.fetchPersons(mockEndpointUrl, mockParameters, mockToken);
 
       // Assertions
       expect(mockFetch).toHaveBeenCalledWith(
@@ -109,11 +105,7 @@ describe('SchulconnexFetcher', () => {
       } as unknown as Response);
 
       // Call the method
-      const result = await fetcher.fetchPersons(
-        mockEndpointUrl,
-        mockParameters,
-        mockToken,
-      );
+      const result = await fetcher.fetchPersons(mockEndpointUrl, mockParameters, mockToken);
 
       // Assertions
       expect(result).toBeNull();
@@ -136,11 +128,7 @@ describe('SchulconnexFetcher', () => {
       } as unknown as Response);
 
       // Call the method
-      const result = await fetcher.fetchPersons(
-        mockEndpointUrl,
-        mockParameters,
-        mockToken,
-      );
+      const result = await fetcher.fetchPersons(mockEndpointUrl, mockParameters, mockToken);
 
       // Assertions
       expect(result).toBeNull();

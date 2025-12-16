@@ -1,10 +1,11 @@
 /* eslint-disable no-console */
 import { NestFactory } from '@nestjs/core';
 import { argv } from 'process';
+import { DataSource } from 'typeorm';
+
+import type { BaseEntity } from '../src/common/database/base.entity';
 import { MainModule } from '../src/main.module';
 import { Persister } from '../src/test/fixture/persister';
-import { DataSource } from 'typeorm';
-import type { BaseEntity } from '../src/common/database/base.entity';
 
 async function main() {
   const fixtureName = argv[argv.length - 1];

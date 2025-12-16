@@ -5,14 +5,11 @@ import request from 'supertest';
 import { DataSource } from 'typeorm';
 
 import { AuthModule } from '../../common/auth';
+import { IntrospectionClient } from '../../common/auth/introspection/introspection-client';
 import { TestIntrospectionClient } from '../../common/auth/introspection/introspection-client.test';
 import { GraphQLModule } from '../../common/graphql/graphql.module';
+import { type TestingInfrastructure, createTestingInfrastructure } from '../../test/testing-module';
 import { ClearanceModule } from '../clearance.module';
-import { IntrospectionClient } from '../../common/auth/introspection/introspection-client';
-import {
-  type TestingInfrastructure,
-  createTestingInfrastructure,
-} from '../../test/testing-module';
 import { Clearance } from '../entity/clearance.entity';
 
 const mockCreateQuery = {
@@ -55,9 +52,7 @@ describe('ClearanceCreateMutation', () => {
       imports: [GraphQLModule, ClearanceModule, AuthModule],
     })
       .configureModule((module) => {
-        module
-          .overrideProvider(IntrospectionClient)
-          .useValue(testIntrospectionClient);
+        module.overrideProvider(IntrospectionClient).useValue(testIntrospectionClient);
       })
       .enableDatabase()
       .build();
@@ -85,9 +80,9 @@ describe('ClearanceCreateMutation', () => {
       .post('/graphql')
       .send(mockCreateQuery)
       .expect((res) => {
-        expect(
-          (res.body as { errors: { message: string }[] }).errors[0].message,
-        ).toBe('Forbidden resource');
+        expect((res.body as { errors: { message: string }[] }).errors[0].message).toBe(
+          'Forbidden resource',
+        );
       });
   });
 

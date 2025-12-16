@@ -1,13 +1,11 @@
-import type { EntityManager } from 'typeorm';
-import { BaseEntity } from '../../common/database/base.entity';
 import { ensureError } from '@fwu-rostering/utils/error';
+import type { EntityManager } from 'typeorm';
+
+import { BaseEntity } from '../../common/database/base.entity';
 
 export class Persister {
   private readonly persisted = new Map<BaseEntity, true>();
-  private readonly persistedIds = new Map<
-    typeof BaseEntity.constructor.name,
-    string[]
-  >();
+  private readonly persistedIds = new Map<typeof BaseEntity.constructor.name, string[]>();
   constructor(
     private readonly entityManager: EntityManager,
     private readonly fixtures: BaseEntity[],
@@ -26,11 +24,7 @@ export class Persister {
 
     try {
       await this.persistRelations(entity);
-      if (
-        (this.persistedIds.get(entity.constructor.name) ?? []).includes(
-          entity.id,
-        )
-      ) {
+      if ((this.persistedIds.get(entity.constructor.name) ?? []).includes(entity.id)) {
         throw new Error(
           `Duplicate ID found for entity "${entity.constructor.name}" with ID "${entity.id}"`,
         );
@@ -44,19 +38,14 @@ export class Persister {
       ]);
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.error(
-        `Error persisting entity: ${ensureError(e).message}`,
-        entity,
-      );
+      console.error(`Error persisting entity: ${ensureError(e).message}`, entity);
       throw e;
     }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
   async persistRelations<T extends BaseEntity>(fixture: T): Promise<void> {
-    const { relations } = this.entityManager.connection.getMetadata(
-      fixture.constructor,
-    );
+    const { relations } = this.entityManager.connection.getMetadata(fixture.constructor);
 
     for (const { propertyName, relationType } of relations) {
       switch (relationType) {
@@ -100,10 +89,7 @@ export class Persister {
     }
   }
 
-  async persistOneRelation<T extends BaseEntity>(
-    fixture: T,
-    propertyName: keyof T,
-  ): Promise<void> {
+  async persistOneRelation<T extends BaseEntity>(fixture: T, propertyName: keyof T): Promise<void> {
     const relation = fixture[propertyName] as unknown;
     if (!relation) {
       return;

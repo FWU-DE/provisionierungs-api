@@ -1,13 +1,7 @@
-import {
-  ClientCredentialsProvider,
-  clientCredentialsResponseSchema,
-} from './client-credentials';
 import { Logger } from '../../common/logger';
-import {
-  createTestingInfrastructure,
-  type TestingInfrastructure,
-} from '../../test/testing-module';
+import { type TestingInfrastructure, createTestingInfrastructure } from '../../test/testing-module';
 import { IdentityProviderModule } from '../identity-provider.module';
+import { ClientCredentialsProvider, clientCredentialsResponseSchema } from './client-credentials';
 
 describe('ClientCredentialsProvider', () => {
   let infra: TestingInfrastructure;
@@ -69,18 +63,15 @@ describe('ClientCredentialsProvider', () => {
       );
 
       expect(result).toEqual({ token: 'test-token' });
-      expect(global.fetch).toHaveBeenCalledWith(
-        'https://test-endpoint.com/token',
-        {
-          method: 'POST',
-          headers: {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            Authorization: expect.any(String),
-          },
+      expect(global.fetch).toHaveBeenCalledWith('https://test-endpoint.com/token', {
+        method: 'POST',
+        headers: {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          body: expect.any(URLSearchParams),
+          Authorization: expect.any(String),
         },
-      );
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        body: expect.any(URLSearchParams),
+      });
     });
 
     it('should throw an error when fetch response is not ok', async () => {
@@ -92,11 +83,7 @@ describe('ClientCredentialsProvider', () => {
       global.fetch = jest.fn().mockResolvedValue(mockResponse);
 
       await expect(
-        provider.authenticate(
-          'https://test-endpoint.com/token',
-          'test-username',
-          'test-password',
-        ),
+        provider.authenticate('https://test-endpoint.com/token', 'test-username', 'test-password'),
       ).rejects.toThrow('Authorization towards IDM failed.');
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockLogger.error).toHaveBeenCalled();
@@ -114,11 +101,7 @@ describe('ClientCredentialsProvider', () => {
       global.fetch = jest.fn().mockResolvedValue(mockResponse);
 
       await expect(
-        provider.authenticate(
-          'https://test-endpoint.com/token',
-          'test-username',
-          'test-password',
-        ),
+        provider.authenticate('https://test-endpoint.com/token', 'test-username', 'test-password'),
       ).rejects.toThrow('Authorization towards IDM failed.');
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockLogger.error).toHaveBeenCalled();

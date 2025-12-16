@@ -1,4 +1,5 @@
 import type { GenerateKeyPairResult, JSONWebKeySet, JWTPayload } from 'jose';
+
 import { AccessTokenVerifier } from './access-token-verifier';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
@@ -97,27 +98,22 @@ describe('AccessTokenVerifier', () => {
         schulkennung: [1, 2, 3],
       },
     ],
-  ])(
-    'token validation should fail for malformed tokens: %s',
-    async (_, claims) => {
-      const keyStore = await getCryptoKeyPair();
-      const accessToken = await getSignedJWTToken(claims, keyStore);
+  ])('token validation should fail for malformed tokens: %s', async (_, claims) => {
+    const keyStore = await getCryptoKeyPair();
+    const accessToken = await getSignedJWTToken(claims, keyStore);
 
-      const tokenVerifier = new AccessTokenVerifier(
-        (await getJose()).createLocalJWKSet({
-          keys: [await (await getJose()).exportJWK(keyStore.publicKey)],
-        }),
-        {
-          id_token_signing_alg_values_supported: ['RS256'],
-          issuer: 'https://example.test',
-        },
-      );
+    const tokenVerifier = new AccessTokenVerifier(
+      (await getJose()).createLocalJWKSet({
+        keys: [await (await getJose()).exportJWK(keyStore.publicKey)],
+      }),
+      {
+        id_token_signing_alg_values_supported: ['RS256'],
+        issuer: 'https://example.test',
+      },
+    );
 
-      await expect(
-        tokenVerifier.verifyAccessToken(accessToken),
-      ).rejects.toThrow();
-    },
-  );
+    await expect(tokenVerifier.verifyAccessToken(accessToken)).rejects.toThrow();
+  });
 
   it('token validation should succeed', async () => {
     const keyStore = await getCryptoKeyPair();
@@ -133,9 +129,7 @@ describe('AccessTokenVerifier', () => {
       },
     );
 
-    expect(await tokenVerifier.verifyAccessToken(accessToken)).toEqual(
-      validAccessToken,
-    );
+    expect(await tokenVerifier.verifyAccessToken(accessToken)).toEqual(validAccessToken);
   });
   it('token validation with all optional claims should succeed', async () => {
     const keyStore = await getCryptoKeyPair();

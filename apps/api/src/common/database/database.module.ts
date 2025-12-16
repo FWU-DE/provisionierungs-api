@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { AdvancedSnakeNamingStrategy } from './advanced-snake.naming-strategy';
 import databaseConfig, { type DatabaseConfig } from './config/database.config';
-import { ConfigModule } from '@nestjs/config';
 import { getSpecifiedDatabasePoolSize } from './parallelism';
 
 @Module({

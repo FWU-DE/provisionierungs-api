@@ -1,13 +1,10 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
 /* eslint-disable no-console */
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import {
-  ExpressInstrumentation,
-  ExpressLayerType,
-} from '@opentelemetry/instrumentation-express';
+import { ExpressInstrumentation, ExpressLayerType } from '@opentelemetry/instrumentation-express';
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import { UndiciInstrumentation } from '@opentelemetry/instrumentation-undici';
 
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { SimpleSpanProcessor } from '@opentelemetry/sdk-trace-node';
@@ -39,16 +36,11 @@ export function instr() {
     sdk
       .shutdown()
       .then(() => console.log('Tracing terminated'))
-      .catch((error: unknown) =>
-        console.log('Error terminating tracing', error),
-      )
+      .catch((error: unknown) => console.log('Error terminating tracing', error))
       .finally(() => process.exit(0));
   });
 }
 
-if (
-  process.env.OTEL_SDK_DISABLED &&
-  process.env.OTEL_SDK_DISABLED === 'false'
-) {
+if (process.env.OTEL_SDK_DISABLED && process.env.OTEL_SDK_DISABLED === 'false') {
   instr();
 }

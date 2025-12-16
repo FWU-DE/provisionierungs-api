@@ -1,14 +1,15 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import { PostRequestFilter } from './post-request-filter';
-import type { SchulconnexPersonsResponse } from '../dto/schulconnex/schulconnex-persons-response.dto';
+
 import { SchulconnexPersonsQueryParameters } from '../../controller/parameters/schulconnex-persons-query-parameters';
-import type { SchulconnexPerson } from '../dto/schulconnex/schulconnex-person.dto';
-import type { SchulconnexPersonContext } from '../dto/schulconnex/schulconnex-person-context.dto';
-import type { SchulconnexOrganization } from '../dto/schulconnex/schulconnex-organization.dto';
+import type { SchulconnexGroup } from '../dto/schulconnex/schulconnex-group.dto';
 import type { SchulconnexGroupdataset } from '../dto/schulconnex/schulconnex-groupdataset.dto';
 import type { SchulconnexName } from '../dto/schulconnex/schulconnex-name.dto';
-import type { SchulconnexGroup } from '../dto/schulconnex/schulconnex-group.dto';
+import type { SchulconnexOrganization } from '../dto/schulconnex/schulconnex-organization.dto';
+import type { SchulconnexPersonContext } from '../dto/schulconnex/schulconnex-person-context.dto';
+import type { SchulconnexPerson } from '../dto/schulconnex/schulconnex-person.dto';
+import type { SchulconnexPersonsResponse } from '../dto/schulconnex/schulconnex-persons-response.dto';
+import { PostRequestFilter } from './post-request-filter';
 
 describe('PostRequestFilter', () => {
   let filter: PostRequestFilter;
@@ -98,10 +99,7 @@ describe('PostRequestFilter', () => {
   describe('filterByQueryParameters', () => {
     it('should return all entries with the bare minimum of data when no filters are applied', () => {
       const parameters = new SchulconnexPersonsQueryParameters();
-      const result = filter.filterByQueryParameters(
-        mockPersonsData,
-        parameters,
-      );
+      const result = filter.filterByQueryParameters(mockPersonsData, parameters);
       expect(result).toHaveLength(3);
       expect(result[0].pid).toBe('person-1');
       expect(result[1].pid).toBe('person-2');
@@ -109,28 +107,15 @@ describe('PostRequestFilter', () => {
     });
 
     it('should filter by pid', () => {
-      const parameters = new SchulconnexPersonsQueryParameters(
-        undefined,
-        'person-1',
-      );
-      const result = filter.filterByQueryParameters(
-        mockPersonsData,
-        parameters,
-      );
+      const parameters = new SchulconnexPersonsQueryParameters(undefined, 'person-1');
+      const result = filter.filterByQueryParameters(mockPersonsData, parameters);
       expect(result).toHaveLength(1);
       expect(result[0].pid).toBe('person-1');
     });
 
     it('should filter by personenkontext.id', () => {
-      const parameters = new SchulconnexPersonsQueryParameters(
-        undefined,
-        undefined,
-        'context-2',
-      );
-      const result = filter.filterByQueryParameters(
-        mockPersonsData,
-        parameters,
-      );
+      const parameters = new SchulconnexPersonsQueryParameters(undefined, undefined, 'context-2');
+      const result = filter.filterByQueryParameters(mockPersonsData, parameters);
       expect(result).toHaveLength(1);
       expect(result[0].pid).toBe('person-2');
     });
@@ -142,10 +127,7 @@ describe('PostRequestFilter', () => {
         undefined,
         'group-1',
       );
-      const result = filter.filterByQueryParameters(
-        mockPersonsData,
-        parameters,
-      );
+      const result = filter.filterByQueryParameters(mockPersonsData, parameters);
       expect(result).toHaveLength(1);
       expect(result[0].pid).toBe('person-1');
     });
@@ -158,20 +140,14 @@ describe('PostRequestFilter', () => {
         undefined,
         'org-2',
       );
-      const result = filter.filterByQueryParameters(
-        mockPersonsData,
-        parameters,
-      );
+      const result = filter.filterByQueryParameters(mockPersonsData, parameters);
       expect(result).toHaveLength(1);
       expect(result[0].pid).toBe('person-2');
     });
 
     it('should filter for completion with personen', () => {
       const parameters = new SchulconnexPersonsQueryParameters('personen');
-      const result = filter.filterByQueryParameters(
-        mockPersonsData,
-        parameters,
-      );
+      const result = filter.filterByQueryParameters(mockPersonsData, parameters);
 
       // Should include person data but not organization details
       expect(result).toHaveLength(3);
@@ -183,13 +159,8 @@ describe('PostRequestFilter', () => {
     });
 
     it('should filter for completion with personenkontexte', () => {
-      const parameters = new SchulconnexPersonsQueryParameters(
-        'personenkontexte',
-      );
-      const result = filter.filterByQueryParameters(
-        mockPersonsData,
-        parameters,
-      );
+      const parameters = new SchulconnexPersonsQueryParameters('personenkontexte');
+      const result = filter.filterByQueryParameters(mockPersonsData, parameters);
 
       // Should include person context data
       expect(result).toHaveLength(3);
@@ -197,19 +168,12 @@ describe('PostRequestFilter', () => {
       expect(result[0].personenkontexte?.[0].id).toBeDefined();
       expect(result[0].personenkontexte?.[0].rolle).toBeDefined();
       expect(result[0].personenkontexte?.[0].organisation?.id).toBeDefined();
-      expect(
-        result[0].personenkontexte?.[0].organisation?.name,
-      ).toBeUndefined();
+      expect(result[0].personenkontexte?.[0].organisation?.name).toBeUndefined();
     });
 
     it('should filter for completion with organisationen', () => {
-      const parameters = new SchulconnexPersonsQueryParameters(
-        'organisationen',
-      );
-      const result = filter.filterByQueryParameters(
-        mockPersonsData,
-        parameters,
-      );
+      const parameters = new SchulconnexPersonsQueryParameters('organisationen');
+      const result = filter.filterByQueryParameters(mockPersonsData, parameters);
 
       // Should include organization data
       expect(result).toHaveLength(3);
@@ -221,10 +185,7 @@ describe('PostRequestFilter', () => {
 
     it('should filter for completion with gruppen', () => {
       const parameters = new SchulconnexPersonsQueryParameters('gruppen');
-      const result = filter.filterByQueryParameters(
-        mockPersonsData,
-        parameters,
-      );
+      const result = filter.filterByQueryParameters(mockPersonsData, parameters);
 
       // Should include group data
       expect(result).toHaveLength(3);
@@ -238,10 +199,7 @@ describe('PostRequestFilter', () => {
       const parameters = new SchulconnexPersonsQueryParameters(
         'personen,organisationen,gruppen,personenkontexte',
       );
-      const result = filter.filterByQueryParameters(
-        mockPersonsData,
-        parameters,
-      );
+      const result = filter.filterByQueryParameters(mockPersonsData, parameters);
 
       // Should include person, organization, and group data
       expect(result).toHaveLength(3);
@@ -250,12 +208,8 @@ describe('PostRequestFilter', () => {
       expect(result[0].personenkontexte?.[0].id).toBeDefined();
       expect(result[0].personenkontexte?.[0].organisation?.id).toBeDefined();
       expect(result[0].personenkontexte?.[0].organisation?.name).toBeDefined();
-      expect(
-        result[0].personenkontexte?.[0].gruppen?.[0].gruppe?.id,
-      ).toBeDefined();
-      expect(
-        result[0].personenkontexte?.[0].gruppen?.[0].gruppe?.bezeichnung,
-      ).toBeDefined();
+      expect(result[0].personenkontexte?.[0].gruppen?.[0].gruppe?.id).toBeDefined();
+      expect(result[0].personenkontexte?.[0].gruppen?.[0].gruppe?.bezeichnung).toBeDefined();
     });
 
     it('should apply multiple filters together', () => {
@@ -265,10 +219,7 @@ describe('PostRequestFilter', () => {
         undefined,
         'group-1',
       );
-      const result = filter.filterByQueryParameters(
-        mockPersonsData,
-        parameters,
-      );
+      const result = filter.filterByQueryParameters(mockPersonsData, parameters);
 
       // Should filter by group-1 and include person data
       expect(result).toHaveLength(1);
@@ -278,13 +229,8 @@ describe('PostRequestFilter', () => {
     });
 
     it('should handle persons with no person data and empty context data', () => {
-      const parameters = new SchulconnexPersonsQueryParameters(
-        'personen,personenkontexte',
-      );
-      const result = filter.filterByQueryParameters(
-        mockPersonsData,
-        parameters,
-      );
+      const parameters = new SchulconnexPersonsQueryParameters('personen,personenkontexte');
+      const result = filter.filterByQueryParameters(mockPersonsData, parameters);
 
       // Should include all persons, including the one with no data
       expect(result).toHaveLength(3);

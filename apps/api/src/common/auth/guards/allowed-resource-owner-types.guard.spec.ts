@@ -1,12 +1,13 @@
 import { Controller, Get, type Type } from '@nestjs/common';
+import request from 'supertest';
+
 import { createTestingInfrastructure } from '../../../test/testing-module';
 import { AuthModule } from '../auth.module';
+import { ResourceOwnerType } from '../enums/resource-owner-type.enum';
 import { IntrospectionClient } from '../introspection/introspection-client';
 import { TestIntrospectionClient } from '../introspection/introspection-client.test';
-
-import request from 'supertest';
 import { AllowResourceOwnerType } from '../route-decorators/allow-resource-owner-type.decorator';
-import { ResourceOwnerType } from '../enums/resource-owner-type.enum';
+
 describe('ResourceOwnerTokenGuard', () => {
   it('does not grant access with wrong grant type per default', async () => {
     @Controller()
@@ -17,9 +18,7 @@ describe('ResourceOwnerTokenGuard', () => {
       }
     }
 
-    const { infra, testClient } = await createInfrastructureWithController([
-      TestController,
-    ]);
+    const { infra, testClient } = await createInfrastructureWithController([TestController]);
     try {
       testClient.addClientToken('valid-client-token', []);
 
@@ -47,9 +46,7 @@ describe('ResourceOwnerTokenGuard', () => {
         return 'ok';
       }
     }
-    const { infra, testClient } = await createInfrastructureWithController([
-      TestController,
-    ]);
+    const { infra, testClient } = await createInfrastructureWithController([TestController]);
     testClient.addUserToken('valid-user-token', []);
     testClient.addClientToken('valid-client-token', []);
     try {
@@ -80,9 +77,7 @@ describe('ResourceOwnerTokenGuard', () => {
         return 'ok';
       }
     }
-    const { infra, testClient } = await createInfrastructureWithController([
-      TestController,
-    ]);
+    const { infra, testClient } = await createInfrastructureWithController([TestController]);
     testClient.addClientToken('valid-client-token', []);
     testClient.addUserToken('valid-user-token', []);
     try {
@@ -118,9 +113,7 @@ describe('ResourceOwnerTokenGuard', () => {
         return 'ok';
       }
     }
-    const { infra, testClient } = await createInfrastructureWithController([
-      TestController,
-    ]);
+    const { infra, testClient } = await createInfrastructureWithController([TestController]);
     testClient.addClientToken('valid-client-token', []);
     testClient.addUserToken('valid-user-token', []);
     try {
@@ -144,9 +137,7 @@ async function createInfrastructureWithController(controllers: Type<object>[]) {
     imports: [AuthModule],
     controllers,
   })
-    .configureModule((module) =>
-      module.overrideProvider(IntrospectionClient).useValue(testClient),
-    )
+    .configureModule((module) => module.overrideProvider(IntrospectionClient).useValue(testClient))
     .build();
 
   await infra.setUp();

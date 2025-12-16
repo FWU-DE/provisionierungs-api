@@ -1,14 +1,9 @@
 import type { KeycloakIntrospection } from './introspection-client';
 
 export class TestIntrospectionClient {
-  private tokens: Map<string, KeycloakIntrospection> = new Map<
-    string,
-    KeycloakIntrospection
-  >();
+  private tokens: Map<string, KeycloakIntrospection> = new Map<string, KeycloakIntrospection>();
 
-  getIntrospectionResponse(
-    accessToken: string,
-  ): Promise<KeycloakIntrospection> {
+  getIntrospectionResponse(accessToken: string): Promise<KeycloakIntrospection> {
     const token = this.tokens.get(accessToken);
     if (!token) {
       return Promise.resolve({ active: false });

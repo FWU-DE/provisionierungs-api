@@ -10,12 +10,7 @@ import { transformIntoExpressContext } from '../util/graphql/express-context';
  */
 export const ScopesOptional = createParamDecorator<never, string[] | undefined>(
   (_, context: ExecutionContext) => {
-    const req =
-      transformIntoExpressContext<RequestMaybeContainingIntrospection>(
-        context,
-      ).req;
-    return isRequestWithIntrospection(req)
-      ? req.introspection.scopes
-      : undefined;
+    const req = transformIntoExpressContext<RequestMaybeContainingIntrospection>(context).req;
+    return isRequestWithIntrospection(req) ? req.introspection.scopes : undefined;
   },
 );

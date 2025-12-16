@@ -1,16 +1,16 @@
-import { SaarlandAdapter } from './saarland-adapter';
-import { SchulconnexFetcher } from '../../fetcher/schulconnex/schulconnex.fetcher';
-import { SchulconnexPersonsQueryParameters } from '../../../controller/parameters/schulconnex-persons-query-parameters';
-import { type BearerToken } from '../../authentication/bearer-token';
-import { type SchulconnexPersonsResponse } from '../../fetcher/schulconnex/schulconnex-response.interface';
-import {
-  createTestingInfrastructure,
-  type TestingInfrastructure,
-} from '../../../test/testing-module';
-import { IdentityProviderModule } from '../../identity-provider.module';
-import { FormUrlEncodedProvider } from '../../authentication/form-url-encoded';
 import { Clearance } from '../../../clearance/entity/clearance.entity';
+import { SchulconnexPersonsQueryParameters } from '../../../controller/parameters/schulconnex-persons-query-parameters';
+import {
+  type TestingInfrastructure,
+  createTestingInfrastructure,
+} from '../../../test/testing-module';
+import { type BearerToken } from '../../authentication/bearer-token';
+import { FormUrlEncodedProvider } from '../../authentication/form-url-encoded';
 import { type SchulconnexOrganization } from '../../dto/schulconnex/schulconnex-organization.dto';
+import { type SchulconnexPersonsResponse } from '../../fetcher/schulconnex/schulconnex-response.interface';
+import { SchulconnexFetcher } from '../../fetcher/schulconnex/schulconnex.fetcher';
+import { IdentityProviderModule } from '../../identity-provider.module';
+import { SaarlandAdapter } from './saarland-adapter';
 
 describe('SaarlandAdapter', () => {
   let infra: TestingInfrastructure;
@@ -98,15 +98,9 @@ describe('SaarlandAdapter', () => {
       ];
 
       // Setup mocks
-      mockFormUrlEncodedProviderProvider.authenticate.mockResolvedValue(
-        mockAuthToken,
-      );
-      mockSchulconnexFetcher.fetchPersons.mockResolvedValue(
-        mockPersonsResponse,
-      );
-      mockSchulconnexFetcher.fetchOrganizations.mockResolvedValue(
-        mockOrganizationsResponse,
-      );
+      mockFormUrlEncodedProviderProvider.authenticate.mockResolvedValue(mockAuthToken);
+      mockSchulconnexFetcher.fetchPersons.mockResolvedValue(mockPersonsResponse);
+      mockSchulconnexFetcher.fetchOrganizations.mockResolvedValue(mockOrganizationsResponse);
 
       const mockClearance1 = new Clearance();
       mockClearance1.offerId = 1;

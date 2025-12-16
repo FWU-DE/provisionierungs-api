@@ -1,4 +1,5 @@
 import { DataSource } from 'typeorm';
+
 import { AdvancedSnakeNamingStrategy } from './advanced-snake.naming-strategy';
 
 /**
@@ -7,9 +8,7 @@ import { AdvancedSnakeNamingStrategy } from './advanced-snake.naming-strategy';
 
 const dataSource = new DataSource({
   type: 'postgres',
-  url:
-    process.env.DB_MAIN_URL ??
-    'postgresql://postgres:postgres@localhost:54320/postgres',
+  url: process.env.DB_MAIN_URL ?? 'postgresql://postgres:postgres@localhost:54320/postgres',
   synchronize: false,
   namingStrategy: new AdvancedSnakeNamingStrategy(),
   entities: ['dist/**/*.entity.js'],

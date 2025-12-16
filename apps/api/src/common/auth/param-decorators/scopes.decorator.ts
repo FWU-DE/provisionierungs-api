@@ -8,18 +8,11 @@ import { transformIntoExpressContext } from '../util/graphql/express-context';
 /**
  * @returns string[]
  */
-export const Scopes = createParamDecorator<never, string[]>(
-  (_, context: ExecutionContext) => {
-    const req =
-      transformIntoExpressContext<RequestMaybeContainingIntrospection>(
-        context,
-      ).req;
-    const scopes = isRequestWithIntrospection(req)
-      ? req.introspection.scopes
-      : undefined;
-    if (!scopes) {
-      throw new Error('ParamDecorator Scopes: Cannot get scopes from request');
-    }
-    return scopes;
-  },
-);
+export const Scopes = createParamDecorator<never, string[]>((_, context: ExecutionContext) => {
+  const req = transformIntoExpressContext<RequestMaybeContainingIntrospection>(context).req;
+  const scopes = isRequestWithIntrospection(req) ? req.introspection.scopes : undefined;
+  if (!scopes) {
+    throw new Error('ParamDecorator Scopes: Cannot get scopes from request');
+  }
+  return scopes;
+});

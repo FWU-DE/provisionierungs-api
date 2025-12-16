@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+import { SchulconnexBirth } from './schulconnex-birth.dto';
 import { SchulconnexName } from './schulconnex-name.dto';
 import { SchulconnexOrganization } from './schulconnex-organization.dto';
-import { SchulconnexBirth } from './schulconnex-birth.dto';
 
 export class SchulconnexPerson {
   @ApiProperty({

@@ -1,12 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import {
-  type HealthIndicatorResult,
-  HealthIndicatorService,
-} from '@nestjs/terminus';
-import {
-  TimeoutError as PromiseTimeoutError,
-  promiseTimeout,
-} from '@nestjs/terminus/dist/utils';
+import { type HealthIndicatorResult, HealthIndicatorService } from '@nestjs/terminus';
+import { TimeoutError as PromiseTimeoutError, promiseTimeout } from '@nestjs/terminus/dist/utils';
 import { DataSource } from 'typeorm';
 
 @Injectable()

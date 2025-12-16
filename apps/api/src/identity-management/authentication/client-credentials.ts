@@ -1,7 +1,8 @@
-import { BearerToken } from './bearer-token';
-import z from 'zod';
 import { Inject, Injectable } from '@nestjs/common';
+import z from 'zod';
+
 import { Logger } from '../../common/logger';
+import { BearerToken } from './bearer-token';
 
 export const clientCredentialsResponseSchema = z.object({
   access_token: z.string(),
@@ -29,8 +30,7 @@ export class ClientCredentialsProvider {
     const response = await fetch(endpointUrl, {
       method: 'POST',
       headers: {
-        Authorization:
-          'Basic ' + Buffer.from(`${username}:${password}`).toString('base64'),
+        Authorization: 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64'),
       },
       body: new URLSearchParams({
         grant_type: grantType,
@@ -39,9 +39,7 @@ export class ClientCredentialsProvider {
     });
 
     if (!response.ok) {
-      this.logger.error(
-        `Failed to authenticate towards IDM: ${await response.text()}`,
-      );
+      this.logger.error(`Failed to authenticate towards IDM: ${await response.text()}`);
       throw new Error('Authorization towards IDM failed.');
     }
 
@@ -49,8 +47,7 @@ export class ClientCredentialsProvider {
     const data = await response.json();
 
     // Validate response schema
-    const { error, data: parsedData } =
-      clientCredentialsResponseSchema.safeParse(data);
+    const { error, data: parsedData } = clientCredentialsResponseSchema.safeParse(data);
     if (error || !parsedData.access_token) {
       this.logger.error(`IDM response is invalid: ${error?.message ?? ''}`);
       throw new Error('Authorization towards IDM failed.');

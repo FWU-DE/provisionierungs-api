@@ -1,5 +1,5 @@
-import type { SchulconnexPersonsResponse as InboundSchulconnexPersonsResponse } from './schulconnex-response.interface';
 import { type SchulconnexPersonsResponse } from '../../dto/schulconnex/schulconnex-persons-response.dto';
+import type { SchulconnexPersonsResponse as InboundSchulconnexPersonsResponse } from './schulconnex-response.interface';
 
 export function transformSchulconnexPersonsResponse(
   response: null | InboundSchulconnexPersonsResponse[],

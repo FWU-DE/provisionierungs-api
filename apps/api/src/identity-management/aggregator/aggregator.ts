@@ -1,23 +1,24 @@
 import { Inject, Injectable } from '@nestjs/common';
+
+import { Clearance } from '../../clearance/entity/clearance.entity';
+import { applyClearancePersonsFieldFilter } from '../../clearance/filter/clearance-field.filter';
+import { applyClearancePersonsGroupFilter } from '../../clearance/filter/clearance-group.filter';
+import { Logger } from '../../common/logger';
 import { SchulconnexPersonsQueryParameters } from '../../controller/parameters/schulconnex-persons-query-parameters';
-import { EduplacesAdapter } from '../adapter/eduplaces/eduplaces-adapter';
+import { OfferContext } from '../../offers/model/offer-context';
+import { Pseudonymization } from '../../pseudonymization/pseudonymization';
+import { DeByVidisIdpAdapter } from '../adapter/DE-BY-vidis-idp/de-by-vidis-idp-adapter';
 import {
   AdapterGetGroupsReturnType,
   AdapterGetPersonsReturnType,
   AdapterInterface,
 } from '../adapter/adapter-interface';
-import { SchulconnexPersonsResponse } from '../dto/schulconnex/schulconnex-persons-response.dto';
 import { EduplacesStagingAdapter } from '../adapter/eduplaces-staging/eduplaces-staging-adapter';
-import { Pseudonymization } from '../../pseudonymization/pseudonymization';
-import { Logger } from '../../common/logger';
-import { GroupsPerIdmModel } from '../model/groups-per-idm.model';
-import { applyClearancePersonsFieldFilter } from '../../clearance/filter/clearance-field.filter';
-import { Clearance } from '../../clearance/entity/clearance.entity';
-import { PostRequestFilter } from '../post-request-filter/post-request-filter';
-import { applyClearancePersonsGroupFilter } from '../../clearance/filter/clearance-group.filter';
-import { OfferContext } from '../../offers/model/offer-context';
-import { DeByVidisIdpAdapter } from '../adapter/DE-BY-vidis-idp/de-by-vidis-idp-adapter';
+import { EduplacesAdapter } from '../adapter/eduplaces/eduplaces-adapter';
 import { SaarlandAdapter } from '../adapter/saarland/saarland-adapter';
+import { SchulconnexPersonsResponse } from '../dto/schulconnex/schulconnex-persons-response.dto';
+import { GroupsPerIdmModel } from '../model/groups-per-idm.model';
+import { PostRequestFilter } from '../post-request-filter/post-request-filter';
 
 @Injectable()
 export class Aggregator {
@@ -45,9 +46,7 @@ export class Aggregator {
   }
 
   private getAdapterById(id: string): undefined | AdapterInterface {
-    return this.getAvailableAdapters().find(
-      (adapter) => adapter.getIdentifier() === id,
-    );
+    return this.getAvailableAdapters().find((adapter) => adapter.getIdentifier() === id);
   }
 
   public async getPersons(
@@ -68,21 +67,19 @@ export class Aggregator {
     });
 
     // Merge all responses into one array on retrieval
-    const rawPersons: SchulconnexPersonsResponse[] = (
-      await Promise.all(idmRequests)
-    ).reduce((acc: SchulconnexPersonsResponse[], person) => {
-      if (person.response === null) {
-        this.logger.error('No data received from IDM: ' + person.idm);
-        return acc;
-      }
-      return [...acc, ...person.response];
-    }, []);
+    const rawPersons: SchulconnexPersonsResponse[] = (await Promise.all(idmRequests)).reduce(
+      (acc: SchulconnexPersonsResponse[], person) => {
+        if (person.response === null) {
+          this.logger.error('No data received from IDM: ' + person.idm);
+          return acc;
+        }
+        return [...acc, ...person.response];
+      },
+      [],
+    );
 
     // Firstly, remove all entries the client does not have clearance for.
-    const clearedDataByGroup = applyClearancePersonsGroupFilter(
-      rawPersons,
-      clearance,
-    );
+    const clearedDataByGroup = applyClearancePersonsGroupFilter(rawPersons, clearance);
 
     // Secondly, pseudonymize the data.
     const pseudonymizedData = await this.pseudonymization.pseudonymize(
@@ -99,16 +96,10 @@ export class Aggregator {
     // Fourthly, filter the data by the query parameters.
     // That has to be done last, because the client might only ever know pseudonymized data,
     // and therefore, IDs in queries will always be pseudonymized.
-    return this.postRequestFilter.filterByQueryParameters(
-      clearedDataByFields,
-      parameters,
-    );
+    return this.postRequestFilter.filterByQueryParameters(clearedDataByFields, parameters);
   }
 
-  public async getGroups(
-    idmIds: string[],
-    schoolIds?: string[],
-  ): Promise<GroupsPerIdmModel[]> {
+  public async getGroups(idmIds: string[], schoolIds?: string[]): Promise<GroupsPerIdmModel[]> {
     // Request data from all IDMs in parallel
     const idmRequests: Promise<AdapterGetGroupsReturnType>[] = [];
     idmIds.forEach((idmId) => {
@@ -121,21 +112,18 @@ export class Aggregator {
     });
 
     // Merge all responses into one array on retrieval
-    return (await Promise.all(idmRequests)).reduce(
-      (acc: GroupsPerIdmModel[], groups) => {
-        if (groups.response === null) {
-          this.logger.error('No data received from IDM: ' + groups.idm);
-          return acc;
-        }
-        return [
-          ...acc,
-          {
-            idm: groups.idm,
-            groups: groups.response,
-          },
-        ];
-      },
-      [],
-    );
+    return (await Promise.all(idmRequests)).reduce((acc: GroupsPerIdmModel[], groups) => {
+      if (groups.response === null) {
+        this.logger.error('No data received from IDM: ' + groups.idm);
+        return acc;
+      }
+      return [
+        ...acc,
+        {
+          idm: groups.idm,
+          groups: groups.response,
+        },
+      ];
+    }, []);
   }
 }

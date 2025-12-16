@@ -1,7 +1,8 @@
-import { BearerToken } from './bearer-token';
-import z from 'zod';
 import { Inject, Injectable } from '@nestjs/common';
+import z from 'zod';
+
 import { Logger } from '../../common/logger';
+import { BearerToken } from './bearer-token';
 
 export const formUrlEncodedResponseSchema = z.object({
   access_token: z.string(),
@@ -41,9 +42,7 @@ export class FormUrlEncodedProvider {
     });
 
     if (!response.ok) {
-      this.logger.error(
-        `Failed to authenticate towards IDM: ${await response.text()}`,
-      );
+      this.logger.error(`Failed to authenticate towards IDM: ${await response.text()}`);
       throw new Error('Authorization towards IDM failed.');
     }
 
@@ -51,8 +50,7 @@ export class FormUrlEncodedProvider {
     const data = await response.json();
 
     // Validate response schema
-    const { error, data: parsedData } =
-      formUrlEncodedResponseSchema.safeParse(data);
+    const { error, data: parsedData } = formUrlEncodedResponseSchema.safeParse(data);
     if (error || !parsedData.access_token) {
       this.logger.error(`IDM response is invalid: ${error?.message ?? ''}`);
       throw new Error('Authorization towards IDM failed.');

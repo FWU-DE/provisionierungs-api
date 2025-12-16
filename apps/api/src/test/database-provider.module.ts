@@ -1,6 +1,7 @@
 /* eslint-disable turbo/no-undeclared-env-vars */
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { AdvancedSnakeNamingStrategy } from '../common/database/advanced-snake.naming-strategy';
 
 @Module({

@@ -4,9 +4,9 @@ import { Reflector } from '@nestjs/core';
 
 import { ResourceOwnerType } from '../enums/resource-owner-type.enum';
 import type { RequestMaybeContainingIntrospection } from '../interfaces/request-with-introspection.interface';
+import { IntrospectionProvider } from '../introspection/introspection.provider';
 import { AllowResourceOwnerType } from '../route-decorators/allow-resource-owner-type.decorator';
 import { transformIntoExpressContext } from '../util/graphql/express-context';
-import { IntrospectionProvider } from '../introspection/introspection.provider';
 import { PublicRouteEvaluator } from './public-route.evaluator';
 
 @Injectable()
@@ -31,13 +31,9 @@ export class AllowedResourceOwnerTypesGuard implements CanActivate {
     const classRef = context.getClass();
 
     const allowedResourceOwnerTypes =
-      this.reflector.getAllAndOverride(AllowResourceOwnerType, [
-        handler,
-        classRef,
-      ]) ?? this.defaultAllowedResourceOwnerTypes;
-    const allowedResourceOwnerTypesArray = Array.isArray(
-      allowedResourceOwnerTypes,
-    )
+      this.reflector.getAllAndOverride(AllowResourceOwnerType, [handler, classRef]) ??
+      this.defaultAllowedResourceOwnerTypes;
+    const allowedResourceOwnerTypesArray = Array.isArray(allowedResourceOwnerTypes)
       ? allowedResourceOwnerTypes
       : [allowedResourceOwnerTypes];
 
@@ -46,14 +42,10 @@ export class AllowedResourceOwnerTypesGuard implements CanActivate {
       this.getRequest(context),
     );
     if (!introspection) {
-      this.logger.debug(
-        'AllowedResourceOwnerTypesGuard: No access token given. Proceeding.',
-      );
+      this.logger.debug('AllowedResourceOwnerTypesGuard: No access token given. Proceeding.');
       return true;
     }
-    const accessAllowed = allowedResourceOwnerTypesArray.includes(
-      introspection.subType,
-    );
+    const accessAllowed = allowedResourceOwnerTypesArray.includes(introspection.subType);
     if (!accessAllowed) {
       this.logger.log(
         'AllowedResourceOwnerTypesGuard: Resource owner type is not allowed on request route. Denying access.',
@@ -66,17 +58,11 @@ export class AllowedResourceOwnerTypesGuard implements CanActivate {
       return false;
     }
 
-    this.logger.debug(
-      'AllowedResourceOwnerTypesGuard: Resource owner type is allowed',
-    );
+    this.logger.debug('AllowedResourceOwnerTypesGuard: Resource owner type is allowed');
     return true;
   }
 
-  private getRequest(
-    context: ExecutionContext,
-  ): RequestMaybeContainingIntrospection {
-    return transformIntoExpressContext<RequestMaybeContainingIntrospection>(
-      context,
-    ).req;
+  private getRequest(context: ExecutionContext): RequestMaybeContainingIntrospection {
+    return transformIntoExpressContext<RequestMaybeContainingIntrospection>(context).req;
   }
 }

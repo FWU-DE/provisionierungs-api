@@ -1,9 +1,6 @@
-import type {
-  ApolloServerPlugin,
-  BaseContext,
-  GraphQLRequestContext,
-} from '@apollo/server';
+import type { ApolloServerPlugin, BaseContext, GraphQLRequestContext } from '@apollo/server';
 import { Plugin } from '@nestjs/apollo';
+
 import { Logger } from '../logger';
 
 @Plugin()
@@ -13,9 +10,7 @@ export class LoggingPlugin implements ApolloServerPlugin {
   }
 
   requestDidStart(context: GraphQLRequestContext<BaseContext>): Promise<void> {
-    this.logger.debug(
-      `GraphQL Query "${context.request.operationName ?? '-'}"`,
-    );
+    this.logger.debug(`GraphQL Query "${context.request.operationName ?? '-'}"`);
 
     return Promise.resolve();
   }

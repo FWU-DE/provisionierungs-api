@@ -1,13 +1,14 @@
-import { AbstractFetcher } from './abstract-fetcher';
-import { Logger } from '../../common/logger';
-import { type ZodObject, z } from 'zod';
-import { type SchulconnexPersonsResponse } from './schulconnex/schulconnex-response.interface';
-import { type SchulconnexPersonsQueryParameters } from '../../controller/parameters/schulconnex-persons-query-parameters';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { type SchulconnexGroup } from '../dto/schulconnex/schulconnex-group.dto';
+import { type ZodObject, z } from 'zod';
+
+import { Logger } from '../../common/logger';
 import { type SchulconnexOrganizationQueryParameters } from '../../controller/parameters/schulconnex-organisations-query-parameters';
+import { type SchulconnexPersonsQueryParameters } from '../../controller/parameters/schulconnex-persons-query-parameters';
 import { type BearerToken } from '../authentication/bearer-token';
+import { type SchulconnexGroup } from '../dto/schulconnex/schulconnex-group.dto';
 import { type SchulconnexOrganization } from '../dto/schulconnex/schulconnex-organization.dto';
+import { AbstractFetcher } from './abstract-fetcher';
+import { type SchulconnexPersonsResponse } from './schulconnex/schulconnex-response.interface';
 
 // Create a concrete implementation of AbstractFetcher for testing
 class TestFetcher extends AbstractFetcher<{ token: string }> {
@@ -104,8 +105,7 @@ describe('AbstractFetcher', () => {
       } as unknown as Response;
 
       // Call the method
-      const result =
-        await fetcher.testHandleData<typeof mockData>(mockResponse);
+      const result = await fetcher.testHandleData<typeof mockData>(mockResponse);
 
       // Assertions
       expect(result).toEqual(mockData);
@@ -150,9 +150,7 @@ describe('AbstractFetcher', () => {
       // Mock data with invalid structure
       const mockData = { invalid: 'value' };
 
-      expect(() => fetcher.testValidateData<typeof mockData>(mockData)).toThrow(
-        Error,
-      );
+      expect(() => fetcher.testValidateData<typeof mockData>(mockData)).toThrow(Error);
     });
 
     it('should throw an error when input is null', () => {

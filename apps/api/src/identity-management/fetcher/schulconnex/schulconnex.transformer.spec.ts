@@ -1,5 +1,5 @@
-import { transformSchulconnexPersonsResponse } from './schulconnex.transformer';
 import { type SchulconnexPersonsResponse } from './schulconnex-response.interface';
+import { transformSchulconnexPersonsResponse } from './schulconnex.transformer';
 
 describe('SchulconnexTransformer', () => {
   describe('transformSchulconnexResponse', () => {

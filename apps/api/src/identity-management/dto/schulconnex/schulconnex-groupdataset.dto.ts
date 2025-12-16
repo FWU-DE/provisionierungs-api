@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { SchulconnexGroup } from './schulconnex-group.dto';
+
 import { SchulconnexGroupRelation } from './schulconnex-group-relation.dto';
+import { SchulconnexGroup } from './schulconnex-group.dto';
 
 export class SchulconnexGroupdataset {
   @ApiProperty({

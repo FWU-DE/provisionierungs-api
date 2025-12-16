@@ -1,6 +1,7 @@
 import { Inject } from '@nestjs/common';
-import { AccessTokenVerifier } from './access-token-verifier';
+
 import authConfig, { type AuthConfig } from '../config/auth.config';
+import { AccessTokenVerifier } from './access-token-verifier';
 
 export class AccessTokenVerifierFactory {
   constructor(

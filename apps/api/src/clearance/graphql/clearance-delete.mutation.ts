@@ -1,7 +1,8 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
-import { Clearance } from '../entity/clearance.entity';
+import { Args, Mutation, Resolver } from '@nestjs/graphql';
+
 import { ClearanceService } from '../clearance.service';
 import { ClearanceDeleteResponse } from '../dto/clearance-delete-response.dto';
+import { Clearance } from '../entity/clearance.entity';
 
 @Resolver(() => Clearance)
 export class ClearanceDeleteMutation {

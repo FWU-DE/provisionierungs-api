@@ -6,13 +6,12 @@ import type { TestingModule, TestingModuleBuilder } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { QueryRunner } from 'typeorm';
 import { DataSource } from 'typeorm';
-import type { BaseEntity } from '../common/database/base.entity';
-import { Persister } from './fixture/persister';
-import { TestDatabaseProviderModule } from './database-provider.module';
 
-export function createTestingModule(
-  metadata: ModuleMetadata,
-): TestingModuleBuilder {
+import type { BaseEntity } from '../common/database/base.entity';
+import { TestDatabaseProviderModule } from './database-provider.module';
+import { Persister } from './fixture/persister';
+
+export function createTestingModule(metadata: ModuleMetadata): TestingModuleBuilder {
   metadata.imports = [
     ConfigModule.forRoot({ envFilePath: ['.env.test', '.env'] }),
     TestDatabaseProviderModule,
@@ -51,10 +50,7 @@ export class TestingInfrastructure {
   }
 
   async setUp() {
-    if (
-      !hasCreatedSchema &&
-      (this.databaseEnabled || this.fixtures.length > 0)
-    ) {
+    if (!hasCreatedSchema && (this.databaseEnabled || this.fixtures.length > 0)) {
       await this.module.get(DataSource).synchronize(true);
       hasCreatedSchema = true;
     }
@@ -63,24 +59,16 @@ export class TestingInfrastructure {
       await this.setUpTransactionsInDatabase();
 
       if (this.fixtures.length > 0) {
-        await new Persister(
-          this.module.get(DataSource).manager,
-          this.fixtures,
-        ).persist();
+        await new Persister(this.module.get(DataSource).manager, this.fixtures).persist();
       }
     }
   }
 
   async addFixtures(...fixtures: BaseEntity[]) {
-    await new Persister(
-      this.module.get(DataSource).manager,
-      fixtures,
-    ).persist();
+    await new Persister(this.module.get(DataSource).manager, fixtures).persist();
   }
 
-  async addComplexFixtures(
-    ...fixtures: (BaseEntity[] | Record<string, BaseEntity>)[]
-  ) {
+  async addComplexFixtures(...fixtures: (BaseEntity[] | Record<string, BaseEntity>)[]) {
     const ret: BaseEntity[] = [];
     for (let fixture of fixtures) {
       if (!(fixture instanceof Array)) {
@@ -108,8 +96,7 @@ export class TestingInfrastructure {
       (queryRunner as unknown as { isReleased: boolean }).isReleased = false;
     };
 
-    (ds.manager as unknown as { queryRunner: QueryRunner }).queryRunner =
-      this.queryRunner;
+    (ds.manager as unknown as { queryRunner: QueryRunner }).queryRunner = this.queryRunner;
     ds.createQueryRunner = () => {
       return queryRunner;
     };
@@ -136,9 +123,7 @@ export class TestingInfrastructureBuilder {
     );
   }
 
-  addFixtures(
-    ...fixtures: (BaseEntity[] | Record<string, BaseEntity>)[]
-  ): this {
+  addFixtures(...fixtures: (BaseEntity[] | Record<string, BaseEntity>)[]): this {
     for (let fixture of fixtures) {
       if (!(fixture instanceof Array)) {
         fixture = Object.values(fixture);
