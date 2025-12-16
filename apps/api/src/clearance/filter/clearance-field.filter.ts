@@ -34,7 +34,7 @@ function getClearedProperties(
   // @todo: Develop actual list of properties to toggle clearance for.
   // @todo: Configure by app via clearance table
   return {
-    name: true,
+    name: false, // Name should never be exposed directly, we need depseudonymization for that.
     role: true,
     groups: true,
     organization: true,
