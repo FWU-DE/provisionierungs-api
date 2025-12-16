@@ -31,7 +31,16 @@ export class EduplacesStagingAdapter implements AdapterInterface {
     return 'eduplaces-staging';
   }
 
+  isEnabled(): boolean {
+    return (
+      this.idmEduplacesStagingConfig.IDM_EDUPLACES_STAGING_ENABLED ?? false
+    );
+  }
+
   private async getAuthToken(): Promise<BearerToken> {
+    if (!this.idmEduplacesStagingConfig.IDM_EDUPLACES_STAGING_ENABLED) {
+      throw new Error('Eduplaces Staging IDM is not enabled');
+    }
     return this.clientCredentialsProvider.authenticate(
       this.idmEduplacesStagingConfig.IDM_EDUPLACES_STAGING_TOKEN_ENDPOINT,
       this.idmEduplacesStagingConfig.IDM_EDUPLACES_STAGING_CLIENT_ID,
@@ -46,6 +55,9 @@ export class EduplacesStagingAdapter implements AdapterInterface {
     clearance?: Clearance[],
   ): Promise<AdapterGetPersonsReturnType> {
     void clearance;
+    if (!this.idmEduplacesStagingConfig.IDM_EDUPLACES_STAGING_ENABLED) {
+      throw new Error('Eduplaces Staging IDM is not enabled');
+    }
 
     const response = await this.schulconnexFetcher.fetchPersons(
       this.idmEduplacesStagingConfig.IDM_EDUPLACES_STAGING_API_ENDPOINT,
@@ -74,6 +86,9 @@ export class EduplacesStagingAdapter implements AdapterInterface {
 
   async getGroups(schoolIds?: string[]): Promise<AdapterGetGroupsReturnType> {
     void schoolIds;
+    if (!this.idmEduplacesStagingConfig.IDM_EDUPLACES_STAGING_ENABLED) {
+      throw new Error('Eduplaces Staging IDM is not enabled');
+    }
 
     const response = await this.schulconnexFetcher.fetchGroups(
       this.idmEduplacesStagingConfig.IDM_EDUPLACES_STAGING_API_ENDPOINT,

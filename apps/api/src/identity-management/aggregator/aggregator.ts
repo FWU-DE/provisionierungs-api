@@ -33,12 +33,15 @@ export class Aggregator {
   ) {}
 
   private getAvailableAdapters(): AdapterInterface[] {
-    return [
+    const allAdapters: AdapterInterface[] = [
       this.deByVidisIdpAdapter,
       this.eduplacesAdapter,
       this.eduplacesStagingAdapter,
       this.saarlandAdapter,
     ];
+    return allAdapters.filter((adapter) => {
+      return adapter.isEnabled();
+    });
   }
 
   private getAdapterById(id: string): undefined | AdapterInterface {

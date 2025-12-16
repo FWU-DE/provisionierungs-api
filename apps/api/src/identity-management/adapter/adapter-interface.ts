@@ -23,6 +23,8 @@ export interface AdapterGetGroupsReturnType {
 export interface AdapterInterface {
   getIdentifier(): string;
 
+  isEnabled(): boolean;
+
   getPersons(
     parameters: SchulconnexPersonsQueryParameters,
     clearance?: Clearance[],

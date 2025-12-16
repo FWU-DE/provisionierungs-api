@@ -31,7 +31,14 @@ export class EduplacesAdapter implements AdapterInterface {
     return 'eduplaces';
   }
 
+  isEnabled(): boolean {
+    return this.idmEduplacesConfig.IDM_EDUPLACES_ENABLED ?? false;
+  }
+
   private async getAuthToken(): Promise<BearerToken> {
+    if (!this.idmEduplacesConfig.IDM_EDUPLACES_ENABLED) {
+      throw new Error('Eduplaces IDM is not enabled');
+    }
     return this.clientCredentialsProvider.authenticate(
       this.idmEduplacesConfig.IDM_EDUPLACES_TOKEN_ENDPOINT,
       this.idmEduplacesConfig.IDM_EDUPLACES_CLIENT_ID,
@@ -46,6 +53,9 @@ export class EduplacesAdapter implements AdapterInterface {
     clearance?: Clearance[],
   ): Promise<AdapterGetPersonsReturnType> {
     void clearance;
+    if (!this.idmEduplacesConfig.IDM_EDUPLACES_ENABLED) {
+      throw new Error('Eduplaces IDM is not enabled');
+    }
 
     const response = await this.schulconnexFetcher.fetchPersons(
       this.idmEduplacesConfig.IDM_EDUPLACES_API_ENDPOINT,
@@ -74,6 +84,9 @@ export class EduplacesAdapter implements AdapterInterface {
 
   async getGroups(schoolIds?: string[]): Promise<AdapterGetGroupsReturnType> {
     void schoolIds;
+    if (!this.idmEduplacesConfig.IDM_EDUPLACES_ENABLED) {
+      throw new Error('Eduplaces IDM is not enabled');
+    }
 
     const response = await this.schulconnexFetcher.fetchGroups(
       this.idmEduplacesConfig.IDM_EDUPLACES_API_ENDPOINT,

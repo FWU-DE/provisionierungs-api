@@ -9,6 +9,7 @@ describe('AdapterInterface', () => {
     // Create a mock implementation
     const mockAdapter: AdapterInterface = {
       getIdentifier: () => 'test-adapter',
+      isEnabled: () => true,
       getPersons: () =>
         Promise.resolve({
           idm: 'test-adapter',
@@ -50,6 +51,7 @@ describe('AdapterInterface', () => {
     // Create a mock implementation that returns a null response
     const mockAdapter: AdapterInterface = {
       getIdentifier: () => 'test-adapter',
+      isEnabled: () => true,
       getPersons: () =>
         Promise.resolve({
           idm: 'test-adapter',

@@ -32,7 +32,15 @@ export class SaarlandAdapter implements AdapterInterface {
     return 'saarland';
   }
 
+  isEnabled(): boolean {
+    return this.idmSaarlandConfig.IDM_SAARLAND_ENABLED;
+  }
+
   private async getAuthToken(): Promise<BearerToken> {
+    if (!this.idmSaarlandConfig.IDM_SAARLAND_ENABLED) {
+      throw new Error('Saarland IDM is not enabled');
+    }
+
     return this.formUrlEncodedProvider.authenticate(
       this.idmSaarlandConfig.IDM_SAARLAND_TOKEN_ENDPOINT,
       this.idmSaarlandConfig.IDM_SAARLAND_CLIENT_ID,
@@ -47,6 +55,11 @@ export class SaarlandAdapter implements AdapterInterface {
     parameters: SchulconnexPersonsQueryParameters,
     clearance?: Clearance[],
   ): Promise<AdapterGetPersonsReturnType> {
+    const config = this.idmSaarlandConfig;
+    if (!config.IDM_SAARLAND_ENABLED) {
+      throw new Error('Saarland IDM is not enabled');
+    }
+
     // Get organizations per schulkennung from clearance.
     const schoolIds = clearance?.map((clearance) => clearance.schoolId) ?? [];
 
@@ -68,7 +81,7 @@ export class SaarlandAdapter implements AdapterInterface {
         localParameters['organisation.id'] = organizationId;
 
         return await this.schulconnexFetcher.fetchPersons(
-          this.idmSaarlandConfig.IDM_SAARLAND_API_ENDPOINT,
+          config.IDM_SAARLAND_API_ENDPOINT,
           localParameters,
           await this.getAuthToken(),
         );
@@ -89,6 +102,10 @@ export class SaarlandAdapter implements AdapterInterface {
   async getOrganizations(
     parameters: SchulconnexOrganizationQueryParameters,
   ): Promise<AdapterGetOrganizationsReturnType> {
+    if (!this.idmSaarlandConfig.IDM_SAARLAND_ENABLED) {
+      throw new Error('Saarland IDM is not enabled');
+    }
+
     const response = await this.schulconnexFetcher.fetchOrganizations(
       this.idmSaarlandConfig.IDM_SAARLAND_API_ENDPOINT,
       parameters,
@@ -102,6 +119,11 @@ export class SaarlandAdapter implements AdapterInterface {
   }
 
   async getGroups(schoolIds?: string[]): Promise<AdapterGetGroupsReturnType> {
+    const config = this.idmSaarlandConfig;
+    if (!config.IDM_SAARLAND_ENABLED) {
+      throw new Error('Saarland IDM is not enabled');
+    }
+
     let organizationIds: string[] | undefined;
     if (schoolIds) {
       const organizations = await this.getOrganizations(
@@ -118,7 +140,7 @@ export class SaarlandAdapter implements AdapterInterface {
     const responses = await Promise.all(
       organizationIds?.map(async (organizationId) => {
         return await this.schulconnexFetcher.fetchGroups(
-          this.idmSaarlandConfig.IDM_SAARLAND_API_ENDPOINT,
+          config.IDM_SAARLAND_API_ENDPOINT,
           await this.getAuthToken(),
           organizationId,
         );

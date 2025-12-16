@@ -31,7 +31,14 @@ export class DeByVidisIdpAdapter implements AdapterInterface {
     return 'DE-BY-vidis-idp';
   }
 
+  isEnabled(): boolean {
+    return this.idmBY_DE_vidis_idpConfig.IDM_DE_BY_VIDIS_IDP_ENABLED ?? false;
+  }
+
   private async getAuthToken(): Promise<BearerToken> {
+    if (!this.idmBY_DE_vidis_idpConfig.IDM_DE_BY_VIDIS_IDP_ENABLED) {
+      throw new Error('DE-BY vidis idp IDM is not enabled');
+    }
     return this.clientCredentialsProvider.authenticate(
       this.idmBY_DE_vidis_idpConfig.IDM_DE_BY_VIDIS_IDP_TOKEN_ENDPOINT,
       this.idmBY_DE_vidis_idpConfig.IDM_DE_BY_VIDIS_IDP_CLIENT_ID,
@@ -46,6 +53,9 @@ export class DeByVidisIdpAdapter implements AdapterInterface {
     clearance?: Clearance[],
   ): Promise<AdapterGetPersonsReturnType> {
     void clearance;
+    if (!this.idmBY_DE_vidis_idpConfig.IDM_DE_BY_VIDIS_IDP_ENABLED) {
+      throw new Error('DE-BY vidis idp IDM is not enabled');
+    }
 
     const response = await this.schulconnexFetcher.fetchPersons(
       this.idmBY_DE_vidis_idpConfig.IDM_DE_BY_VIDIS_IDP_API_ENDPOINT,
@@ -74,6 +84,9 @@ export class DeByVidisIdpAdapter implements AdapterInterface {
 
   async getGroups(schoolIds?: string[]): Promise<AdapterGetGroupsReturnType> {
     void schoolIds;
+    if (!this.idmBY_DE_vidis_idpConfig.IDM_DE_BY_VIDIS_IDP_ENABLED) {
+      throw new Error('DE-BY vidis idp IDM is not enabled');
+    }
 
     const response = await this.schulconnexFetcher.fetchGroups(
       this.idmBY_DE_vidis_idpConfig.IDM_DE_BY_VIDIS_IDP_API_ENDPOINT,

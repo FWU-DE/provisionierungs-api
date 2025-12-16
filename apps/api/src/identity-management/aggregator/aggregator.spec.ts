@@ -42,11 +42,13 @@ describe('Aggregator', () => {
     // Create mocks for all dependencies
     mockEduplacesAdapter = {
       getIdentifier: jest.fn().mockReturnValue('eduplaces'),
+      isEnabled: jest.fn().mockReturnValue(true),
       getPersons: jest.fn(),
     } as unknown as jest.Mocked<EduplacesAdapter>;
 
     mockEduplacesStagingAdapter = {
       getIdentifier: jest.fn().mockReturnValue('eduplaces-staging'),
+      isEnabled: jest.fn().mockReturnValue(true),
       getPersons: jest.fn(),
     } as unknown as jest.Mocked<EduplacesStagingAdapter>;
 

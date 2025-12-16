@@ -55,6 +55,12 @@ describe('DE_BY_vidis_idpAdapter', () => {
     });
   });
 
+  describe('isEnabled', () => {
+    it('should return true if enabled via ENV var', () => {
+      expect(adapter.isEnabled()).toBe(true);
+    });
+  });
+
   describe('getPersons', () => {
     it('should authenticate, fetch persons, and transform the response', async () => {
       // Mock data
