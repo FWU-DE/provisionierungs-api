@@ -114,34 +114,26 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.api.existingSecret.name }}
                   key: {{ .Values.api.existingSecret.keyIdmEduplacesClientSecret }}
-            - name: IDM_EDUPLACES_STAGING_TOKEN_ENDPOINT
-              value: {{ .Values.api.options.idmEduplacesStagingTokenEndpoint | quote }}
-            - name: IDM_EDUPLACES_STAGING_API_ENDPOINT
-              value: {{ .Values.api.options.idmEduplacesStagingApiEndpoint | quote }}
-            - name: IDM_EDUPLACES_STAGING_CLIENT_ID
+            - name: IDM_SAARLAND_ENABLED
+              value: "true"
+            - name: IDM_SAARLAND_TOKEN_ENDPOINT
+              value: {{ .Values.api.options.idmSaarlandTokenEndpoint | quote }}
+            - name: IDM_SAARLAND_API_ENDPOINT
+              value: {{ .Values.api.options.idmSaarlandApiEndpoint | quote }}
+            - name: IDM_SAARLAND_CLIENT_ID
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.api.existingSecret.name }}
-                  key: {{ .Values.api.existingSecret.keyIdmEduplacesStagingClientId }}
-            - name: IDM_EDUPLACES_STAGING_CLIENT_SECRET
+                  key: {{ .Values.api.existingSecret.keyIdmSaarlandClientId }}
+            - name: IDM_SAARLAND_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.api.existingSecret.name }}
-                  key: {{ .Values.api.existingSecret.keyIdmEduplacesStagingClientSecret }}
-            - name: IDM_DE_BY_VIDIS_IDP_TOKEN_ENDPOINT
-              value: {{ .Values.api.options.idmDeByVidisIdpTokenEndpoint | quote }}
-            - name: IDM_DE_BY_VIDIS_IDP_API_ENDPOINT
-              value: {{ .Values.api.options.idmDeByVidisIdpApiEndpoint | quote }}
-            - name: IDM_DE_BY_VIDIS_IDP_CLIENT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.api.existingSecret.name }}
-                  key: {{ .Values.api.existingSecret.keyIdmDeByVidisIdpClientId }}
-            - name: IDM_DE_BY_VIDIS_IDP_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.api.existingSecret.name }}
-                  key: {{ .Values.api.existingSecret.keyIdmDeByVidisIdpClientSecret }}
+                  key: {{ .Values.api.existingSecret.keyIdmSaarlandClientSecret }}
+            - name: IDM_SAARLAND_SCOPE
+              value: {{ .Values.api.options.idmSaarlandScope | quote }}
+            - name: IDM_SAARLAND_RESOURCE
+              value: {{ .Values.api.options.idmSaarlandResource | quote }}
           {{- with .Values.api.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
