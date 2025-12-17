@@ -64,13 +64,13 @@ export class Pseudonymization {
     const saltEndpoint = this.pseudonymConfig.PSEUDONYMIZATION_SALT_ENDPOINT;
     void saltEndpoint;
 
-    return Promise.resolve('12345678');
+    return Promise.resolve(this.pseudonymConfig.PSEUDONYMIZATION_SALT);
   }
 
   private async getSectorIdentifier(clientId?: string): Promise<string> {
     // @todo: Get sector identifier for client...
     void clientId;
 
-    return Promise.resolve('https://sector.identifier');
+    return Promise.resolve(this.pseudonymConfig.PSEUDONYMIZATION_SECTOR_IDENTIFIER);
   }
 }

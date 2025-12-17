@@ -149,6 +149,8 @@ api:
     keyIdmSaarlandClientId: 'idmSaarlandClientId'
     keyIdmSaarlandClientSecret: 'idmSaarlandClientSecret'
     keyPseudonymizationSaltEndpoint: 'pseudonymizationSaltEndpoint'
+    keyPseudonymizationSalt: 'pseudonymizationSalt'
+    keyPseudonymizationSectorIdentifier: 'pseudonymizationSectorIdentifier'
 
 ui:
   selfBaseUrl: 'http://vidis-ui.local'

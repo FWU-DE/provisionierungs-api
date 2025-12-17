@@ -88,6 +88,16 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.api.existingSecret.name }}
                   key: {{ .Values.api.existingSecret.keyPseudonymizationSaltEndpoint }}
+            - name: PSEUDONYMIZATION_SALT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.api.existingSecret.name }}
+                  key: {{ .Values.api.existingSecret.keyPseudonymizationSalt }}
+            - name: PSEUDONYMIZATION_SECTOR_IDENTIFIER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.api.existingSecret.name }}
+                  key: {{ .Values.api.existingSecret.keyPseudonymizationSectorIdentifier }}
             - name: OFFERS_API_ENDPOINT
               value: {{ .Values.api.options.offersApiEndpoint | quote }}
             - name: OFFERS_CLIENT_ID

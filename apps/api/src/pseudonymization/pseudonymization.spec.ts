@@ -22,6 +22,8 @@ describe('Pseudonymization', () => {
     // Create a mock for PseudonymizationConfig
     mockConfig = {
       PSEUDONYMIZATION_SALT_ENDPOINT: 'https://example.local/salt',
+      PSEUDONYMIZATION_SALT: '12345678',
+      PSEUDONYMIZATION_SECTOR_IDENTIFIER: 'https://sector.identifier',
     };
 
     const module: TestingModule = await Test.createTestingModule({
