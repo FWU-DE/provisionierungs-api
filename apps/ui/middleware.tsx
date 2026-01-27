@@ -12,7 +12,7 @@ const intlMiddleware = createMiddleware({
 });
 
 export async function middleware(request: NextRequest) {
-  if (null === (await getSession())) {
+  if (null === (await getSession()) && !/^\/(de)?$/.exec(request.nextUrl.pathname)) {
     return NextResponse.redirect(new URL('/api/login', request.url));
   }
 

@@ -51,7 +51,7 @@ export class AccessTokenVerifier {
     return new AccessTokenVerifier(jwks, result.data);
   }
 
-  async verifyAccessToken(logoutToken: string): Promise<AccessToken> {
+  async verifyAccessToken(token: string): Promise<AccessToken> {
     // use local config or fetch new
     const openIDConnectConfig = this.openIDConnectConfig;
 
@@ -63,16 +63,12 @@ export class AccessTokenVerifier {
 
     const jwtVerifyResult = await (
       await this.getJose()
-    ).jwtVerify<JWTPayload & { sid?: string; events?: Record<string, unknown> }>(
-      logoutToken,
-      this.jwks,
-      {
-        issuer: this.openIDConnectConfig.issuer,
-        clockTolerance: 60,
-        algorithms,
-        requiredClaims: ['iss', 'iat', 'jti'],
-      },
-    );
+    ).jwtVerify<JWTPayload & { sid?: string; events?: Record<string, unknown> }>(token, this.jwks, {
+      issuer: this.openIDConnectConfig.issuer,
+      clockTolerance: 60,
+      algorithms,
+      requiredClaims: ['iss', 'iat', 'jti'],
+    });
 
     const validatedResult = safeParse(accessTokenSchema, jwtVerifyResult.payload);
     if (!validatedResult.success) {

@@ -3,6 +3,7 @@ import { graphql } from '@/lib/gql-tada/graphql';
 import { getGrahpqlClient } from '@/lib/graphql-client';
 import { verifySession } from '@/lib/session';
 import { getTranslations } from 'next-intl/server';
+import Link from 'next/link';
 
 const query = graphql(`
   query Home {
@@ -15,6 +16,7 @@ const query = graphql(`
 
 export default async function Home() {
   const t = await getTranslations('home');
+  const tAuth = await getTranslations('auth');
   const session = await verifySession();
   const result = await getGrahpqlClient().query({ query });
 
@@ -25,6 +27,7 @@ export default async function Home() {
       <pre className="w-full overflow-x-scroll">{JSON.stringify(session, undefined, '  ')}</pre>
       <AccessTokenCopyBox token={session.accessToken} />
       <pre>{JSON.stringify(result)}</pre>
+      <Link href="/api/logout">{tAuth('logout')}</Link>
     </div>
   );
 }
