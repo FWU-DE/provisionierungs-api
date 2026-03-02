@@ -40,6 +40,13 @@ export class SchulconnexFetcher extends AbstractFetcher<BearerToken> {
       queryParams.vollstaendig.add('gruppen');
     }
 
+    const pid = parameters.pid;
+    if (pid) {
+      // We need to depseudonymize the pid parameter.
+      // We achieve this by fetching all users and filtering down the line.
+      queryParams.pid = undefined;
+    }
+
     const fullEndpointUrl = endpointUrl + '/personen-info?' + queryParams.toUrlSearchParams();
     const response = await fetch(fullEndpointUrl, {
       method: 'GET',

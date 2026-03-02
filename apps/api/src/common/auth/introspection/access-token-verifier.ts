@@ -19,6 +19,7 @@ const accessTokenSchema = z.object({
   sid: z.string().optional(),
   scope: z.string().optional(),
   client_id: z.string().optional(),
+  azp: z.string().optional(),
   schulkennung: z.array(z.string()).optional(),
   heimatorganisation: z.string().optional(),
   email: z.string().optional(),

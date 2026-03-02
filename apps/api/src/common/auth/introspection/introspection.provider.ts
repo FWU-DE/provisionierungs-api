@@ -146,7 +146,7 @@ export class IntrospectionProvider {
           sub: jwtVerifyResult.sub,
           subType: resourceOwnerType,
           scopes,
-          clientId: jwtVerifyResult.client_id ?? null,
+          clientId: jwtVerifyResult.client_id ?? jwtVerifyResult.azp ?? null,
           heimatorganisation: jwtVerifyResult.heimatorganisation,
           schulkennung: jwtVerifyResult.schulkennung,
         };
