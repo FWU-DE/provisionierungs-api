@@ -31,10 +31,7 @@ type OffersDto {
   offerLink: String!
   offerLogo: String!
   offerLongTitle: String!
-  offerResourcePk: Float!
-  offerStatus: String!
   offerTitle: String!
-  offerVersion: Float!
 }
 
 type Query {

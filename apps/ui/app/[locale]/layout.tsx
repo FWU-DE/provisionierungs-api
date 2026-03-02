@@ -32,9 +32,9 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body>
-        <div className="container mx-auto">
-          <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
-        </div>
+        <NextIntlClientProvider messages={messages}>
+          <div className="container mx-auto px-4">{children}</div>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

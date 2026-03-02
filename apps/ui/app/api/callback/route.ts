@@ -1,10 +1,9 @@
 import * as client from 'openid-client';
+import { getClientConfiguration, getState } from '@/lib/auth';
+import { getConfig } from '@/lib/config';
+import { encryptSession } from '@/lib/session';
 import { cookies } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
-
-import { getClientConfiguration, getState } from '../../lib/auth';
-import { getConfig } from '../../lib/config';
-import { encryptSession } from '../../lib/session';
 
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);

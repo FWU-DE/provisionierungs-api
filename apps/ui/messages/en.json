@@ -8,7 +8,40 @@
     "logout": "Logout",
     "login_description": "Log in to access the VIDIS rostering application."
   },
-  "home": {
-    "welcome": "Welcome"
+  "component/app-list": {
+    "headline": "Apps",
+    "no-apps": "No apps available."
+  },
+  "component/header": {
+    "sign-out": "sign out",
+    "select-school": "Select school"
+  },
+  "component/language-switcher": {
+    "label": "Language",
+    "german": "German",
+    "english": "English"
+  },
+  "component/school-list": {
+    "headline": "Your schools:"
+  },
+  "page/apps/all": {
+    "headline": "All apps"
+  },
+  "page/apps/own": {
+    "headline": "Configured apps"
+  },
+  "page/apps/settings": {
+    "headline": "Configure app"
+  },
+  "page/home": {
+    "headline": "Welcome"
+  },
+  "page/user/no-school-available": {
+    "headline": "No school available for management",
+    "no_school_available_for_management": "No school available for management"
+  },
+  "page/user/select-school": {
+    "headline": "Select school",
+    "select_school_to_administer": "Please select the school you want to administer."
   }
 }

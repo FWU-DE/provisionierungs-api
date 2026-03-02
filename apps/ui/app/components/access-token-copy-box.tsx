@@ -1,5 +1,7 @@
 'use client';
 
+// @todo: Remove after core development!
+
 export default function AccessTokenCopyBox({ token }: { token: string }) {
   const copyToClipboard = (text: string) => {
     void navigator.clipboard.writeText(text);
@@ -8,12 +10,7 @@ export default function AccessTokenCopyBox({ token }: { token: string }) {
 
   return (
     <div
-      style={{
-        padding: '1rem',
-        backgroundColor: 'red',
-        borderRadius: '1rem',
-        wordBreak: 'break-word',
-      }}
+      className="my-10 cursor-pointer break-all rounded-2xl bg-gray-200 px-6 py-4"
       onClick={() => {
         copyToClipboard(token);
       }}

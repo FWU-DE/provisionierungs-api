@@ -1,9 +1,8 @@
 import * as client from 'openid-client';
+import { encryptState, getClientConfiguration } from '@/lib/auth';
+import { getConfig } from '@/lib/config';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-
-import { encryptState, getClientConfiguration } from '../../lib/auth';
-import { getConfig } from '../../lib/config';
 
 export async function GET() {
   const config = getConfig();

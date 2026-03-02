@@ -5,6 +5,7 @@ export interface Config {
   authUrl: string;
   apiBaseUrl: string;
   sessionCookieName: string;
+  schoolSelectionCookieName: string;
   scopes: string;
 }
 
@@ -29,6 +30,7 @@ export function getConfig(): Config {
     authUrl: process.env.AUTH_URL,
     apiBaseUrl: process.env.API_BASE_URL ?? 'http://localhost:3010',
     sessionCookieName: 'session',
+    schoolSelectionCookieName: 'school_selection',
     scopes: process.env.AUTH_REQUESTED_SCOPES ?? 'openid',
   };
 }

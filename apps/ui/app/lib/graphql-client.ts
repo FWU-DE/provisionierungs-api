@@ -22,7 +22,9 @@ export const { getClient: getGrahpqlClient } = registerApolloClient(() => {
     return new Observable((observer: Subscriber<ApolloLink.Operation>) => {
       verifySession()
         .then((session) => {
-          operation.setContext({ headers: { Authorization: `Bearer ${session.accessToken}` } });
+          operation.setContext({
+            headers: { Authorization: `Bearer ${session?.accessToken ?? ''}` },
+          });
           observer.next(operation);
           observer.complete();
         })

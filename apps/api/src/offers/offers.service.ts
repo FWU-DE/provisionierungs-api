@@ -17,15 +17,12 @@ export class OffersService {
       return response.items.map((item) => {
         const dto = new OffersDto();
         dto.educationProviderOrganizationName = item.educationProviderOrganizationName;
-        dto.offerDescription = item.offerDescription ?? '';
         dto.offerId = item.offerId;
+        dto.offerTitle = item.offerTitle ?? '';
+        dto.offerLongTitle = item.offerLongTitle ?? '';
+        dto.offerDescription = item.offerDescription ?? '';
         dto.offerLink = item.offerLink ?? '';
         dto.offerLogo = item.offerLogo ?? '';
-        dto.offerLongTitle = item.offerLongTitle ?? '';
-        dto.offerResourcePk = item.offerResourcePk ?? 0;
-        dto.offerStatus = item.offerStatus ?? '';
-        dto.offerTitle = item.offerTitle ?? '';
-        dto.offerVersion = item.offerVersion ?? 0;
         return dto;
       });
     });

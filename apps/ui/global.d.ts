@@ -1,12 +1,10 @@
-import type { formats } from '@/i18n/request';
-import type { routing } from '@/i18n/routing';
-
+import type { Locale } from './i18n';
 import type messages from './messages/en.json';
 
 declare module 'next-intl' {
   interface AppConfig {
-    Locale: (typeof routing.locales)[number];
+    Locale: Locale;
     Messages: typeof messages;
-    Formats: typeof formats;
+    Formats: unknown;
   }
 }
