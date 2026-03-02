@@ -20,7 +20,7 @@
     "db:fixture": "zx --verbose scripts/database/load-fixture.mjs"
   },
   "dependencies": {
-    "@apollo/server": "^5.0.0",
+    "@apollo/server": "^5.4.0",
     "@as-integrations/express5": "^1.1.2",
     "@fwu-rostering/utils": "workspace:*",
     "@nestjs/apollo": "^13.2.1",
