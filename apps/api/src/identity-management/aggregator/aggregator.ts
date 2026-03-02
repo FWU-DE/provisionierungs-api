@@ -19,6 +19,7 @@ import { SaarlandAdapter } from '../adapter/saarland/saarland-adapter';
 import { SchulconnexPersonsResponse } from '../dto/schulconnex/schulconnex-persons-response.dto';
 import { GroupsPerIdmModel } from '../model/groups-per-idm.model';
 import { PostRequestFilter } from '../post-request-filter/post-request-filter';
+import { applyMissingInitials } from './initials';
 
 @Injectable()
 export class Aggregator {
@@ -86,11 +87,13 @@ export class Aggregator {
       offerContext,
       clearedDataByGroup,
     );
+    // Add missing initials where necessary
+    const additionalData = applyMissingInitials(pseudonymizedData);
 
     // Thirdly, filter the data by the clearance fields.
     const clearedDataByFields = applyClearancePersonsFieldFilter(
       offerContext.offerId,
-      pseudonymizedData,
+      additionalData,
     );
 
     // Fourthly, filter the data by the query parameters.

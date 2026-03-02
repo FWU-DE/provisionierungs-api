@@ -34,6 +34,7 @@ function getClearedProperties(offerId: number): SchulconnexClearanceVisibleField
   // @todo: Configure by app via clearance table
   return {
     name: false, // Name should never be exposed directly, we need depseudonymization for that.
+    initials: true,
     role: true,
     groups: true,
     organization: true,
@@ -48,9 +49,24 @@ function filterPerson(
   if (typeof person === 'undefined') {
     return undefined;
   }
-  if (!visibleProperties.name) {
-    person.name = undefined;
+
+  if (!visibleProperties.initials && person.name) {
+    person.name.initialenfamilienname = null;
+    person.name.initialenvorname = null;
   }
+
+  if (!visibleProperties.name) {
+    // initials overwrite the name visibility
+    if (visibleProperties.initials) {
+      person.name = {
+        initialenfamilienname: person.name?.initialenfamilienname ?? null,
+        initialenvorname: person.name?.initialenvorname ?? null,
+      };
+    } else {
+      person.name = undefined;
+    }
+  }
+
   if (!visibleProperties.organization) {
     person.stammorganisation = undefined;
   }
