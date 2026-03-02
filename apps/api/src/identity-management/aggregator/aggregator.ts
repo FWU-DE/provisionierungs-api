@@ -7,7 +7,6 @@ import { Logger } from '../../common/logger';
 import { SchulconnexPersonsQueryParameters } from '../../controller/parameters/schulconnex-persons-query-parameters';
 import { OfferContext } from '../../offers/model/offer-context';
 import { Pseudonymization } from '../../pseudonymization/pseudonymization';
-import { DeByVidisIdpAdapter } from '../adapter/DE-BY-vidis-idp/de-by-vidis-idp-adapter';
 import {
   AdapterGetGroupsReturnType,
   AdapterGetPersonsReturnType,
@@ -24,7 +23,6 @@ import { applyMissingInitials } from './initials';
 @Injectable()
 export class Aggregator {
   constructor(
-    private readonly deByVidisIdpAdapter: DeByVidisIdpAdapter,
     private readonly eduplacesAdapter: EduplacesAdapter,
     private readonly eduplacesStagingAdapter: EduplacesStagingAdapter,
     private readonly saarlandAdapter: SaarlandAdapter,
@@ -36,7 +34,6 @@ export class Aggregator {
 
   private getAvailableAdapters(): AdapterInterface[] {
     const allAdapters: AdapterInterface[] = [
-      this.deByVidisIdpAdapter,
       this.eduplacesAdapter,
       this.eduplacesStagingAdapter,
       this.saarlandAdapter,
