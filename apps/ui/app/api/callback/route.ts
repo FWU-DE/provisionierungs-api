@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   url.protocol = 'https:';
   url.port = '';
+  url.host = request.headers.get('host') ?? url.host;
   const state = await getState(request.cookies.get('state')?.value);
   if (!state.state || !state.codeVerifier) {
     return new Response('Invalid state or code verifier', { status: 400 });
