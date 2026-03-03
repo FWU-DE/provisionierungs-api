@@ -73,6 +73,8 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.ui.existingSecret.name }}
                   key: {{ .Values.ui.existingSecret.keySessionSecret }}
+            - name: API_BASE_URL
+              value: http://{{ include "vidis-rostering.apiFullname" . }}:{{ .Values.api.service.port }}
             - name: SELF_BASE_URL
               value: {{ .Values.ui.selfBaseUrl }}
           {{- with .Values.ui.resources }}
