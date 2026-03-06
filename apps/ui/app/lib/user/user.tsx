@@ -26,10 +26,6 @@ export async function getUserFromSession(): Promise<User> {
       throw new InvalidTokenPayloadException();
     }
 
-    // @todo: Remove after implementation! This is here to fake a second school for the user.
-    context.schulkennung.push('fake-school-id');
-    context.schulkennung.push('DE-VIDIS-vidis_test_101010');
-
     return {
       userId: session.userId,
       heimatorganisation: context.heimatorganisation,

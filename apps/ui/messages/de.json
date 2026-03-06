@@ -8,39 +8,80 @@
     "logout": "Abmelden",
     "login_description": "Melden Sie sich an, um auf die VIDIS Rostering-Anwendung zuzugreifen."
   },
-  "component/app-list": {
-    "headline": "Anwendungen",
-    "no-apps": "Keine Angebote vorhanden"
+  "component/offer-list": {
+    "no-offers": "Keine Angebote vorhanden"
   },
   "component/header": {
-    "select-school": "Schule auswählen"
+    "select-school": "Schule auswählen",
+    "logo-alt": "VIDIS Rostering Logo"
   },
   "component/language-switcher": {
     "label": "Sprache",
     "german": "Deutsch",
     "english": "Englisch"
   },
+  "component/group-list": {
+    "headline": "Gruppen",
+    "groups": "Gruppen",
+    "no-groups": "Keine Gruppen zur Auswahl vorhanden.",
+    "empty-state-image": "Leere Gruppen"
+  },
   "component/school-list": {
-    "headline": "Ihre Schulen"
+    "headline": "Ihre Schulen",
+    "schools": "Schulen"
   },
-  "page/apps/all": {
-    "headline": "Alle Anwendungen"
-  },
-  "page/apps/own": {
-    "headline": "Konfigurierte Anwendungen"
+  "page/apps": {
+    "headline": "Meine Apps",
+    "subline": "Hier siehst Du die Apps, die Du bereits freigeschaltet hast."
   },
   "page/apps/settings": {
-    "headline": "Anwendung konfigurieren"
-  },
-  "page/home": {
-    "headline": "Willkommen"
+    "headline": "Anwendung konfigurieren",
+    "back-to-apps": "Zurück zu den Apps",
+    "not-found": {
+      "headline": "App nicht gefunden",
+      "description": "Die angeforderte App konnte nicht gefunden werden oder Sie haben keine Berechtigung, sie anzuzeigen."
+    }
   },
   "page/user/no-school-available": {
     "headline": "Keine Schule zur Verwaltung verfügbar",
-    "no_school_available_for_management": "Keine Schule zur Verwaltung verfügbar"
+    "no_school_available_for_management": "Keine Schule zur Verwaltung verfügbar. Bitte wenden Sie sich an einen Administrator, wenn Sie glauben, dass dies ein Fehler ist."
   },
   "page/user/select-school": {
     "headline": "Schule auswählen",
     "select_school_to_administer": "Bitte wählen Sie die Schule aus, die Sie verwalten möchten."
+  },
+  "component/offer-settings": {
+    "back": "Zurück",
+    "headline": "App-Konfiguration",
+    "description": "Verwalte die Einstellungen für diese App-Konfiguration.",
+    "tab-groups": "für Gruppen",
+    "tab-school": "ganze Schule",
+    "available-groups": "Verfügbare Gruppen",
+    "selected-groups": "Ausgewählte Gruppen",
+    "school-release-granted": "Freigabe ist für die gesamte Schule erteilt",
+    "remove-configuration": "Deine App-Konfiguration entfernen",
+    "cancel": "Abbrechen",
+    "save": "speichern",
+    "saved": "Gespeichert",
+    "deleted": "Gelöscht",
+    "error-saving": "Fehler beim Speichern der Konfiguration",
+    "error-deleting": "Fehler beim Löschen der Konfiguration",
+    "please-select-at-least-one-group": "Bitte wählen Sie mindestens eine Gruppe aus.",
+    "empty-headline": "Keine Konfiguration vorhanden",
+    "empty-copy": "Du hast diese App selbst noch nicht freigeschaltet.",
+    "empty-button": "Jetzt freischalten"
+  },
+  "component/footer": {
+    "help": "Hilfe",
+    "about-us": "Über uns",
+    "legal-notice": "Impressum",
+    "privacy": "Datenschutz",
+    "terms-and-conditions": "AGB",
+    "logo-alt": "VIDIS Rostering Logo"
+  },
+  "component/sidebar/main": {
+    "home": "Home",
+    "apps-own": "Freigeschaltete Apps",
+    "apps-all": "Alle Apps"
   }
 }

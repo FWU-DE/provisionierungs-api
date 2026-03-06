@@ -41,6 +41,9 @@ $ pnpm --filter @fwu/vidis-rostering-api test -- --watch --testPathPatterns pers
 $ pnpm db:migration:generate <migration-name>
 ```
 
+NOTE: Make sure to delete the `dist/` folder before generating migrations.
+Entities in the `dist/` folder might be taken into account aswell, which might lead to outdated data structures finding their way into the migration generation.
+
 #### Run migrations
 
 ```bash

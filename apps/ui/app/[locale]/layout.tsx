@@ -1,3 +1,5 @@
+import { Footer } from '@/components/layout/footer';
+import { Toaster } from '@/components/ui/sonner';
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
@@ -28,12 +30,25 @@ export default async function RootLayout({
   }
 
   const messages = await getMessages();
+  const tFooter = await getTranslations('component/footer');
+
+  const footerLinks = [
+    { href: '/help', text: tFooter('help') },
+    { href: '/about', text: tFooter('about-us') },
+    { href: '/legal', text: tFooter('legal-notice') },
+    { href: '/privacy', text: tFooter('privacy') },
+    { href: '/terms', text: tFooter('terms-and-conditions') },
+  ];
 
   return (
     <html lang={locale}>
       <body>
         <NextIntlClientProvider messages={messages}>
-          <div className="container mx-auto px-4">{children}</div>
+          <div className="flex min-h-screen flex-col">
+            {children}
+            <Footer className={'mt-auto'} links={footerLinks} />
+          </div>
+          <Toaster />
         </NextIntlClientProvider>
       </body>
     </html>

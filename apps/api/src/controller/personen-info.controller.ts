@@ -2,7 +2,7 @@ import { Controller, Get, Inject, Query, Res } from '@nestjs/common';
 import { ApiBearerAuth, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import type { Response } from 'express';
 
-import { ClearanceService } from '../clearance/clearance.service';
+import { GroupClearanceService } from '../clearance/group-clearance.service';
 import { AllowResourceOwnerType, ClientId, RequireScope, ResourceOwnerType } from '../common/auth';
 import { ScopeIdentifier } from '../common/auth/scope/scope-identifier';
 import { Logger } from '../common/logger';
@@ -16,7 +16,7 @@ import { SchulconnexPersonsQueryParameters } from './parameters/schulconnex-pers
 export class PersonenInfoController {
   constructor(
     private readonly aggregator: Aggregator,
-    private readonly clearanceService: ClearanceService,
+    private readonly clearanceService: GroupClearanceService,
     @Inject(OffersFetcher) private offersFetcher: OffersFetcher,
     private readonly logger: Logger,
   ) {

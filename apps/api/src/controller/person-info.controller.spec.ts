@@ -1,6 +1,6 @@
 import request from 'supertest';
 
-import { Clearance } from '../clearance/entity/clearance.entity';
+import { GroupClearance } from '../clearance/entity/group-clearance.entity';
 import { AuthModule } from '../common/auth';
 import { IntrospectionClient } from '../common/auth/introspection/introspection-client';
 import { TestIntrospectionClient } from '../common/auth/introspection/introspection-client.test';
@@ -45,7 +45,7 @@ describe('Schulconnex Person-Info Controller', () => {
       })
       .enableDatabase()
       .addFixtures([
-        fixture(Clearance, {
+        fixture(GroupClearance, {
           offerId: 1234,
           schoolId: 'test-school-id',
           groupId: 'test-group-id',

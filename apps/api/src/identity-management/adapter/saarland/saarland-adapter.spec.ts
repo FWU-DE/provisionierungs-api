@@ -1,4 +1,4 @@
-import { Clearance } from '../../../clearance/entity/clearance.entity';
+import { GroupClearance } from '../../../clearance/entity/group-clearance.entity';
 import { SchulconnexPersonsQueryParameters } from '../../../controller/parameters/schulconnex-persons-query-parameters';
 import {
   type TestingInfrastructure,
@@ -54,7 +54,7 @@ describe('SaarlandAdapter', () => {
 
   describe('getIdentifier', () => {
     it('should return the correct identifier', () => {
-      expect(adapter.getIdentifier()).toBe('saarland');
+      expect(adapter.getIdentifier()).toBe('DE-SL-OnlineSchuleSaarlandTest');
     });
   });
 
@@ -102,15 +102,15 @@ describe('SaarlandAdapter', () => {
       mockSchulconnexFetcher.fetchPersons.mockResolvedValue(mockPersonsResponse);
       mockSchulconnexFetcher.fetchOrganizations.mockResolvedValue(mockOrganizationsResponse);
 
-      const mockClearance1 = new Clearance();
+      const mockClearance1 = new GroupClearance();
       mockClearance1.offerId = 1;
-      mockClearance1.idmId = 'saarland';
+      mockClearance1.idmId = 'DE-SL-OnlineSchuleSaarlandTest';
       mockClearance1.schoolId = 'schule-1';
       mockClearance1.groupId = 'group-1';
 
-      const mockClearance2 = new Clearance();
+      const mockClearance2 = new GroupClearance();
       mockClearance2.offerId = 2;
-      mockClearance2.idmId = 'saarland';
+      mockClearance2.idmId = 'DE-SL-OnlineSchuleSaarlandTest';
       mockClearance2.schoolId = 'schule-2';
       mockClearance2.groupId = 'group-3';
 
@@ -157,7 +157,7 @@ describe('SaarlandAdapter', () => {
         mockAuthToken,
       );
       expect(result).toEqual({
-        idm: 'saarland',
+        idm: 'DE-SL-OnlineSchuleSaarlandTest',
         response: mockPersonsResponse,
       });
     });

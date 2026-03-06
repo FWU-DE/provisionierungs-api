@@ -2,11 +2,16 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type ClearanceDeleteResponse {
+type Group {
+  id: String!
+  name: String!
+}
+
+type GroupClearanceDeleteResponse {
   deleted: Boolean!
 }
 
-type ClearanceResponse {
+type GroupClearanceResponse {
   groupId: String!
   id: String!
   idmId: String!
@@ -14,14 +19,12 @@ type ClearanceResponse {
   schoolId: String!
 }
 
-type Group {
-  id: String!
-  name: String!
-}
-
 type Mutation {
-  createClearance(groupId: String!, idmId: String!, offerId: Int!, schoolId: String!): ClearanceResponse!
-  deleteClearance(id: String!): ClearanceDeleteResponse!
+  createGroupClearance(groupId: String!, idmId: String!, offerId: Int!, schoolId: String!): GroupClearanceResponse!
+  createSchoolClearance(idmId: String!, offerId: Int!, schoolId: String!): SchoolClearanceResponse!
+  deleteAllGroupClearances(idmId: String!, offerId: Int!, schoolId: String!): GroupClearanceDeleteResponse!
+  deleteGroupClearance(id: String!): GroupClearanceDeleteResponse!
+  deleteSchoolClearance(id: String!): SchoolClearanceDeleteResponse!
 }
 
 type OffersDto {
@@ -35,7 +38,20 @@ type OffersDto {
 }
 
 type Query {
-  allClearances: [ClearanceResponse!]!
-  allGroups: [Group!]!
-  allOffers: [OffersDto!]!
+  allGroupClearances(offerId: Int, schoolId: String): [GroupClearanceResponse!]!
+  allGroups(schoolId: String): [Group!]!
+  allOffers(schoolId: String): [OffersDto!]!
+  allSchoolClearances(offerId: Int, schoolId: String): [SchoolClearanceResponse!]!
+  offer(id: Int!, schoolId: String): OffersDto
+}
+
+type SchoolClearanceDeleteResponse {
+  deleted: Boolean!
+}
+
+type SchoolClearanceResponse {
+  id: String!
+  idmId: String!
+  offerId: Float!
+  schoolId: String!
 }

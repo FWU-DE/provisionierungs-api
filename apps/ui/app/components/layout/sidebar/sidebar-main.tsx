@@ -3,26 +3,18 @@
 import * as React from 'react';
 import { Sidebar } from '@/components/ui/sidebar/sidebar';
 import { SidebarItem } from '@/components/ui/sidebar/sidebar-item';
-import { GraduationCapIcon, HomeIcon, LayersIcon } from 'lucide-react';
+import { LayersIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 function SidebarMain() {
+  const t = useTranslations('component/sidebar/main');
+
   // Define sidebar items
-  // @todo: Translate!
   const sidebarItems = [
     {
-      label: 'Home',
-      icon: HomeIcon,
-      href: '/home',
-    },
-    {
-      label: 'Cleared apps',
+      label: t('apps-own'),
       icon: LayersIcon,
-      href: '/apps/own',
-    },
-    {
-      label: 'All apps',
-      icon: GraduationCapIcon,
-      href: '/apps/all',
+      href: '/apps',
     },
   ];
 

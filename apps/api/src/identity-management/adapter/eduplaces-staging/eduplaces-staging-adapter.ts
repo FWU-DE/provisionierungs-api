@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import type { Clearance } from '../../../clearance/entity/clearance.entity';
+import type { GroupClearance } from '../../../clearance/entity/group-clearance.entity';
 import { SchulconnexOrganizationQueryParameters } from '../../../controller/parameters/schulconnex-organisations-query-parameters';
 import { SchulconnexPersonsQueryParameters } from '../../../controller/parameters/schulconnex-persons-query-parameters';
 import { BearerToken } from '../../authentication/bearer-token';
@@ -51,7 +51,7 @@ export class EduplacesStagingAdapter implements AdapterInterface {
 
   async getPersons(
     parameters: SchulconnexPersonsQueryParameters,
-    clearance?: Clearance[],
+    clearance?: GroupClearance[],
   ): Promise<AdapterGetPersonsReturnType> {
     void clearance;
     if (!this.idmEduplacesStagingConfig.IDM_EDUPLACES_STAGING_ENABLED) {

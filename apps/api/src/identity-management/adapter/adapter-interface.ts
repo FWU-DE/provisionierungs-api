@@ -1,4 +1,4 @@
-import { type Clearance } from '../../clearance/entity/clearance.entity';
+import { type GroupClearance } from '../../clearance/entity/group-clearance.entity';
 import { type SchulconnexOrganizationQueryParameters } from '../../controller/parameters/schulconnex-organisations-query-parameters';
 import type { SchulconnexPersonsQueryParameters } from '../../controller/parameters/schulconnex-persons-query-parameters';
 import { type SchulconnexGroup } from '../dto/schulconnex/schulconnex-group.dto';
@@ -27,7 +27,7 @@ export interface AdapterInterface {
 
   getPersons(
     parameters: SchulconnexPersonsQueryParameters,
-    clearance?: Clearance[],
+    clearance?: GroupClearance[],
   ): Promise<AdapterGetPersonsReturnType>;
 
   getOrganizations(

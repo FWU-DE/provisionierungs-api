@@ -1,8 +1,11 @@
 'use client';
 
 import * as React from 'react';
-import { cn } from '@/lib/utils';
 
-export function Sidebar({ className, ...props }: React.ComponentProps<'div'>) {
-  return <div className={cn('flex flex-col gap-2', className)} {...props}></div>;
+export function Sidebar({ className, children, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <nav className={className} {...props}>
+      <ul className={'flex list-none flex-col gap-2'}>{children}</ul>
+    </nav>
+  );
 }

@@ -11,6 +11,6 @@ export async function selectSchool(formData: FormData) {
     await setUserSchoolSelection(schoolId);
     revalidatePath('/', 'layout');
     const locale = await getLocale();
-    redirect(`/${locale as string}/home`);
+    redirect(`/${locale as string}/apps`);
   }
 }

@@ -12,12 +12,16 @@ export default async function SelectSchool() {
   const user: User = await getUserFromSession();
 
   return (
-    <div>
+    <section>
       <Headline headline={t('headline')} />
 
       <p>{t('select_school_to_administer')}</p>
 
-      <SchoolList action={selectSchool} user={user} />
-    </div>
+      <SchoolList
+        action={selectSchool}
+        availableSchoolIds={user.schulkennung}
+        selectedSchoolId={user.selectedSchool}
+      />
+    </section>
   );
 }

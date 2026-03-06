@@ -1,7 +1,7 @@
 import { Controller, Get, Inject } from '@nestjs/common';
 
-import { ClearanceService } from '../clearance/clearance.service';
-import { Clearance } from '../clearance/entity/clearance.entity';
+import { GroupClearance } from '../clearance/entity/group-clearance.entity';
+import { GroupClearanceService } from '../clearance/group-clearance.service';
 import { AllowResourceOwnerType, RequireScope, ResourceOwnerType } from '../common/auth';
 import { ScopeIdentifier } from '../common/auth/scope/scope-identifier';
 import { Aggregator } from '../identity-management/aggregator/aggregator';
@@ -14,7 +14,7 @@ import { OfferItem } from '../offers/model/response/offer-item.model';
 
 interface TestResponse {
   groups: GroupsPerIdmModel[];
-  clearanceEntries: Clearance[];
+  clearanceEntries: GroupClearance[];
   offerIdForClientId: OfferItem['offerId'] | undefined;
 }
 
@@ -27,7 +27,7 @@ const AVAILABLE_SCHOOL_IDS = ['SL_00099', 'SL_98108'];
 @Controller('/')
 export class TestController {
   constructor(
-    @Inject(ClearanceService) private clearanceService: ClearanceService,
+    @Inject(GroupClearanceService) private clearanceService: GroupClearanceService,
     @Inject(OffersFetcher) private offersFetcher: OffersFetcher,
     private readonly aggregator: Aggregator,
   ) {}
@@ -61,22 +61,24 @@ export class TestController {
 
     await Promise.all(
       groups.map((groupSet: GroupsPerIdmModel) => {
-        return groupSet.groups.map(async (groupEntry: SchulconnexGroup): Promise<Clearance> => {
-          const offerId = availableOfferIds[Math.floor(Math.random() * availableOfferIds.length)];
-          const schoolId =
-            AVAILABLE_SCHOOL_IDS[Math.floor(Math.random() * AVAILABLE_SCHOOL_IDS.length)];
+        return groupSet.groups.map(
+          async (groupEntry: SchulconnexGroup): Promise<GroupClearance> => {
+            const offerId = availableOfferIds[Math.floor(Math.random() * availableOfferIds.length)];
+            const schoolId =
+              AVAILABLE_SCHOOL_IDS[Math.floor(Math.random() * AVAILABLE_SCHOOL_IDS.length)];
 
-          const clearance = new Clearance();
-          clearance.offerId = offerId;
-          clearance.schoolId = schoolId;
-          clearance.idmId = groupSet.idm;
-          clearance.groupId = groupEntry.id;
+            const clearance = new GroupClearance();
+            clearance.offerId = offerId;
+            clearance.schoolId = schoolId;
+            clearance.idmId = groupSet.idm;
+            clearance.groupId = groupEntry.id;
 
-          return (await this.clearanceService.save(clearance).catch((e: unknown) => {
-            // eslint-disable-next-line
-            console.log(e);
-          })) as Clearance;
-        });
+            return (await this.clearanceService.save(clearance).catch((e: unknown) => {
+              // eslint-disable-next-line
+              console.log(e);
+            })) as GroupClearance;
+          },
+        );
       }),
     );
   }

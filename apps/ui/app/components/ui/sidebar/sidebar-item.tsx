@@ -19,11 +19,11 @@ function SidebarItem({
   icon: Icon,
   href,
   ...props
-}: React.ComponentProps<'div'> & SidebarItemProps) {
+}: React.ComponentProps<'li'> & SidebarItemProps) {
   const isActive = useActiveRoute(href);
 
   return (
-    <div className={cn('w-full', className)} {...props}>
+    <li className={cn('w-full', className)} {...props}>
       <Button
         variant={isActive ? 'default' : 'ghost'}
         className={cn('w-full justify-start', isActive ? 'bg-primary text-primary-foreground' : '')}
@@ -34,7 +34,7 @@ function SidebarItem({
           <span>{label}</span>
         </Link>
       </Button>
-    </div>
+    </li>
   );
 }
 

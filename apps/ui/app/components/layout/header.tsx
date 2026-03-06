@@ -23,21 +23,23 @@ export async function Header({ className, ...props }: React.ComponentProps<'div'
   return (
     <header
       className={cn(
-        'bg-accent fixed left-0 right-0 top-0 flex items-center justify-between px-4 py-2',
+        'bg-accent fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-4 py-2',
         className,
       )}
       {...props}
     >
-      {/* @todo: replace with actual logo */}
-      <Image
-        src={'https://picsum.photos/200'}
-        width={40}
-        height={40}
-        alt={'App Logo'}
-        className={'rounded-md'}
-      />
+      <Link href="/apps">
+        {/* @todo: replace with actual logo */}
+        <Image
+          src={'https://picsum.photos/200'}
+          width={40}
+          height={40}
+          alt={t('logo-alt')}
+          className={'rounded-md'}
+        />
+      </Link>
 
-      <div className="flex items-center gap-2">
+      <nav className="flex items-center gap-2">
         <LanguageSwitcher />
 
         {isLoggedIn && (
@@ -64,7 +66,7 @@ export async function Header({ className, ...props }: React.ComponentProps<'div'
             </LinkNative>
           </Button>
         )}
-      </div>
+      </nav>
     </header>
   );
 }

@@ -1,4 +1,4 @@
-import { Query, Resolver } from '@nestjs/graphql';
+import { Args, Query, Resolver } from '@nestjs/graphql';
 
 import { AllowResourceOwnerType, ResourceOwnerType } from '../../common/auth';
 import {
@@ -14,12 +14,18 @@ export class GroupAllQuery {
 
   @Query(() => [Group])
   @AllowResourceOwnerType(ResourceOwnerType.USER)
-  async allGroups(@UserCtx() userContext: UserContext): Promise<Group[]> {
+  async allGroups(
+    @UserCtx() userContext: UserContext,
+    @Args('schoolId', { type: () => String, nullable: true }) schoolId?: string,
+  ): Promise<Group[]> {
     // @todo: Test again after proper test data is available.
 
-    return (
-      await this.aggregator.getGroups([userContext.heimatorganisation], userContext.schulkennung)
-    )
+    let schoolIds = userContext.schulkennung;
+    if (schoolId && userContext.schulkennung.includes(schoolId)) {
+      schoolIds = [schoolId];
+    }
+
+    return (await this.aggregator.getGroups([userContext.heimatorganisation], schoolIds))
       .flatMap((groups) => groups.groups)
       .map((group) => new Group(group.id, group.bezeichnung));
   }

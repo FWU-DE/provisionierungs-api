@@ -18,8 +18,30 @@ const mockOffersService = {
 
     const offerDto = new OffersDto();
     offerDto.offerId = 12345678;
+    offerDto.offerTitle = 'Test Offer';
+    offerDto.offerLongTitle = 'Test Offer Long Title';
+    offerDto.offerDescription = 'Test Offer Description';
+    offerDto.offerLink = 'https://example.com';
+    offerDto.offerLogo =
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+    offerDto.educationProviderOrganizationName = 'Test Org';
 
     return Promise.resolve([offerDto]);
+  },
+  getOfferById: async (schoolId: string[], id: number): Promise<OffersDto> => {
+    void schoolId;
+
+    const offerDto = new OffersDto();
+    offerDto.offerId = id;
+    offerDto.offerTitle = 'Test Offer';
+    offerDto.offerLongTitle = 'Test Offer Long Title';
+    offerDto.offerDescription = 'Test Offer Description';
+    offerDto.offerLink = 'https://example.com';
+    offerDto.offerLogo =
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+    offerDto.educationProviderOrganizationName = 'Test Org';
+
+    return Promise.resolve(offerDto);
   },
 };
 
@@ -94,6 +116,26 @@ describe('OffersQuery', () => {
 
     expect(result.data.allOffers).toHaveLength(1);
     expect(result.data.allOffers[0]).toEqual({
+      offerId: 12345678,
+    });
+  });
+
+  it('fetches a single offer', async () => {
+    const response = await request((await infra.getApp()).getHttpServer())
+      .post('/graphql')
+      .set('Authorization', 'Bearer ::user-access-token::')
+      .send({
+        query: `query {
+          offer(id: 12345678) {
+            offerId
+          }
+        }`,
+      });
+    const result = response.body as {
+      data: { offer: object };
+    };
+
+    expect(result.data.offer).toEqual({
       offerId: 12345678,
     });
   });

@@ -2,7 +2,7 @@ import { Controller, Get, Inject, NotFoundException, Res } from '@nestjs/common'
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import type { Response } from 'express';
 
-import { ClearanceService } from '../clearance/clearance.service';
+import { GroupClearanceService } from '../clearance/group-clearance.service';
 import {
   AllowResourceOwnerType,
   ClientId,
@@ -22,7 +22,7 @@ import { SchulconnexPersonsQueryParameters } from './parameters/schulconnex-pers
 export class PersonInfoController {
   constructor(
     private readonly aggregator: Aggregator,
-    private readonly clearanceService: ClearanceService,
+    private readonly groupClearanceService: GroupClearanceService,
     @Inject(OffersFetcher) private offersFetcher: OffersFetcher,
     private readonly logger: Logger,
   ) {
@@ -51,7 +51,7 @@ export class PersonInfoController {
       throw new NotFoundException();
     }
 
-    const clearance = await this.clearanceService.findAllForOffer(offerForClientId.offerId);
+    const clearance = await this.groupClearanceService.findAllForOffer(offerForClientId.offerId);
     if (clearance.length === 0) {
       this.logger.verbose(
         `No clearance found for offer "${String(offerForClientId.offerId)}" and client "${clientId}"`,

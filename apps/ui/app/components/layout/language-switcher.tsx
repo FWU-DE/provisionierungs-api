@@ -29,13 +29,13 @@ export function LanguageSwitcher() {
 
   const languageOptions = [
     {
-      icon: '🇩🇪',
+      icon: FLAGS.de,
       label: t('german'),
       value: 'de' as const,
     },
     {
-      icon: '🇬🇧',
-      label: 'english',
+      icon: FLAGS.en,
+      label: t('english'),
       value: 'en' as const,
     },
   ];

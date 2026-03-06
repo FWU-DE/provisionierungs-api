@@ -8,40 +8,81 @@
     "logout": "Logout",
     "login_description": "Log in to access the VIDIS rostering application."
   },
-  "component/app-list": {
-    "headline": "Apps",
-    "no-apps": "No apps available."
+  "component/offer-list": {
+    "no-offers": "No apps available."
   },
   "component/header": {
     "sign-out": "sign out",
-    "select-school": "Select school"
+    "select-school": "Select school",
+    "logo-alt": "VIDIS Rostering Logo"
   },
   "component/language-switcher": {
     "label": "Language",
     "german": "German",
     "english": "English"
   },
+  "component/group-list": {
+    "headline": "Groups",
+    "groups": "Groups",
+    "no-groups": "No groups available for selection.",
+    "empty-state-image": "Empty groups"
+  },
   "component/school-list": {
-    "headline": "Your schools:"
+    "headline": "Your schools",
+    "schools": "Schools"
   },
-  "page/apps/all": {
-    "headline": "All apps"
-  },
-  "page/apps/own": {
-    "headline": "Configured apps"
+  "page/apps": {
+    "headline": "My apps",
+    "subline": "Here you can see the apps you've already unlocked"
   },
   "page/apps/settings": {
-    "headline": "Configure app"
-  },
-  "page/home": {
-    "headline": "Welcome"
+    "headline": "Configure app",
+    "back-to-apps": "Back to apps",
+    "not-found": {
+      "headline": "App not found",
+      "description": "The requested app could not be found or you do not have permission to view it."
+    }
   },
   "page/user/no-school-available": {
     "headline": "No school available for management",
-    "no_school_available_for_management": "No school available for management"
+    "no_school_available_for_management": "No school available for management. Please get in contact with an administrator if you think this is a mistake."
   },
   "page/user/select-school": {
     "headline": "Select school",
     "select_school_to_administer": "Please select the school you want to administer."
+  },
+  "component/offer-settings": {
+    "back": "Back",
+    "headline": "App Configuration",
+    "description": "Manage settings for this app configuration.",
+    "tab-groups": "for groups",
+    "tab-school": "whole school",
+    "available-groups": "Available groups",
+    "selected-groups": "Selected groups",
+    "school-release-granted": "Release is granted for the entire school",
+    "remove-configuration": "Remove your app configuration",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saved": "Saved",
+    "deleted": "Deleted",
+    "error-saving": "Error saving configuration",
+    "error-deleting": "Error deleting configuration",
+    "please-select-at-least-one-group": "Please select at least one group.",
+    "empty-headline": "No configuration available",
+    "empty-copy": "You have not yet unlocked this app yourself.",
+    "empty-button": "Unlock now"
+  },
+  "component/footer": {
+    "help": "Help",
+    "about-us": "About us",
+    "legal-notice": "Legal notice",
+    "privacy": "Privacy",
+    "terms-and-conditions": "Terms and conditions",
+    "logo-alt": "VIDIS Rostering Logo"
+  },
+  "component/sidebar/main": {
+    "home": "Home",
+    "apps-own": "Cleared apps",
+    "apps-all": "All apps"
   }
 }

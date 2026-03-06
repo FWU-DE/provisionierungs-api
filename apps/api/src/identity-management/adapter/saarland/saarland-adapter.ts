@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import type { Clearance } from '../../../clearance/entity/clearance.entity';
+import type { GroupClearance } from '../../../clearance/entity/group-clearance.entity';
 import { SchulconnexOrganizationQueryParameters } from '../../../controller/parameters/schulconnex-organisations-query-parameters';
 import { SchulconnexPersonsQueryParameters } from '../../../controller/parameters/schulconnex-persons-query-parameters';
 import { BearerToken } from '../../authentication/bearer-token';
@@ -28,7 +28,7 @@ export class SaarlandAdapter implements AdapterInterface {
   ) {}
 
   getIdentifier(): string {
-    return 'saarland';
+    return 'DE-SL-OnlineSchuleSaarlandTest';
   }
 
   isEnabled(): boolean {
@@ -52,7 +52,7 @@ export class SaarlandAdapter implements AdapterInterface {
 
   async getPersons(
     parameters: SchulconnexPersonsQueryParameters,
-    clearance?: Clearance[],
+    clearance?: GroupClearance[],
   ): Promise<AdapterGetPersonsReturnType> {
     const config = this.idmSaarlandConfig;
     if (!config.IDM_SAARLAND_ENABLED) {

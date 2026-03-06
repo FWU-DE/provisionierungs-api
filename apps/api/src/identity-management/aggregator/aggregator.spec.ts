@@ -1,4 +1,4 @@
-import type { Clearance } from '../../clearance/entity/clearance.entity';
+import type { GroupClearance } from '../../clearance/entity/group-clearance.entity';
 import { Logger } from '../../common/logger';
 import { SchulconnexPersonsQueryParameters } from '../../controller/parameters/schulconnex-persons-query-parameters';
 import { OfferContext } from '../../offers/model/offer-context';
@@ -20,7 +20,7 @@ jest.mock('../../clearance/filter/clearance-field.filter', () => ({
 jest.mock('../../clearance/filter/clearance-group.filter', () => ({
   applyClearancePersonsGroupFilter: jest
     .fn()
-    .mockImplementation((data, clearanceEntries?: Clearance[]) => {
+    .mockImplementation((data, clearanceEntries?: GroupClearance[]) => {
       void clearanceEntries;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return data;

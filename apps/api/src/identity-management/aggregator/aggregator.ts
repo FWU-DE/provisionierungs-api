@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { Clearance } from '../../clearance/entity/clearance.entity';
+import { GroupClearance } from '../../clearance/entity/group-clearance.entity';
 import { applyClearancePersonsFieldFilter } from '../../clearance/filter/clearance-field.filter';
 import { applyClearancePersonsGroupFilter } from '../../clearance/filter/clearance-group.filter';
 import { Logger } from '../../common/logger';
@@ -51,7 +51,7 @@ export class Aggregator {
     idmIds: string[],
     offerContext: OfferContext,
     parameters: SchulconnexPersonsQueryParameters,
-    clearance?: Clearance[],
+    clearance?: GroupClearance[],
   ): Promise<SchulconnexPersonsResponse[]> {
     // Request data from all IDMs in parallel
     const idmRequests: Promise<AdapterGetPersonsReturnType>[] = [];

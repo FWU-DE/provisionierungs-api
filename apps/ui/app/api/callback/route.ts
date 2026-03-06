@@ -33,5 +33,5 @@ export async function GET(request: NextRequest) {
     path: '/',
   });
 
-  return NextResponse.redirect(`${getConfig().selfBaseUrl}/home`, { status: 302 });
+  return NextResponse.redirect(`${getConfig().selfBaseUrl}/apps`, { status: 302 });
 }
