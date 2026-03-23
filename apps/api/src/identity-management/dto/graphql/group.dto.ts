@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class Group {
+export class GroupDto {
   @Field()
   id!: string;
 

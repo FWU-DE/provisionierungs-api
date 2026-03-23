@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { SchulconnexPersonContext } from '../identity-management/dto/schulconnex/schulconnex-person-context.dto';
-import { type SchulconnexPersonsResponse } from '../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
+import { type SchulconnexPersonsResponseDto } from '../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
 import { OfferContext } from '../offers/model/offer-context';
 import pseudonymizationConfig, {
   type PseudonymizationConfig,
@@ -25,14 +25,14 @@ export class Pseudonymization {
 
   public async pseudonymize(
     offerContext: OfferContext,
-    identities: SchulconnexPersonsResponse[],
-  ): Promise<SchulconnexPersonsResponse[]> {
+    identities: SchulconnexPersonsResponseDto[],
+  ): Promise<SchulconnexPersonsResponseDto[]> {
     const salt = await this.getSalt(offerContext.clientId);
     const sectorIdentifier = await this.getSectorIdentifier(offerContext.clientId);
 
     return await Promise.all(
       identities.map(
-        async (identity: SchulconnexPersonsResponse): Promise<SchulconnexPersonsResponse> => {
+        async (identity: SchulconnexPersonsResponseDto): Promise<SchulconnexPersonsResponseDto> => {
           identity.pid = this.hasher.hash(identity.pid, salt, sectorIdentifier);
 
           if (identity.person?.stammorganisation?.id) {

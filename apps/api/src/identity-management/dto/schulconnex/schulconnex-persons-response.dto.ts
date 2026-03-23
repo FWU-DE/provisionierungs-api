@@ -4,7 +4,10 @@ import { IsNotEmpty, IsString } from 'class-validator';
 import { SchulconnexPersonContext } from './schulconnex-person-context.dto';
 import { SchulconnexPerson } from './schulconnex-person.dto';
 
-export class SchulconnexPersonsResponse {
+/**
+ * Type for outbound responses to requests for persons data.
+ */
+export class SchulconnexPersonsResponseDto {
   @ApiProperty({
     description: 'The pseudonymous ID of the user.',
     example: '1e08bf41-4c41-4758-bf16-0d323a313289',

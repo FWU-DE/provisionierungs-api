@@ -3,11 +3,12 @@ import { ApiBearerAuth, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import type { Response } from 'express';
 
 import { GroupClearanceService } from '../clearance/group-clearance.service';
+import { SchoolClearanceService } from '../clearance/school-clearance.service';
 import { AllowResourceOwnerType, ClientId, RequireScope, ResourceOwnerType } from '../common/auth';
 import { ScopeIdentifier } from '../common/auth/scope/scope-identifier';
 import { Logger } from '../common/logger';
 import { Aggregator } from '../identity-management/aggregator/aggregator';
-import { SchulconnexPersonsResponse } from '../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
+import { SchulconnexPersonsResponseDto } from '../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
 import { OffersFetcher } from '../offers/fetcher/offers.fetcher';
 import { OfferContext } from '../offers/model/offer-context';
 import { SchulconnexPersonsQueryParameters } from './parameters/schulconnex-persons-query-parameters';
@@ -16,7 +17,8 @@ import { SchulconnexPersonsQueryParameters } from './parameters/schulconnex-pers
 export class PersonenInfoController {
   constructor(
     private readonly aggregator: Aggregator,
-    private readonly clearanceService: GroupClearanceService,
+    private readonly groupClearanceService: GroupClearanceService,
+    private readonly schoolClearanceService: SchoolClearanceService,
     @Inject(OffersFetcher) private offersFetcher: OffersFetcher,
     private readonly logger: Logger,
   ) {
@@ -29,7 +31,7 @@ export class PersonenInfoController {
   @ApiResponse({
     status: 200,
     description: 'Read all users',
-    type: [SchulconnexPersonsResponse],
+    type: [SchulconnexPersonsResponseDto],
   })
   @ApiQuery({
     name: 'vollstaendig',
@@ -83,7 +85,7 @@ export class PersonenInfoController {
     groupIdFilter?: string,
     @Query('organisation.id')
     organizationIdFilter?: string,
-  ): Promise<SchulconnexPersonsResponse[]> {
+  ): Promise<SchulconnexPersonsResponseDto[]> {
     const filterParameters = new SchulconnexPersonsQueryParameters(
       completeRaw,
       pidFilter,
@@ -100,23 +102,32 @@ export class PersonenInfoController {
       return [];
     }
 
-    const clearance = await this.clearanceService.findAllForOffer(offerForClientId.offerId);
-    if (clearance.length === 0) {
+    const groupClearance = await this.groupClearanceService.findAllForOffer(
+      offerForClientId.offerId,
+    );
+    const schoolClearance = await this.schoolClearanceService.findAllForOffer(
+      offerForClientId.offerId,
+    );
+
+    if (groupClearance.length === 0 && schoolClearance.length === 0) {
       this.logger.verbose(
         `No clearance found for offer "${String(offerForClientId.offerId)}" and client "${clientId}"`,
       );
       return [];
     }
-    const idmIds = [...new Set(clearance.map((c) => c.idmId))];
+    const idmIds = [
+      ...new Set([...groupClearance.map((c) => c.idmId), ...schoolClearance.map((c) => c.idmId)]),
+    ];
 
     /*
      * Fetch data from IDM
      */
-    const identities: SchulconnexPersonsResponse[] = await this.aggregator.getPersons(
+    const identities: SchulconnexPersonsResponseDto[] = await this.aggregator.getPersons(
       idmIds,
       new OfferContext(offerForClientId.offerId, clientId),
       filterParameters,
-      clearance,
+      groupClearance,
+      schoolClearance,
     );
 
     // Spec says we need to send an ETag header

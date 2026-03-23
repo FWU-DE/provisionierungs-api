@@ -2,16 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Group {
-  id: String!
-  name: String!
-}
-
-type GroupClearanceDeleteResponse {
+type GroupClearanceDeleteResponseDto {
   deleted: Boolean!
 }
 
-type GroupClearanceResponse {
+type GroupClearanceResponseDto {
   groupId: String!
   id: String!
   idmId: String!
@@ -19,12 +14,17 @@ type GroupClearanceResponse {
   schoolId: String!
 }
 
+type GroupDto {
+  id: String!
+  name: String!
+}
+
 type Mutation {
-  createGroupClearance(groupId: String!, idmId: String!, offerId: Int!, schoolId: String!): GroupClearanceResponse!
-  createSchoolClearance(idmId: String!, offerId: Int!, schoolId: String!): SchoolClearanceResponse!
-  deleteAllGroupClearances(idmId: String!, offerId: Int!, schoolId: String!): GroupClearanceDeleteResponse!
-  deleteGroupClearance(id: String!): GroupClearanceDeleteResponse!
-  deleteSchoolClearance(id: String!): SchoolClearanceDeleteResponse!
+  createGroupClearance(groupId: String!, idmId: String!, offerId: Int!, schoolId: String!): GroupClearanceResponseDto!
+  createSchoolClearance(idmId: String!, offerId: Int!, schoolId: String!): SchoolClearanceResponseDto!
+  deleteAllGroupClearances(idmId: String!, offerId: Int!, schoolId: String!): GroupClearanceDeleteResponseDto!
+  deleteGroupClearance(id: String!): GroupClearanceDeleteResponseDto!
+  deleteSchoolClearance(id: String!): SchoolClearanceDeleteResponseDto!
 }
 
 type OffersDto {
@@ -38,18 +38,18 @@ type OffersDto {
 }
 
 type Query {
-  allGroupClearances(offerId: Int, schoolId: String): [GroupClearanceResponse!]!
-  allGroups(schoolId: String): [Group!]!
+  allGroupClearances(offerId: Int, schoolId: String): [GroupClearanceResponseDto!]!
+  allGroups(schoolId: String): [GroupDto!]!
   allOffers(schoolId: String): [OffersDto!]!
-  allSchoolClearances(offerId: Int, schoolId: String): [SchoolClearanceResponse!]!
+  allSchoolClearances(offerId: Int, schoolId: String): [SchoolClearanceResponseDto!]!
   offer(id: Int!, schoolId: String): OffersDto
 }
 
-type SchoolClearanceDeleteResponse {
+type SchoolClearanceDeleteResponseDto {
   deleted: Boolean!
 }
 
-type SchoolClearanceResponse {
+type SchoolClearanceResponseDto {
   id: String!
   idmId: String!
   offerId: Float!

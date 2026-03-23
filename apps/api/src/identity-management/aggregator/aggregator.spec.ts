@@ -1,4 +1,7 @@
 import type { GroupClearance } from '../../clearance/entity/group-clearance.entity';
+import type { SchoolClearance } from '../../clearance/entity/school-clearance.entity';
+import { applyClearancePersonsGroupFilter } from '../../clearance/filter/clearance-group.filter';
+import { applyClearancePersonsSchoolFilter } from '../../clearance/filter/clearance-school.filter';
 import { Logger } from '../../common/logger';
 import { SchulconnexPersonsQueryParameters } from '../../controller/parameters/schulconnex-persons-query-parameters';
 import { OfferContext } from '../../offers/model/offer-context';
@@ -7,6 +10,7 @@ import { type TestingInfrastructure, createTestingInfrastructure } from '../../t
 import { type AdapterGetPersonsReturnType } from '../adapter/adapter-interface';
 import { EduplacesStagingAdapter } from '../adapter/eduplaces-staging/eduplaces-staging-adapter';
 import { EduplacesAdapter } from '../adapter/eduplaces/eduplaces-adapter';
+import type { SchulconnexPersonsResponseDto } from '../dto/schulconnex/schulconnex-persons-response.dto';
 import { IdentityProviderModule } from '../identity-provider.module';
 import { Aggregator } from './aggregator';
 
@@ -21,7 +25,16 @@ jest.mock('../../clearance/filter/clearance-group.filter', () => ({
   applyClearancePersonsGroupFilter: jest
     .fn()
     .mockImplementation((data, clearanceEntries?: GroupClearance[]) => {
-      void clearanceEntries;
+      if (!clearanceEntries) return [];
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return data;
+    }),
+}));
+jest.mock('../../clearance/filter/clearance-school.filter', () => ({
+  applyClearancePersonsSchoolFilter: jest
+    .fn()
+    .mockImplementation((data, clearanceEntries?: SchoolClearance[]) => {
+      if (!clearanceEntries) return [];
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return data;
     }),
@@ -136,8 +149,14 @@ describe('Aggregator', () => {
       mockEduplacesAdapter.getPersons.mockResolvedValue(mockEduplacesResponse);
       mockEduplacesStagingAdapter.getPersons.mockResolvedValue(mockStagingResponse);
 
-      // Call the method
-      const result = await aggregator.getPersons(mockIdmIds, mockOfferContext, mockParameters);
+      // Call the method - Providing empty arrays so the mocks (as updated) don't return empty
+      const result = await aggregator.getPersons(
+        mockIdmIds,
+        mockOfferContext,
+        mockParameters,
+        [],
+        [],
+      );
 
       // Assertions
       expect(result).toEqual([
@@ -246,7 +265,13 @@ describe('Aggregator', () => {
       mockEduplacesStagingAdapter.getPersons.mockResolvedValue(mockStagingResponse);
 
       // Call the method
-      const result = await aggregator.getPersons(mockIdmIds, mockOfferContext, mockParameters);
+      const result = await aggregator.getPersons(
+        mockIdmIds,
+        mockOfferContext,
+        mockParameters,
+        [],
+        [],
+      );
 
       // Assertions
       // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -272,7 +297,13 @@ describe('Aggregator', () => {
       const mockIdmIds: string[] = [];
 
       // Call the method
-      const result = await aggregator.getPersons(mockIdmIds, mockOfferContext, mockParameters);
+      const result = await aggregator.getPersons(
+        mockIdmIds,
+        mockOfferContext,
+        mockParameters,
+        [],
+        [],
+      );
 
       // Assertions
       expect(result).toEqual([]);
@@ -280,6 +311,114 @@ describe('Aggregator', () => {
       expect(mockEduplacesAdapter.getPersons).not.toHaveBeenCalled();
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockEduplacesStagingAdapter.getPersons).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('applyClearance', () => {
+    const mockPersons: SchulconnexPersonsResponseDto[] = [
+      { pid: 'p1', person: { name: { vorname: 'P1' } }, personenkontexte: [] },
+      { pid: 'p2', person: { name: { vorname: 'P2' } }, personenkontexte: [] },
+      { pid: 'p3', person: { name: { vorname: 'P3' } }, personenkontexte: [] },
+    ];
+
+    it('should return combined results from school and group filters', async () => {
+      (applyClearancePersonsSchoolFilter as jest.Mock).mockReturnValue([mockPersons[0]]);
+      (applyClearancePersonsGroupFilter as jest.Mock).mockReturnValue([mockPersons[1]]);
+
+      // We test it through getPersons since applyClearance is private
+      mockEduplacesAdapter.getPersons.mockResolvedValue({
+        idm: 'eduplaces',
+        response: mockPersons,
+      });
+
+      const schoolClearance = [{ schoolId: 's1' }] as SchoolClearance[];
+      const groupClearance = [{ groupId: 'g1' }] as GroupClearance[];
+
+      const result = await aggregator.getPersons(
+        ['eduplaces'],
+        new OfferContext(1, 'c1'),
+        new SchulconnexPersonsQueryParameters(),
+        groupClearance,
+        schoolClearance,
+      );
+
+      // Result should be merged from school and group filters
+      expect(result).toHaveLength(2);
+      expect(result.map((p) => p.pid)).toContain('p1');
+      expect(result.map((p) => p.pid)).toContain('p2');
+
+      // Verify school filter was called with all persons
+      expect(applyClearancePersonsSchoolFilter).toHaveBeenCalledWith(mockPersons, schoolClearance);
+
+      // Verify group filter was called with the diff (p2, p3)
+      expect(applyClearancePersonsGroupFilter).toHaveBeenCalledWith(
+        [mockPersons[1], mockPersons[2]],
+        groupClearance,
+      );
+    });
+
+    it('should return empty if both filters return empty', async () => {
+      (applyClearancePersonsSchoolFilter as jest.Mock).mockReturnValue([]);
+      (applyClearancePersonsGroupFilter as jest.Mock).mockReturnValue([]);
+
+      mockEduplacesAdapter.getPersons.mockResolvedValue({
+        idm: 'eduplaces',
+        response: mockPersons,
+      });
+
+      const result = await aggregator.getPersons(
+        ['eduplaces'],
+        new OfferContext(1, 'c1'),
+        new SchulconnexPersonsQueryParameters(),
+        [],
+        [],
+      );
+
+      expect(result).toHaveLength(0);
+    });
+
+    it('should only use school filter if group clearance is missing', async () => {
+      (applyClearancePersonsSchoolFilter as jest.Mock).mockReturnValue([mockPersons[0]]);
+      (applyClearancePersonsGroupFilter as jest.Mock).mockReturnValue([]);
+
+      mockEduplacesAdapter.getPersons.mockResolvedValue({
+        idm: 'eduplaces',
+        response: mockPersons,
+      });
+
+      const result = await aggregator.getPersons(
+        ['eduplaces'],
+        new OfferContext(1, 'c1'),
+        new SchulconnexPersonsQueryParameters(),
+        undefined,
+        [{ schoolId: 's1' }] as SchoolClearance[],
+      );
+
+      expect(result).toHaveLength(1);
+      expect(result[0].pid).toBe('p1');
+    });
+
+    it('should directly call the private applyClearance method', () => {
+      (applyClearancePersonsSchoolFilter as jest.Mock).mockReturnValue([mockPersons[0]]);
+      (applyClearancePersonsGroupFilter as jest.Mock).mockReturnValue([mockPersons[1]]);
+
+      const schoolClearance = [{ schoolId: 's1' }] as SchoolClearance[];
+      const groupClearance = [{ groupId: 'g1' }] as GroupClearance[];
+
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      const result = aggregator['applyClearance'](mockPersons, groupClearance, schoolClearance);
+
+      expect(result).toHaveLength(2);
+      expect(result.map((p) => p.pid)).toContain('p1');
+      expect(result.map((p) => p.pid)).toContain('p2');
+
+      // Verify filters were called
+      expect(applyClearancePersonsSchoolFilter).toHaveBeenCalledWith(mockPersons, schoolClearance);
+      // Diff calculation: p1 is returned by school filter, so the diff should be [p2, p3]
+      expect(applyClearancePersonsGroupFilter).toHaveBeenCalledWith(
+        [mockPersons[1], mockPersons[2]],
+        groupClearance,
+      );
     });
   });
 
@@ -311,7 +450,7 @@ describe('Aggregator', () => {
       mockEduplacesAdapter.getPersons.mockResolvedValue(mockEduplacesResponse);
 
       // Call the method
-      await aggregator.getPersons(mockIdmIds, mockOfferContext, mockParameters, []);
+      await aggregator.getPersons(mockIdmIds, mockOfferContext, mockParameters, [], []);
 
       // Assertions
       // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -328,7 +467,7 @@ describe('Aggregator', () => {
       const mockIdmIds = ['non-existent'];
 
       // Call the method
-      await aggregator.getPersons(mockIdmIds, mockOfferContext, mockParameters, []);
+      await aggregator.getPersons(mockIdmIds, mockOfferContext, mockParameters, [], []);
 
       // Assertions
       // eslint-disable-next-line @typescript-eslint/unbound-method

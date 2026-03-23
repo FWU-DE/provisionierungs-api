@@ -1,8 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { GroupClearance } from '../../clearance/entity/group-clearance.entity';
+import { SchoolClearance } from '../../clearance/entity/school-clearance.entity';
 import { applyClearancePersonsFieldFilter } from '../../clearance/filter/clearance-field.filter';
 import { applyClearancePersonsGroupFilter } from '../../clearance/filter/clearance-group.filter';
+import { applyClearancePersonsSchoolFilter } from '../../clearance/filter/clearance-school.filter';
 import { Logger } from '../../common/logger';
 import { SchulconnexPersonsQueryParameters } from '../../controller/parameters/schulconnex-persons-query-parameters';
 import { OfferContext } from '../../offers/model/offer-context';
@@ -15,7 +17,7 @@ import {
 import { EduplacesStagingAdapter } from '../adapter/eduplaces-staging/eduplaces-staging-adapter';
 import { EduplacesAdapter } from '../adapter/eduplaces/eduplaces-adapter';
 import { SaarlandAdapter } from '../adapter/saarland/saarland-adapter';
-import { SchulconnexPersonsResponse } from '../dto/schulconnex/schulconnex-persons-response.dto';
+import { SchulconnexPersonsResponseDto } from '../dto/schulconnex/schulconnex-persons-response.dto';
 import { GroupsPerIdmModel } from '../model/groups-per-idm.model';
 import { PostRequestFilter } from '../post-request-filter/post-request-filter';
 import { applyMissingInitials } from './initials';
@@ -51,8 +53,9 @@ export class Aggregator {
     idmIds: string[],
     offerContext: OfferContext,
     parameters: SchulconnexPersonsQueryParameters,
-    clearance?: GroupClearance[],
-  ): Promise<SchulconnexPersonsResponse[]> {
+    groupClearance?: GroupClearance[],
+    schoolClearance?: SchoolClearance[],
+  ): Promise<SchulconnexPersonsResponseDto[]> {
     // Request data from all IDMs in parallel
     const idmRequests: Promise<AdapterGetPersonsReturnType>[] = [];
     idmIds.forEach((idmId) => {
@@ -61,12 +64,12 @@ export class Aggregator {
         this.logger.error(`No adapter found for IDM: ${idmId}`);
         return [];
       }
-      idmRequests.push(adapter.getPersons(parameters, clearance));
+      idmRequests.push(adapter.getPersons(parameters, groupClearance));
     });
 
     // Merge all responses into one array on retrieval
-    const rawPersons: SchulconnexPersonsResponse[] = (await Promise.all(idmRequests)).reduce(
-      (acc: SchulconnexPersonsResponse[], person) => {
+    const rawPersons: SchulconnexPersonsResponseDto[] = (await Promise.all(idmRequests)).reduce(
+      (acc: SchulconnexPersonsResponseDto[], person) => {
         if (person.response === null) {
           this.logger.error('No data received from IDM: ' + person.idm);
           return acc;
@@ -77,12 +80,12 @@ export class Aggregator {
     );
 
     // Firstly, remove all entries the client does not have clearance for.
-    const clearedDataByGroup = applyClearancePersonsGroupFilter(rawPersons, clearance);
+    const mergedClearedData = this.applyClearance(rawPersons, groupClearance, schoolClearance);
 
     // Secondly, pseudonymize the data.
     const pseudonymizedData = await this.pseudonymization.pseudonymize(
       offerContext,
-      clearedDataByGroup,
+      mergedClearedData,
     );
     // Add missing initials where necessary
     const additionalData = applyMissingInitials(pseudonymizedData);
@@ -97,6 +100,25 @@ export class Aggregator {
     // That has to be done last, because the client might only ever know pseudonymized data,
     // and therefore, IDs in queries will always be pseudonymized.
     return this.postRequestFilter.filterByQueryParameters(clearedDataByFields, parameters);
+  }
+
+  private applyClearance(
+    rawPersons: SchulconnexPersonsResponseDto[],
+    groupClearance?: GroupClearance[],
+    schoolClearance?: SchoolClearance[],
+  ): SchulconnexPersonsResponseDto[] {
+    // The school filter needs to be used before the group filter is applied.
+    const clearedDataBySchool = applyClearancePersonsSchoolFilter(rawPersons, schoolClearance);
+
+    // A new diff between the original entries and the result from the school filtration needs to be created.
+    // The diff includes all entries that where not returned by the school filter.
+    const schoolFilterDiff = rawPersons.filter((person) => !clearedDataBySchool.includes(person));
+
+    // The diff will be provided as entries to the group filter.
+    const clearedDataByGroup = applyClearancePersonsGroupFilter(schoolFilterDiff, groupClearance);
+
+    // Now, the results from the school filter and the group filter get merged and are the actual filtered data.
+    return [...clearedDataBySchool, ...clearedDataByGroup];
   }
 
   public async getGroups(idmIds: string[], schoolIds?: string[]): Promise<GroupsPerIdmModel[]> {

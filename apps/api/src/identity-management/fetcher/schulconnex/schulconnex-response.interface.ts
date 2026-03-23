@@ -1,6 +1,9 @@
 import type { SchulconnexPersonContext } from '../../dto/schulconnex/schulconnex-person-context.dto';
 import type { SchulconnexPerson } from '../../dto/schulconnex/schulconnex-person.dto';
 
+/**
+ * Type for inbound response data of persons from schulconnex IDM APIs.
+ */
 export interface SchulconnexPersonsResponse {
   pid: string;
   // We do assumer that the input structure matches the schulconnex specification and therefore the DTO structure:

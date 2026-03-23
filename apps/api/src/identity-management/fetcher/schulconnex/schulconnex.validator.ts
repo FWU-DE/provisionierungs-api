@@ -22,7 +22,7 @@ export const schulconnexOrganizationsResponseSchema = z.array(
   schulconnexOrganizationResponseSchema,
 );
 
-export const schulconnextGroupAffiliationSchema = z.object({
+export const schulconnexGroupAffiliationSchema = z.object({
   ktid: z.string().nullable().optional(),
   rollen: z
     .array(z.enum(['Lern', 'Lehr', 'KlLeit', 'Foerd', 'VLehr', 'SchB', 'GMit', 'GLeit']))
@@ -130,9 +130,9 @@ export const schulconnexPersonsResponseSchema = z.array(
                   })
                   .nullable()
                   .optional(),
-                gruppenzugehoerigkeit: schulconnextGroupAffiliationSchema.nullable().optional(),
+                gruppenzugehoerigkeit: schulconnexGroupAffiliationSchema.nullable().optional(),
                 sonstige_gruppenzugehoerige: z
-                  .array(schulconnextGroupAffiliationSchema)
+                  .array(schulconnexGroupAffiliationSchema)
                   .nullable()
                   .optional(),
               }),

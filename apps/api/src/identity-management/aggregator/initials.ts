@@ -1,14 +1,14 @@
 import { plainToInstance } from 'class-transformer';
 
 import { SchulconnexName } from '../dto/schulconnex/schulconnex-name.dto';
-import type { SchulconnexPersonsResponse } from '../dto/schulconnex/schulconnex-persons-response.dto';
+import type { SchulconnexPersonsResponseDto } from '../dto/schulconnex/schulconnex-persons-response.dto';
 
 /**
  * Adds initials to persons missing them, based on their first and last names.
  */
 export function applyMissingInitials(
-  persons: SchulconnexPersonsResponse[],
-): SchulconnexPersonsResponse[] {
+  persons: SchulconnexPersonsResponseDto[],
+): SchulconnexPersonsResponseDto[] {
   return persons.map((personResponse) => {
     const person = personResponse.person;
     if (!person) {

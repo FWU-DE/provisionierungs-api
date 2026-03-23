@@ -1,19 +1,19 @@
 import { Args, Int, Mutation, Resolver } from '@nestjs/graphql';
 
-import { SchoolClearanceResponse } from '../dto/school-clearance-response.dto';
+import { SchoolClearanceResponseDto } from '../dto/school-clearance-response.dto';
 import { SchoolClearance } from '../entity/school-clearance.entity';
 import { SchoolClearanceService } from '../school-clearance.service';
 
-@Resolver(() => SchoolClearanceResponse)
+@Resolver(() => SchoolClearanceResponseDto)
 export class SchoolClearanceCreateMutation {
   constructor(private readonly schoolClearanceService: SchoolClearanceService) {}
 
-  @Mutation(() => SchoolClearanceResponse)
+  @Mutation(() => SchoolClearanceResponseDto)
   async createSchoolClearance(
     @Args('offerId', { type: () => Int }) offerId: number,
     @Args('schoolId') schoolId: string,
     @Args('idmId') idmId: string,
-  ): Promise<SchoolClearanceResponse> {
+  ): Promise<SchoolClearanceResponseDto> {
     // @todo: Validate that the idmId, schoolId, groupId and offerId are actually available to the current user!!!
 
     const clearanceEntry = new SchoolClearance();
@@ -21,6 +21,6 @@ export class SchoolClearanceCreateMutation {
     clearanceEntry.schoolId = schoolId;
     clearanceEntry.idmId = idmId;
 
-    return new SchoolClearanceResponse(await this.schoolClearanceService.save(clearanceEntry));
+    return new SchoolClearanceResponseDto(await this.schoolClearanceService.save(clearanceEntry));
   }
 }

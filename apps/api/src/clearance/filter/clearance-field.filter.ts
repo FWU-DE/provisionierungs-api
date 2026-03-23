@@ -4,18 +4,18 @@ import { type SchulconnexGroupdataset } from '../../identity-management/dto/schu
 import { type SchulconnexOrganization } from '../../identity-management/dto/schulconnex/schulconnex-organization.dto';
 import { type SchulconnexPersonContext } from '../../identity-management/dto/schulconnex/schulconnex-person-context.dto';
 import { type SchulconnexPerson } from '../../identity-management/dto/schulconnex/schulconnex-person.dto';
-import { SchulconnexPersonsResponse } from '../../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
+import { SchulconnexPersonsResponseDto } from '../../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
 import { type SchulconnexClearanceVisibleFields } from '../schulconnex-clearance-options.interface';
 
 export function applyClearancePersonsFieldFilter(
   offerId: number,
-  identities: SchulconnexPersonsResponse[],
+  identities: SchulconnexPersonsResponseDto[],
   // @todo: Create a fitting ClearanceField interface.
   // clearance?: Clearance[],
-): SchulconnexPersonsResponse[] {
+): SchulconnexPersonsResponseDto[] {
   const visibleProperties = getClearedProperties(offerId);
   return identities.map((identity) =>
-    plainToInstance(SchulconnexPersonsResponse, {
+    plainToInstance(SchulconnexPersonsResponseDto, {
       pid: identity.pid,
       person: filterPerson(identity.person, visibleProperties),
       personenkontexte: (identity.personenkontexte ?? []).map((context) =>

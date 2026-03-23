@@ -5,20 +5,20 @@ import {
   type UserContext,
   UserCtx,
 } from '../../common/auth/param-decorators/user-context.decorator';
-import { GroupClearanceResponse } from '../dto/group-clearance-response.dto';
+import { GroupClearanceResponseDto } from '../dto/group-clearance-response.dto';
 import { GroupClearanceService } from '../group-clearance.service';
 
 @Resolver()
 export class GroupClearanceAllQuery {
   constructor(private readonly groupClearanceService: GroupClearanceService) {}
 
-  @Query(() => [GroupClearanceResponse])
+  @Query(() => [GroupClearanceResponseDto])
   @AllowResourceOwnerType(ResourceOwnerType.USER)
   async allGroupClearances(
     @UserCtx() userContext: UserContext,
     @Args('offerId', { type: () => Int, nullable: true }) offerId?: number,
     @Args('schoolId', { type: () => String, nullable: true }) schoolId?: string,
-  ): Promise<GroupClearanceResponse[]> {
+  ): Promise<GroupClearanceResponseDto[]> {
     let schoolIds = userContext.schulkennung;
     if (schoolId && userContext.schulkennung.includes(schoolId)) {
       schoolIds = [schoolId];
@@ -30,6 +30,6 @@ export class GroupClearanceAllQuery {
       offerId,
     );
 
-    return response.map((groupClearance) => new GroupClearanceResponse(groupClearance));
+    return response.map((groupClearance) => new GroupClearanceResponseDto(groupClearance));
   }
 }

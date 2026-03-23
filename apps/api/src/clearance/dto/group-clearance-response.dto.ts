@@ -3,7 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { type GroupClearance } from '../entity/group-clearance.entity';
 
 @ObjectType()
-export class GroupClearanceResponse {
+export class GroupClearanceResponseDto {
   @Field()
   id!: string;
 

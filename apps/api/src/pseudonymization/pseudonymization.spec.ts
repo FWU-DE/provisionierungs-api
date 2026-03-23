@@ -1,6 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { type SchulconnexPersonsResponse } from '../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
+import { type SchulconnexPersonsResponseDto } from '../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
 import { OfferContext } from '../offers/model/offer-context';
 import pseudonymizationConfig, {
   type PseudonymizationConfig,
@@ -52,7 +52,7 @@ describe('Pseudonymization', () => {
       // Mock data
       const offerId = 12345678;
       const clientId = 'test-client';
-      const identities: SchulconnexPersonsResponse[] = [
+      const identities: SchulconnexPersonsResponseDto[] = [
         {
           pid: 'person1',
           person: {
@@ -141,7 +141,7 @@ describe('Pseudonymization', () => {
       // Mock data
       const offerId = 12345678;
       const clientId = 'test-client';
-      const identities: SchulconnexPersonsResponse[] = [
+      const identities: SchulconnexPersonsResponseDto[] = [
         {
           pid: 'person1',
           person: {
@@ -189,7 +189,7 @@ describe('Pseudonymization', () => {
       // Mock data
       const offerId = 12345678;
       const clientId = 'test-client';
-      const identities: SchulconnexPersonsResponse[] = [
+      const identities: SchulconnexPersonsResponseDto[] = [
         {
           pid: 'person1',
           person: {
@@ -234,7 +234,7 @@ describe('Pseudonymization', () => {
       // Mock data
       const offerId = 12345678;
       const clientId = 'test-client';
-      const identities: SchulconnexPersonsResponse[] = [
+      const identities: SchulconnexPersonsResponseDto[] = [
         {
           pid: 'person1',
           person: {
@@ -283,7 +283,7 @@ describe('Pseudonymization', () => {
       // Mock data
       const offerId = 12345678;
       const clientId = 'test-client';
-      const identities: SchulconnexPersonsResponse[] = [];
+      const identities: SchulconnexPersonsResponseDto[] = [];
 
       // Call the method
       const result = await pseudonymization.pseudonymize(

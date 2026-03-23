@@ -6,7 +6,7 @@ import type { SchulconnexGroupdataset } from '../dto/schulconnex/schulconnex-gro
 import type { SchulconnexOrganization } from '../dto/schulconnex/schulconnex-organization.dto';
 import type { SchulconnexPersonContext } from '../dto/schulconnex/schulconnex-person-context.dto';
 import type { SchulconnexPerson } from '../dto/schulconnex/schulconnex-person.dto';
-import { SchulconnexPersonsResponse } from '../dto/schulconnex/schulconnex-persons-response.dto';
+import { SchulconnexPersonsResponseDto } from '../dto/schulconnex/schulconnex-persons-response.dto';
 
 // Visible according to schulconnex spec
 export interface SchulconnexShowFields {
@@ -26,9 +26,9 @@ export interface SchulconnexShowFields {
 @Injectable()
 export class PostRequestFilter {
   public filterByQueryParameters(
-    data: SchulconnexPersonsResponse[],
+    data: SchulconnexPersonsResponseDto[],
     parameters: SchulconnexPersonsQueryParameters,
-  ): SchulconnexPersonsResponse[] {
+  ): SchulconnexPersonsResponseDto[] {
     if (parameters.pid) {
       data = this.filterForPid(data, parameters.pid);
     }
@@ -51,25 +51,25 @@ export class PostRequestFilter {
   }
 
   private filterForPid(
-    data: SchulconnexPersonsResponse[],
+    data: SchulconnexPersonsResponseDto[],
     pid: string,
-  ): SchulconnexPersonsResponse[] {
+  ): SchulconnexPersonsResponseDto[] {
     return data.filter((item) => item.pid === pid);
   }
 
   private filterForPersonContextId(
-    data: SchulconnexPersonsResponse[],
+    data: SchulconnexPersonsResponseDto[],
     personContextId: string,
-  ): SchulconnexPersonsResponse[] {
+  ): SchulconnexPersonsResponseDto[] {
     return data.filter((item) =>
       item.personenkontexte?.some((context) => context.id === personContextId),
     );
   }
 
   private filterForGroupId(
-    data: SchulconnexPersonsResponse[],
+    data: SchulconnexPersonsResponseDto[],
     groupId: string,
-  ): SchulconnexPersonsResponse[] {
+  ): SchulconnexPersonsResponseDto[] {
     return data.filter((item) =>
       item.personenkontexte?.some((context) =>
         context.gruppen?.some((group) => group.gruppe?.id === groupId),
@@ -78,18 +78,18 @@ export class PostRequestFilter {
   }
 
   private filterForOrganizationId(
-    data: SchulconnexPersonsResponse[],
+    data: SchulconnexPersonsResponseDto[],
     organizationId: string,
-  ): SchulconnexPersonsResponse[] {
+  ): SchulconnexPersonsResponseDto[] {
     return data.filter((item) =>
       item.personenkontexte?.some((context) => context.organisation?.id === organizationId),
     );
   }
 
   private filterForCompletion(
-    identities: SchulconnexPersonsResponse[],
+    identities: SchulconnexPersonsResponseDto[],
     complete: SchulconnexPersonsQueryParameters['vollstaendig'],
-  ): SchulconnexPersonsResponse[] {
+  ): SchulconnexPersonsResponseDto[] {
     const showFields = {
       users: complete.has('personen'),
       userContexts: complete.has('personenkontexte'),
@@ -101,7 +101,7 @@ export class PostRequestFilter {
     // @todo: Remove 'beziehungen' data if not requested via 'vollstaendig'!
 
     return identities.map((identity) =>
-      plainToInstance(SchulconnexPersonsResponse, {
+      plainToInstance(SchulconnexPersonsResponseDto, {
         pid: identity.pid,
         person: this.filterPerson(identity.person, showFields),
 

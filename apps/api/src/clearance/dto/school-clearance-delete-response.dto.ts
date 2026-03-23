@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class SchoolClearanceDeleteResponse {
+export class SchoolClearanceDeleteResponseDto {
   @Field()
   deleted!: boolean;
 

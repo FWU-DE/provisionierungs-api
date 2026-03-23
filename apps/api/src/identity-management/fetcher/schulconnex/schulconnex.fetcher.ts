@@ -42,7 +42,7 @@ export class SchulconnexFetcher extends AbstractFetcher<BearerToken> {
 
     const pid = parameters.pid;
     if (pid) {
-      // We need to depseudonymize the pid parameter.
+      // We need to de-pseudonymize the pid parameter.
       // We achieve this by fetching all users and filtering down the line.
       queryParams.pid = undefined;
     }

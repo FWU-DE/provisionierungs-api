@@ -3,7 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { type SchoolClearance } from '../entity/school-clearance.entity';
 
 @ObjectType()
-export class SchoolClearanceResponse {
+export class SchoolClearanceResponseDto {
   @Field()
   id!: string;
 

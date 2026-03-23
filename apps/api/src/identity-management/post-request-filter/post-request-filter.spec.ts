@@ -8,12 +8,12 @@ import type { SchulconnexName } from '../dto/schulconnex/schulconnex-name.dto';
 import type { SchulconnexOrganization } from '../dto/schulconnex/schulconnex-organization.dto';
 import type { SchulconnexPersonContext } from '../dto/schulconnex/schulconnex-person-context.dto';
 import type { SchulconnexPerson } from '../dto/schulconnex/schulconnex-person.dto';
-import type { SchulconnexPersonsResponse } from '../dto/schulconnex/schulconnex-persons-response.dto';
+import type { SchulconnexPersonsResponseDto } from '../dto/schulconnex/schulconnex-persons-response.dto';
 import { PostRequestFilter } from './post-request-filter';
 
 describe('PostRequestFilter', () => {
   let filter: PostRequestFilter;
-  let mockPersonsData: SchulconnexPersonsResponse[];
+  let mockPersonsData: SchulconnexPersonsResponseDto[];
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -55,7 +55,7 @@ describe('PostRequestFilter', () => {
             loeschung: null,
           } as SchulconnexPersonContext,
         ],
-      } as SchulconnexPersonsResponse,
+      } as SchulconnexPersonsResponseDto,
       {
         pid: 'person-2',
         person: {
@@ -87,12 +87,12 @@ describe('PostRequestFilter', () => {
             loeschung: null,
           } as SchulconnexPersonContext,
         ],
-      } as SchulconnexPersonsResponse,
+      } as SchulconnexPersonsResponseDto,
       // Add a person with no person data and no context data for edge case testing
       {
         pid: 'person-3',
         personenkontexte: [],
-      } as SchulconnexPersonsResponse,
+      } as SchulconnexPersonsResponseDto,
     ];
   });
 

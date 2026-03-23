@@ -3,6 +3,7 @@ import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import type { Response } from 'express';
 
 import { GroupClearanceService } from '../clearance/group-clearance.service';
+import { SchoolClearanceService } from '../clearance/school-clearance.service';
 import {
   AllowResourceOwnerType,
   ClientId,
@@ -13,7 +14,7 @@ import {
 import { ScopeIdentifier } from '../common/auth/scope/scope-identifier';
 import { Logger } from '../common/logger';
 import { Aggregator } from '../identity-management/aggregator/aggregator';
-import { SchulconnexPersonsResponse } from '../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
+import { SchulconnexPersonsResponseDto } from '../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
 import { OffersFetcher } from '../offers/fetcher/offers.fetcher';
 import { OfferContext } from '../offers/model/offer-context';
 import { SchulconnexPersonsQueryParameters } from './parameters/schulconnex-persons-query-parameters';
@@ -23,6 +24,7 @@ export class PersonInfoController {
   constructor(
     private readonly aggregator: Aggregator,
     private readonly groupClearanceService: GroupClearanceService,
+    private readonly schoolClearanceService: SchoolClearanceService,
     @Inject(OffersFetcher) private offersFetcher: OffersFetcher,
     private readonly logger: Logger,
   ) {
@@ -35,14 +37,14 @@ export class PersonInfoController {
   @ApiResponse({
     status: 200,
     description: 'Read currently authenticated user',
-    type: SchulconnexPersonsResponse,
+    type: SchulconnexPersonsResponseDto,
   })
   @ApiBearerAuth()
   async getPerson(
     @Res({ passthrough: true }) res: Response,
     @ClientId() clientId: string,
     @Sub() userId: string,
-  ): Promise<SchulconnexPersonsResponse> {
+  ): Promise<SchulconnexPersonsResponseDto> {
     const offerForClientId = await this.offersFetcher.fetchOfferForClientId(clientId);
     if (!offerForClientId?.offerId) {
       this.logger.error(
@@ -51,24 +53,33 @@ export class PersonInfoController {
       throw new NotFoundException();
     }
 
-    const clearance = await this.groupClearanceService.findAllForOffer(offerForClientId.offerId);
-    if (clearance.length === 0) {
+    const groupClearance = await this.groupClearanceService.findAllForOffer(
+      offerForClientId.offerId,
+    );
+    const schoolClearance = await this.schoolClearanceService.findAllForOffer(
+      offerForClientId.offerId,
+    );
+
+    if (groupClearance.length === 0 && schoolClearance.length === 0) {
       this.logger.verbose(
         `No clearance found for offer "${String(offerForClientId.offerId)}" and client "${clientId}"`,
       );
       throw new NotFoundException();
     }
 
-    const idmIds = [...new Set(clearance.map((c) => c.idmId))];
+    const idmIds = [
+      ...new Set([...groupClearance.map((c) => c.idmId), ...schoolClearance.map((c) => c.idmId)]),
+    ];
 
     /*
      * Fetch data from IDM
      */
-    const identities: SchulconnexPersonsResponse[] = await this.aggregator.getPersons(
+    const identities: SchulconnexPersonsResponseDto[] = await this.aggregator.getPersons(
       idmIds,
       new OfferContext(offerForClientId.offerId, clientId),
       new SchulconnexPersonsQueryParameters(undefined, userId),
-      clearance,
+      groupClearance,
+      schoolClearance,
     );
 
     if (identities.length === 0) {

@@ -6,18 +6,18 @@ import {
   UserCtx,
 } from '../../common/auth/param-decorators/user-context.decorator';
 import { Aggregator } from '../aggregator/aggregator';
-import { Group } from '../dto/graphql/group.dto';
+import { GroupDto } from '../dto/graphql/group.dto';
 
 @Resolver()
 export class GroupAllQuery {
   constructor(private readonly aggregator: Aggregator) {}
 
-  @Query(() => [Group])
+  @Query(() => [GroupDto])
   @AllowResourceOwnerType(ResourceOwnerType.USER)
   async allGroups(
     @UserCtx() userContext: UserContext,
     @Args('schoolId', { type: () => String, nullable: true }) schoolId?: string,
-  ): Promise<Group[]> {
+  ): Promise<GroupDto[]> {
     // @todo: Test again after proper test data is available.
 
     let schoolIds = userContext.schulkennung;
@@ -27,6 +27,6 @@ export class GroupAllQuery {
 
     return (await this.aggregator.getGroups([userContext.heimatorganisation], schoolIds))
       .flatMap((groups) => groups.groups)
-      .map((group) => new Group(group.id, group.bezeichnung));
+      .map((group) => new GroupDto(group.id, group.bezeichnung));
   }
 }
