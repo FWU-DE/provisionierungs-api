@@ -25,7 +25,7 @@ export class GroupClearanceAllQuery {
     }
 
     const response = await this.groupClearanceService.findByIdmAndSchools(
-      userContext.heimatorganisation,
+      [userContext.heimatorganisation],
       schoolIds,
       offerId,
     );

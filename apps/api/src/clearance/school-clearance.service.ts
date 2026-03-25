@@ -86,8 +86,6 @@ export class SchoolClearanceService extends EntityService<SchoolClearance> {
     })) as ResolveRelations<TRelations, SchoolClearance>[];
   }
 
-  // @todo: Replace with usage of findByIdmAndSchools!
-  // @deprecated Use findByIdmAndSchools instead!
   async findAllForOffer(offerId: number): Promise<SchoolClearance[]> {
     return this.findAll({
       where: {

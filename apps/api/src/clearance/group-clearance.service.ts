@@ -72,8 +72,8 @@ export class GroupClearanceService extends EntityService<GroupClearance> {
   }
 
   async findByIdmAndSchools<TRelations extends FindOptionsRelations<GroupClearance>>(
-    idmId: GroupClearance['idmId'],
-    schoolIds: GroupClearance['schoolId'][],
+    idmIds: GroupClearance['idmId'][],
+    schoolIds?: GroupClearance['schoolId'][],
     offerId?: GroupClearance['offerId'],
     options?: {
       select?: FindOptionsSelect<GroupClearance>;
@@ -84,9 +84,12 @@ export class GroupClearanceService extends EntityService<GroupClearance> {
     const repository = this.getRepository(options?.transactionManager);
 
     const where: FindOptionsWhere<GroupClearance> = {
-      idmId: idmId,
-      schoolId: In(schoolIds),
+      idmId: In(idmIds),
     };
+
+    if (schoolIds !== undefined) {
+      where.schoolId = In(schoolIds);
+    }
 
     if (offerId !== undefined) {
       where.offerId = offerId;
@@ -99,10 +102,7 @@ export class GroupClearanceService extends EntityService<GroupClearance> {
     })) as ResolveRelations<TRelations, GroupClearance>[];
   }
 
-  // @todo: Replace with usage of findByIdmAndSchools!
-  // @deprecated Use findByIdmAndSchools instead!
   async findAllForOffer(offerId: number): Promise<GroupClearance[]> {
-    // @todo: Don't we have to filter down to IDM as well at least?
     return this.findAll({
       where: {
         offerId: offerId,

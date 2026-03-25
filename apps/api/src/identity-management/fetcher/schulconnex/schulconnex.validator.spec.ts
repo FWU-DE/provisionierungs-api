@@ -38,12 +38,21 @@ describe('SchulconnexValidator', () => {
             name: {
               vorname: 'Test',
               familienname: 'User',
+              initialenfamilienname: 'U',
+              initialenvorname: 'T',
+              rufname: 'Tester',
             },
             stammorganisation: {
               id: 'org1',
               kennung: 'ORG1',
               name: 'Organization 1',
               typ: 'Schule',
+              traegerschaft: '01',
+              anschrift: {
+                postleitzahl: '12345',
+                ort: 'Berlin',
+                ortsteil: 'Mitte',
+              },
             },
             geburt: {
               datum: '2000-01-01',
@@ -64,8 +73,10 @@ describe('SchulconnexValidator', () => {
                 anschrift: {
                   postleitzahl: '12345',
                   ort: 'Berlin',
+                  ortsteil: 'Mitte',
                 },
                 typ: 'Schule',
+                traegerschaft: '02',
               },
               rolle: 'Lern',
               personenstatus: 'Aktiv',
@@ -85,14 +96,51 @@ describe('SchulconnexValidator', () => {
                     beschreibung: 'Description',
                     typ: 'Sonstig',
                     bereich: 'Pflicht',
+                    optionen: ['bilingual'],
+                    differenzierung: 'G',
+                    bildungsziele: ['GS'],
+                    jahrgangsstufen: ['05'],
+                    faecher: [{ bezeichnung: 'Mathe' }],
                     laufzeit: {
                       von: '2021-01-01',
+                      vonlernperiode: '2021H1',
                       bis: '2022-12-31',
+                      bislernperiode: '2022H2',
                     },
-                    // @todo: Add complete schema in order to fully test the validation!
                   },
+                  gruppenzugehoerigkeit: {
+                    ktid: 'context1',
+                    rollen: ['Lern'],
+                    von: '2021-01-01' as unknown as Date,
+                    bis: '2022-12-31' as unknown as Date,
+                  },
+                  sonstige_gruppenzugehoerige: [
+                    {
+                      ktid: 'context2',
+                      rollen: ['Lehr'],
+                      von: '2021-01-01' as unknown as Date,
+                      bis: '2022-12-31' as unknown as Date,
+                    },
+                  ],
                 },
               ],
+              beziehungen: {
+                hat_als: [
+                  {
+                    ktid: 'parent1',
+                    beziehung: 'SorgBer',
+                  },
+                ],
+                ist_von: [
+                  {
+                    ktid: 'child1',
+                    beziehung: 'SorgBer',
+                  },
+                ],
+              },
+              loeschung: {
+                zeitpunkt: '2023-01-01T00:00:00Z' as unknown as Date,
+              },
             },
           ],
         },

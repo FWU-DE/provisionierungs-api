@@ -134,7 +134,7 @@ describe('GroupClearanceAllQuery', () => {
     expect(result.data.allGroupClearances[0].offerId).toBe(1);
   });
 
-  it('narrows results to provided schoolId when allowed', async () => {
+  it('narrows results to provided schoolId', async () => {
     await infra.addFixtures(
       fixture(GroupClearance, {
         offerId: 111,

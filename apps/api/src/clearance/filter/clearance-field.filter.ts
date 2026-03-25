@@ -26,8 +26,7 @@ export function applyClearancePersonsFieldFilter(
 }
 
 function getClearedProperties(offerId: number): SchulconnexClearanceVisibleFields {
-  // @todo: Implement clearance table with dummy data
-  // @todo: Get clearance for client
+  // @todo: Implement clearance table with dummy data & get clearance for client / offer
   void offerId;
 
   // @todo: Develop actual list of properties to toggle clearance for.

@@ -18,8 +18,6 @@ export class GroupAllQuery {
     @UserCtx() userContext: UserContext,
     @Args('schoolId', { type: () => String, nullable: true }) schoolId?: string,
   ): Promise<GroupDto[]> {
-    // @todo: Test again after proper test data is available.
-
     let schoolIds = userContext.schulkennung;
     if (schoolId && userContext.schulkennung.includes(schoolId)) {
       schoolIds = [schoolId];

@@ -1,5 +1,6 @@
 import type { GroupClearance } from '../../clearance/entity/group-clearance.entity';
 import type { SchoolClearance } from '../../clearance/entity/school-clearance.entity';
+import { SchulconnexOrganizationQueryParameters } from '../../controller/parameters/schulconnex-organisations-query-parameters';
 import { SchulconnexPersonsQueryParameters } from '../../controller/parameters/schulconnex-persons-query-parameters';
 import type { AdapterGetGroupsReturnType, AdapterInterface } from './adapter-interface';
 
@@ -28,7 +29,6 @@ describe('AdapterInterface', () => {
             },
           ],
         }),
-      // @todo: Test the getOrganisations method
       getOrganizations: jest.fn(),
       getGroups: function (): Promise<AdapterGetGroupsReturnType> {
         throw new Error('Function not implemented.');
@@ -79,7 +79,6 @@ describe('AdapterInterface', () => {
       getIdentifier: () => 'test-adapter',
       isEnabled: () => true,
       getPersons: getPersonsMock,
-      // @todo: Test the getOrganisations method
       getOrganizations: jest.fn(),
       getGroups: function (): Promise<AdapterGetGroupsReturnType> {
         throw new Error('Function not implemented.');
@@ -101,7 +100,6 @@ describe('AdapterInterface', () => {
           idm: 'test-adapter',
           response: null,
         }),
-      // @todo: Test the getOrganisations method
       getOrganizations: jest.fn(),
       getGroups: function (): Promise<AdapterGetGroupsReturnType> {
         throw new Error('Function not implemented.');
@@ -112,6 +110,61 @@ describe('AdapterInterface', () => {
     const mockParameters: SchulconnexPersonsQueryParameters =
       new SchulconnexPersonsQueryParameters();
     const result = await mockAdapter.getPersons(mockParameters);
+
+    expect(result).toHaveProperty('idm', 'test-adapter');
+    expect(result.response).toBeNull();
+  });
+
+  it('should handle getOrganizations method correctly', async () => {
+    const mockAdapter: AdapterInterface = {
+      getIdentifier: () => 'test-adapter',
+      isEnabled: () => true,
+      getPersons: jest.fn(),
+      getOrganizations: () =>
+        Promise.resolve({
+          idm: 'test-adapter',
+          response: [
+            {
+              id: 'test-org-id',
+              name: 'Test School',
+              typ: 'Schule',
+            },
+          ],
+        }),
+      getGroups: function (): Promise<AdapterGetGroupsReturnType> {
+        throw new Error('Function not implemented.');
+      },
+    };
+
+    const mockParameters: SchulconnexOrganizationQueryParameters =
+      new SchulconnexOrganizationQueryParameters();
+    const result = await mockAdapter.getOrganizations(mockParameters);
+
+    expect(result).toHaveProperty('idm', 'test-adapter');
+    expect(result).toHaveProperty('response');
+    expect(Array.isArray(result.response)).toBe(true);
+    expect(result.response?.[0]).toHaveProperty('id', 'test-org-id');
+    expect(result.response?.[0]).toHaveProperty('name', 'Test School');
+  });
+
+  it('should allow null response in AdapterGetOrganizationsReturnType', async () => {
+    const mockAdapter: AdapterInterface = {
+      getIdentifier: () => 'test-adapter',
+      isEnabled: () => true,
+      getPersons: jest.fn(),
+      getOrganizations: () =>
+        Promise.resolve({
+          idm: 'test-adapter',
+          response: null,
+        }),
+      getGroups: function (): Promise<AdapterGetGroupsReturnType> {
+        throw new Error('Function not implemented.');
+      },
+    };
+
+    const mockParameters: SchulconnexOrganizationQueryParameters =
+      new SchulconnexOrganizationQueryParameters();
+    const result = await mockAdapter.getOrganizations(mockParameters);
 
     expect(result).toHaveProperty('idm', 'test-adapter');
     expect(result.response).toBeNull();

@@ -221,7 +221,7 @@ describe('clearance-school.filter', () => {
         expect(result[0].personenkontexte?.[0].organisation?.id).toBe('cleared-school');
       });
 
-      it('should NOT keep personenkontexte if a group matches but organization does not', () => {
+      it('should NOT keep identity if a group matches but no organization does', () => {
         const identities: SchulconnexPersonsResponseDto[] = [
           {
             pid: 'user-1',

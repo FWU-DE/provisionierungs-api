@@ -16,6 +16,7 @@ export const schulconnexOrganizationResponseSchema = z.object({
     .enum(['Schule', 'Anbieter', 'Medienzentrum', 'Behoerde', 'SchTrae', 'Sonstige'])
     .nullable()
     .optional(),
+  traegerschaft: z.enum(['01', '02', '03', '04', '05', '06']).nullable().optional(),
 });
 
 export const schulconnexOrganizationsResponseSchema = z.array(
@@ -42,6 +43,9 @@ export const schulconnexPersonsResponseSchema = z.array(
           .object({
             vorname: z.string(),
             familienname: z.string(),
+            initialenvorname: z.string().nullable().optional(),
+            initialenfamilienname: z.string().nullable().optional(),
+            rufname: z.string().nullable().optional(),
           })
           .nullable()
           .optional(),
