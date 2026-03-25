@@ -6,17 +6,20 @@ import { applyClearancePersonsFieldFilter } from '../../clearance/filter/clearan
 import { applyClearancePersonsGroupFilter } from '../../clearance/filter/clearance-group.filter';
 import { applyClearancePersonsSchoolFilter } from '../../clearance/filter/clearance-school.filter';
 import { Logger } from '../../common/logger';
+import { SchulconnexOrganizationQueryParameters } from '../../controller/parameters/schulconnex-organisations-query-parameters';
 import { SchulconnexPersonsQueryParameters } from '../../controller/parameters/schulconnex-persons-query-parameters';
 import { OfferContext } from '../../offers/model/offer-context';
 import { Pseudonymization } from '../../pseudonymization/pseudonymization';
 import {
   AdapterGetGroupsReturnType,
+  AdapterGetOrganizationsReturnType,
   AdapterGetPersonsReturnType,
   AdapterInterface,
 } from '../adapter/adapter-interface';
 import { EduplacesStagingAdapter } from '../adapter/eduplaces-staging/eduplaces-staging-adapter';
 import { EduplacesAdapter } from '../adapter/eduplaces/eduplaces-adapter';
 import { SaarlandAdapter } from '../adapter/saarland/saarland-adapter';
+import { SchulconnexOrganization } from '../dto/schulconnex/schulconnex-organization.dto';
 import { SchulconnexPersonsResponseDto } from '../dto/schulconnex/schulconnex-persons-response.dto';
 import { GroupsPerIdmModel } from '../model/groups-per-idm.model';
 import { PostRequestFilter } from '../post-request-filter/post-request-filter';
@@ -64,7 +67,8 @@ export class Aggregator {
         this.logger.error(`No adapter found for IDM: ${idmId}`);
         return [];
       }
-      idmRequests.push(adapter.getPersons(parameters, groupClearance));
+
+      idmRequests.push(adapter.getPersons(parameters, groupClearance, schoolClearance));
     });
 
     // Merge all responses into one array on retrieval
@@ -80,7 +84,11 @@ export class Aggregator {
     );
 
     // Firstly, remove all entries the client does not have clearance for.
-    const mergedClearedData = this.applyClearance(rawPersons, groupClearance, schoolClearance);
+    const mergedClearedData = this.applyPersonsClearance(
+      rawPersons,
+      groupClearance,
+      schoolClearance,
+    );
 
     // Secondly, pseudonymize the data.
     const pseudonymizedData = await this.pseudonymization.pseudonymize(
@@ -102,7 +110,7 @@ export class Aggregator {
     return this.postRequestFilter.filterByQueryParameters(clearedDataByFields, parameters);
   }
 
-  private applyClearance(
+  private applyPersonsClearance(
     rawPersons: SchulconnexPersonsResponseDto[],
     groupClearance?: GroupClearance[],
     schoolClearance?: SchoolClearance[],
@@ -119,6 +127,39 @@ export class Aggregator {
 
     // Now, the results from the school filter and the group filter get merged and are the actual filtered data.
     return [...clearedDataBySchool, ...clearedDataByGroup];
+  }
+
+  public async getOrganizations(
+    idmIds: string[],
+    parameters: SchulconnexOrganizationQueryParameters,
+  ): Promise<SchulconnexOrganization[]> {
+    // Request data from all IDMs in parallel
+    const idmRequests: Promise<AdapterGetOrganizationsReturnType>[] = [];
+    idmIds.forEach((idmId) => {
+      const adapter = this.getAdapterById(idmId);
+      if (!adapter) {
+        this.logger.error(`No adapter found for IDM: ${idmId}`);
+        return [];
+      }
+      idmRequests.push(adapter.getOrganizations(parameters));
+    });
+
+    // Merge all responses into one array on retrieval
+    const rawOrganizations: SchulconnexOrganization[] = (await Promise.all(idmRequests)).reduce(
+      (acc: SchulconnexOrganization[], organization) => {
+        if (organization.response === null) {
+          this.logger.error('No data received from IDM: ' + organization.idm);
+          return acc;
+        }
+        return [...acc, ...organization.response];
+      },
+      [],
+    );
+
+    // @todo: Add organization level clearance.
+    // @todo: Add pseudonymization.
+
+    return rawOrganizations;
   }
 
   public async getGroups(idmIds: string[], schoolIds?: string[]): Promise<GroupsPerIdmModel[]> {

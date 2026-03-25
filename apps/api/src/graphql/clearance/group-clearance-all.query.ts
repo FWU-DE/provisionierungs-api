@@ -1,12 +1,12 @@
 import { Args, Int, Query, Resolver } from '@nestjs/graphql';
 
+import { GroupClearanceResponseDto } from '../../clearance/dto/group-clearance-response.dto';
+import { GroupClearanceService } from '../../clearance/group-clearance.service';
 import { AllowResourceOwnerType, ResourceOwnerType } from '../../common/auth';
 import {
   type UserContext,
   UserCtx,
 } from '../../common/auth/param-decorators/user-context.decorator';
-import { GroupClearanceResponseDto } from '../dto/group-clearance-response.dto';
-import { GroupClearanceService } from '../group-clearance.service';
 
 @Resolver()
 export class GroupClearanceAllQuery {

@@ -4,14 +4,15 @@
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 
+import { ClearanceModule } from '../../clearance/clearance.module';
+import { GroupClearance } from '../../clearance/entity/group-clearance.entity';
 import { AuthModule } from '../../common/auth';
 import { IntrospectionClient } from '../../common/auth/introspection/introspection-client';
 import { TestIntrospectionClient } from '../../common/auth/introspection/introspection-client.test';
 import { GraphQLModule } from '../../common/graphql/graphql.module';
 import { fixture } from '../../test/fixture/fixture.interface';
 import { type TestingInfrastructure, createTestingInfrastructure } from '../../test/testing-module';
-import { ClearanceModule } from '../clearance.module';
-import { GroupClearance } from '../entity/group-clearance.entity';
+import { RosteringGraphqlModule } from '../graphql.module';
 
 const mockDeleteAllQuery = {
   query: `
@@ -43,7 +44,7 @@ describe('GroupClearanceDeleteAllMutation', () => {
   beforeEach(async () => {
     testIntrospectionClient = new TestIntrospectionClient();
     infra = await createTestingInfrastructure({
-      imports: [GraphQLModule, ClearanceModule, AuthModule],
+      imports: [GraphQLModule, RosteringGraphqlModule, ClearanceModule, AuthModule],
     })
       .configureModule((module) => {
         module.overrideProvider(IntrospectionClient).useValue(testIntrospectionClient);

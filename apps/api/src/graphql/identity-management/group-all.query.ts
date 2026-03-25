@@ -5,8 +5,8 @@ import {
   type UserContext,
   UserCtx,
 } from '../../common/auth/param-decorators/user-context.decorator';
-import { Aggregator } from '../aggregator/aggregator';
-import { GroupDto } from '../dto/graphql/group.dto';
+import { Aggregator } from '../../identity-management/aggregator/aggregator';
+import { GroupDto } from '../../identity-management/dto/graphql/group.dto';
 
 @Resolver()
 export class GroupAllQuery {

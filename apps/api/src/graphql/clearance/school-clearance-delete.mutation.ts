@@ -1,8 +1,8 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
-import { SchoolClearanceDeleteResponseDto } from '../dto/school-clearance-delete-response.dto';
-import { SchoolClearance } from '../entity/school-clearance.entity';
-import { SchoolClearanceService } from '../school-clearance.service';
+import { SchoolClearanceDeleteResponseDto } from '../../clearance/dto/school-clearance-delete-response.dto';
+import { SchoolClearance } from '../../clearance/entity/school-clearance.entity';
+import { SchoolClearanceService } from '../../clearance/school-clearance.service';
 
 @Resolver(() => SchoolClearance)
 export class SchoolClearanceDeleteMutation {

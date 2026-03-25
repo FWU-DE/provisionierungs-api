@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import type { GroupClearance } from '../../../clearance/entity/group-clearance.entity';
+import { SchoolClearance } from '../../../clearance/entity/school-clearance.entity';
 import { SchulconnexOrganizationQueryParameters } from '../../../controller/parameters/schulconnex-organisations-query-parameters';
 import { SchulconnexPersonsQueryParameters } from '../../../controller/parameters/schulconnex-persons-query-parameters';
 import { BearerToken } from '../../authentication/bearer-token';
@@ -51,9 +52,11 @@ export class EduplacesStagingAdapter implements AdapterInterface {
 
   async getPersons(
     parameters: SchulconnexPersonsQueryParameters,
-    clearance?: GroupClearance[],
+    groupClearances?: GroupClearance[],
+    schoolClearance?: SchoolClearance[],
   ): Promise<AdapterGetPersonsReturnType> {
-    void clearance;
+    void groupClearances;
+    void schoolClearance;
     if (!this.idmEduplacesStagingConfig.IDM_EDUPLACES_STAGING_ENABLED) {
       throw new Error('Eduplaces Staging IDM is not enabled');
     }

@@ -1,8 +1,8 @@
 import { Args, Int, Mutation, Resolver } from '@nestjs/graphql';
 
-import { GroupClearanceDeleteResponseDto } from '../dto/group-clearance-delete-response.dto';
-import { GroupClearance } from '../entity/group-clearance.entity';
-import { GroupClearanceService } from '../group-clearance.service';
+import { GroupClearanceDeleteResponseDto } from '../../clearance/dto/group-clearance-delete-response.dto';
+import { GroupClearance } from '../../clearance/entity/group-clearance.entity';
+import { GroupClearanceService } from '../../clearance/group-clearance.service';
 
 @Resolver(() => GroupClearance)
 export class GroupClearanceDeleteAllMutation {

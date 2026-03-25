@@ -102,6 +102,9 @@ export class PersonenInfoController {
       return [];
     }
 
+    // @todo: Remove after implementation!
+    offerForClientId.offerId = 1944628;
+
     const groupClearance = await this.groupClearanceService.findAllForOffer(
       offerForClientId.offerId,
     );

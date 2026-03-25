@@ -4,21 +4,22 @@
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 
+import { ClearanceModule } from '../../clearance/clearance.module';
+import { GroupClearance } from '../../clearance/entity/group-clearance.entity';
 import { AuthModule } from '../../common/auth';
 import { IntrospectionClient } from '../../common/auth/introspection/introspection-client';
 import { TestIntrospectionClient } from '../../common/auth/introspection/introspection-client.test';
 import { GraphQLModule } from '../../common/graphql/graphql.module';
 import { fixture } from '../../test/fixture/fixture.interface';
 import { type TestingInfrastructure, createTestingInfrastructure } from '../../test/testing-module';
-import { ClearanceModule } from '../clearance.module';
-import { SchoolClearance } from '../entity/school-clearance.entity';
+import { RosteringGraphqlModule } from '../graphql.module';
 
 const mockDeleteQuery = {
   query: `
-    mutation DeleteSchoolClearance(
+    mutation DeleteGroupClearance(
       $id: String!
     ) {
-      deleteSchoolClearance(
+      deleteGroupClearance(
         id: $id
       ) {
         deleted
@@ -30,14 +31,14 @@ const mockDeleteQuery = {
   },
 };
 
-describe('SchoolClearanceDeleteMutation', () => {
+describe('GroupClearanceDeleteMutation', () => {
   let infra: TestingInfrastructure;
   let testIntrospectionClient: TestIntrospectionClient;
 
   beforeEach(async () => {
     testIntrospectionClient = new TestIntrospectionClient();
     infra = await createTestingInfrastructure({
-      imports: [GraphQLModule, ClearanceModule, AuthModule],
+      imports: [GraphQLModule, RosteringGraphqlModule, ClearanceModule, AuthModule],
     })
       .configureModule((module) => {
         module.overrideProvider(IntrospectionClient).useValue(testIntrospectionClient);
@@ -74,25 +75,27 @@ describe('SchoolClearanceDeleteMutation', () => {
       });
   });
 
-  it('deletes school clearance', async () => {
-    const mockSchoolClearance = fixture(SchoolClearance, {
+  it('deletes group clearance', async () => {
+    const mockGroupClearance = fixture(GroupClearance, {
       id: 'deb74e35-ea5f-535f-890f-5779b5d8e27f',
       offerId: 34567,
       schoolId: 'school-1',
       idmId: 'idm-1',
+      groupId: 'group-1',
     });
-    await infra.addFixtures(mockSchoolClearance);
+    await infra.addFixtures(mockGroupClearance);
 
     const dataSource = infra.module.get(DataSource);
 
     // Check if the clearance entry actually exists in the database
-    const fixtureFromDb = await dataSource.manager.findOne(SchoolClearance, {
+    const fixtureFromDb = await dataSource.manager.findOne(GroupClearance, {
       where: {
         id: 'deb74e35-ea5f-535f-890f-5779b5d8e27f',
       },
     });
     expect(fixtureFromDb).toBeDefined();
     expect(fixtureFromDb?.offerId).toBe(34567);
+    expect(fixtureFromDb?.groupId).toBe('group-1');
     expect(fixtureFromDb?.idmId).toBe('idm-1');
     expect(fixtureFromDb?.schoolId).toBe('school-1');
 
@@ -102,9 +105,9 @@ describe('SchoolClearanceDeleteMutation', () => {
       .set('Authorization', 'Bearer ::user-access-token::')
       .send(mockDeleteQuery);
     const result1 = response1.body as {
-      data: { deleteSchoolClearance: { deleted: boolean } };
+      data: { deleteGroupClearance: object };
     };
-    expect(result1.data.deleteSchoolClearance).toEqual({
+    expect(result1.data.deleteGroupClearance).toEqual({
       deleted: true,
     });
 
@@ -114,14 +117,14 @@ describe('SchoolClearanceDeleteMutation', () => {
       .set('Authorization', 'Bearer ::user-access-token::')
       .send(mockDeleteQuery);
     const result2 = response2.body as {
-      data: { deleteSchoolClearance: { deleted: boolean } };
+      data: { deleteGroupClearance: object };
     };
-    expect(result2.data.deleteSchoolClearance).toEqual({
+    expect(result2.data.deleteGroupClearance).toEqual({
       deleted: true,
     });
 
     // Check if the clearance entry actually exists in the database
-    const clearanceFromDb = await dataSource.manager.findOne(SchoolClearance, {
+    const clearanceFromDb = await dataSource.manager.findOne(GroupClearance, {
       where: {
         id: 'deb74e35-ea5f-535f-890f-5779b5d8e27f',
       },

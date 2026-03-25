@@ -1,8 +1,8 @@
 import { Args, Int, Mutation, Resolver } from '@nestjs/graphql';
 
-import { GroupClearanceResponseDto } from '../dto/group-clearance-response.dto';
-import { GroupClearance } from '../entity/group-clearance.entity';
-import { GroupClearanceService } from '../group-clearance.service';
+import { GroupClearanceResponseDto } from '../../clearance/dto/group-clearance-response.dto';
+import { GroupClearance } from '../../clearance/entity/group-clearance.entity';
+import { GroupClearanceService } from '../../clearance/group-clearance.service';
 
 @Resolver(() => GroupClearanceResponseDto)
 export class GroupClearanceCreateMutation {

@@ -14,7 +14,6 @@ import idmEduplacesStagingConfig from './config/idm.eduplaces-staging.config';
 import idmEduplacesConfig from './config/idm.eduplaces.config';
 import idmSaarlandConfig from './config/idm.saarland.config';
 import { SchulconnexFetcher } from './fetcher/schulconnex/schulconnex.fetcher';
-import { GroupAllQuery } from './graphql/group-all.query';
 import { PostRequestFilter } from './post-request-filter/post-request-filter';
 
 @Module({
@@ -34,7 +33,6 @@ import { PostRequestFilter } from './post-request-filter/post-request-filter';
     Aggregator,
     ClientCredentialsProvider,
     FormUrlEncodedProvider,
-    GroupAllQuery,
     PostRequestFilter,
     SchulconnexFetcher,
   ],

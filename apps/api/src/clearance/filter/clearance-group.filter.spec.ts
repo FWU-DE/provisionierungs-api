@@ -76,6 +76,58 @@ describe('clearance-group.filter', () => {
       expect(result[0].pid).toBe('match');
     });
 
+    it('should remove groups that do not have a match in GroupClearance', () => {
+      const identities: SchulconnexPersonsResponseDto[] = [
+        {
+          pid: 'identity-1',
+          personenkontexte: [
+            {
+              id: 'ctx1',
+              organisation: { kennung: 'school-1' } as SchulconnexOrganization,
+              gruppen: [{ gruppe: { id: 'group-match' } }, { gruppe: { id: 'group-no-match' } }],
+            },
+          ],
+        },
+      ];
+      const groupClearanceEntries: GroupClearance[] = [
+        { groupId: 'group-match', schoolId: 'school-1' } as GroupClearance,
+      ];
+
+      const result = applyClearancePersonsGroupFilter(identities, groupClearanceEntries);
+      expect(result).toHaveLength(1);
+      expect(result[0].personenkontexte).toHaveLength(1);
+      expect(result[0].personenkontexte?.[0].gruppen).toHaveLength(1);
+      expect(result[0].personenkontexte?.[0].gruppen?.[0].gruppe?.id).toBe('group-match');
+    });
+
+    it('should remove person contexts that have no matching groups', () => {
+      const identities: SchulconnexPersonsResponseDto[] = [
+        {
+          pid: 'identity-1',
+          personenkontexte: [
+            {
+              id: 'ctx-match',
+              organisation: { kennung: 'school-1' } as SchulconnexOrganization,
+              gruppen: [{ gruppe: { id: 'group-match' } }],
+            },
+            {
+              id: 'ctx-no-match',
+              organisation: { kennung: 'school-1' } as SchulconnexOrganization,
+              gruppen: [{ gruppe: { id: 'group-no-match' } }],
+            },
+          ],
+        },
+      ];
+      const groupClearanceEntries: GroupClearance[] = [
+        { groupId: 'group-match', schoolId: 'school-1' } as GroupClearance,
+      ];
+
+      const result = applyClearancePersonsGroupFilter(identities, groupClearanceEntries);
+      expect(result).toHaveLength(1);
+      expect(result[0].personenkontexte).toHaveLength(1);
+      expect(result[0].personenkontexte?.[0].id).toBe('ctx-match');
+    });
+
     it('should handle missing personenkontexte or gruppen', () => {
       const identities: SchulconnexPersonsResponseDto[] = [
         {

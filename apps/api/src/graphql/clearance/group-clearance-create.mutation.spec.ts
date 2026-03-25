@@ -4,48 +4,53 @@
 import request from 'supertest';
 import { DataSource } from 'typeorm';
 
+import { ClearanceModule } from '../../clearance/clearance.module';
+import { GroupClearance } from '../../clearance/entity/group-clearance.entity';
 import { AuthModule } from '../../common/auth';
 import { IntrospectionClient } from '../../common/auth/introspection/introspection-client';
 import { TestIntrospectionClient } from '../../common/auth/introspection/introspection-client.test';
 import { GraphQLModule } from '../../common/graphql/graphql.module';
 import { type TestingInfrastructure, createTestingInfrastructure } from '../../test/testing-module';
-import { ClearanceModule } from '../clearance.module';
-import { SchoolClearance } from '../entity/school-clearance.entity';
+import { RosteringGraphqlModule } from '../graphql.module';
 
 const mockCreateQuery = {
   query: `
-    mutation CreateSchoolClearance(
+    mutation CreateGroupClearance(
       $offerId: Int!
       $idmId: String!
+      $groupId: String!
       $schoolId: String!
     ) {
-      createSchoolClearance(
+      createGroupClearance(
         offerId: $offerId
         idmId: $idmId
+        groupId: $groupId
         schoolId: $schoolId
       ) {
         offerId
         idmId
+        groupId
         schoolId
       }
     }
   `,
-  operationName: 'CreateSchoolClearance',
+  operationName: 'CreateGroupClearance',
   variables: {
     offerId: 54321,
+    groupId: 'group-123',
     idmId: 'idm-5',
     schoolId: 'school-3',
   },
 };
 
-describe('SchoolClearanceCreateMutation', () => {
+describe('GroupClearanceCreateMutation', () => {
   let infra: TestingInfrastructure;
   let testIntrospectionClient: TestIntrospectionClient;
 
   beforeEach(async () => {
     testIntrospectionClient = new TestIntrospectionClient();
     infra = await createTestingInfrastructure({
-      imports: [GraphQLModule, ClearanceModule, AuthModule],
+      imports: [GraphQLModule, RosteringGraphqlModule, ClearanceModule, AuthModule],
     })
       .configureModule((module) => {
         module.overrideProvider(IntrospectionClient).useValue(testIntrospectionClient);
@@ -89,10 +94,11 @@ describe('SchoolClearanceCreateMutation', () => {
       .set('Authorization', 'Bearer ::user-access-token::')
       .send(mockCreateQuery);
     const result1 = response1.body as {
-      data: { createSchoolClearance: object };
+      data: { createGroupClearance: object };
     };
-    expect(result1.data.createSchoolClearance).toEqual({
+    expect(result1.data.createGroupClearance).toEqual({
       offerId: 54321,
+      groupId: 'group-123',
       schoolId: 'school-3',
       idmId: 'idm-5',
     });
@@ -103,10 +109,11 @@ describe('SchoolClearanceCreateMutation', () => {
       .set('Authorization', 'Bearer ::user-access-token::')
       .send(mockCreateQuery);
     const result2 = response2.body as {
-      data: { createSchoolClearance: object };
+      data: { createGroupClearance: object };
     };
-    expect(result2.data.createSchoolClearance).toEqual({
+    expect(result2.data.createGroupClearance).toEqual({
       offerId: 54321,
+      groupId: 'group-123',
       schoolId: 'school-3',
       idmId: 'idm-5',
     });
@@ -114,21 +121,24 @@ describe('SchoolClearanceCreateMutation', () => {
     const dataSource = infra.module.get(DataSource);
 
     // Check if the clearance entry actually exists in the database
-    const clearanceFromDb = await dataSource.manager.findOne(SchoolClearance, {
+    const clearanceFromDb = await dataSource.manager.findOne(GroupClearance, {
       where: {
         offerId: 54321,
+        groupId: 'group-123',
         idmId: 'idm-5',
         schoolId: 'school-3',
       },
     });
     expect(clearanceFromDb).toBeDefined();
     expect(clearanceFromDb?.offerId).toBe(54321);
+    expect(clearanceFromDb?.groupId).toBe('group-123');
     expect(clearanceFromDb?.idmId).toBe('idm-5');
     expect(clearanceFromDb?.schoolId).toBe('school-3');
 
     // Make sure that only one entry exists in the database
-    const clearancesFromDb = await dataSource.manager.findBy(SchoolClearance, {
+    const clearancesFromDb = await dataSource.manager.findBy(GroupClearance, {
       offerId: 54321,
+      groupId: 'group-123',
       idmId: 'idm-5',
       schoolId: 'school-3',
     });
@@ -141,24 +151,28 @@ describe('SchoolClearanceCreateMutation', () => {
       .post('/graphql')
       .send({
         query: `
-          mutation CreateSchoolClearance(
+          mutation CreateGroupClearance(
             $offerId: Int!
             $idmId: String!
+            $schoolId: String!
           ) {
-            createSchoolClearance(
+            createGroupClearance(
               offerId: $offerId
               idmId: $idmId
+              schoolId: $schoolId
             ) {
               offerId
               idmId
+              groupId
               schoolId
             }
           }
         `,
-        operationName: 'CreateSchoolClearance',
+        operationName: 'CreateGroupClearance',
         variables: {
           offerId: 12345,
           idmId: 'idm-5',
+          schoolId: 'school-3',
         },
       })
       .expect((res) => {

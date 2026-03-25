@@ -6,8 +6,8 @@ import {
   UserCtx,
 } from '../../common/auth/param-decorators/user-context.decorator';
 import { ensureDataUrl } from '../../common/helper/base64-guesser';
-import { OffersDto } from '../dto/offers.dto';
-import { OffersService } from '../offers.service';
+import { OffersDto } from '../../offers/dto/offers.dto';
+import { OffersService } from '../../offers/offers.service';
 
 @Resolver()
 export class OffersQuery {

@@ -7,10 +7,11 @@ import { AuthModule } from '../../common/auth';
 import { IntrospectionClient } from '../../common/auth/introspection/introspection-client';
 import { TestIntrospectionClient } from '../../common/auth/introspection/introspection-client.test';
 import { GraphQLModule } from '../../common/graphql/graphql.module';
+import { OffersDto } from '../../offers/dto/offers.dto';
+import { OffersModule } from '../../offers/offers.module';
+import { OffersService } from '../../offers/offers.service';
 import { type TestingInfrastructure, createTestingInfrastructure } from '../../test/testing-module';
-import { OffersDto } from '../dto/offers.dto';
-import { OffersModule } from '../offers.module';
-import { OffersService } from '../offers.service';
+import { RosteringGraphqlModule } from '../graphql.module';
 
 const mockOffersService = {
   getOffers: async (schoolId: string[]): Promise<OffersDto[]> => {
@@ -52,7 +53,7 @@ describe('OffersQuery', () => {
   beforeEach(async () => {
     testIntrospectionClient = new TestIntrospectionClient();
     infra = await createTestingInfrastructure({
-      imports: [GraphQLModule, OffersModule, AuthModule],
+      imports: [GraphQLModule, RosteringGraphqlModule, OffersModule, AuthModule],
     })
       .configureModule((module) => {
         module

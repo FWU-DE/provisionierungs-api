@@ -5,8 +5,6 @@ import { type GroupClearance } from '../entity/group-clearance.entity';
  * Filters identities based on group clearance entries.
  * Returns only identities that have at least one person context with a group matching the cleared group IDs.
  *
- * @todo: Do group information have to be filtered out if there is no group clearance given for the particular group?
- *
  * @param identities - Array of Schulconnex person responses to filter
  * @param groupClearanceEntries - Optional array of group clearance entries containing allowed group IDs
  * @returns Filtered array of identities matching the cleared groups, or empty array if no clearance entries provided
@@ -21,19 +19,28 @@ export function applyClearancePersonsGroupFilter(
 
   const clearedGroupKeys = getClearedGroupKeys(groupClearanceEntries);
 
-  return identities.filter((identity) => {
-    return (identity.personenkontexte ?? []).some((context) => {
-      const schoolId = context.organisation?.kennung;
-      if (!schoolId) {
-        return false;
-      }
+  return identities
+    .map((identity) => {
+      const filteredContexts = (identity.personenkontexte ?? [])
+        .map((context) => {
+          const schoolId = context.organisation?.kennung;
+          if (!schoolId) {
+            context.gruppen = [];
+            return context;
+          }
 
-      return (context.gruppen ?? []).some((groupSet) => {
-        const groupId = groupSet.gruppe?.id;
-        return groupId ? clearedGroupKeys.has(`${schoolId}:${groupId}`) : false;
-      });
-    });
-  });
+          context.gruppen = (context.gruppen ?? []).filter((groupSet) => {
+            const groupId = groupSet.gruppe?.id;
+            return groupId ? clearedGroupKeys.has(`${schoolId}:${groupId}`) : false;
+          });
+          return context;
+        })
+        .filter((context) => (context.gruppen ?? []).length > 0);
+
+      identity.personenkontexte = filteredContexts.length > 0 ? filteredContexts : undefined;
+      return identity;
+    })
+    .filter((identity) => (identity.personenkontexte ?? []).length > 0);
 }
 
 /**

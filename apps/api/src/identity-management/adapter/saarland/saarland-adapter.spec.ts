@@ -1,4 +1,5 @@
 import { GroupClearance } from '../../../clearance/entity/group-clearance.entity';
+import { SchulconnexOrganizationQueryParameters } from '../../../controller/parameters/schulconnex-organisations-query-parameters';
 import { SchulconnexPersonsQueryParameters } from '../../../controller/parameters/schulconnex-persons-query-parameters';
 import {
   type TestingInfrastructure,
@@ -23,6 +24,7 @@ describe('SaarlandAdapter', () => {
     mockSchulconnexFetcher = {
       fetchPersons: jest.fn(),
       fetchOrganizations: jest.fn(),
+      fetchGroups: jest.fn(),
     } as unknown as jest.Mocked<SchulconnexFetcher>;
 
     mockFormUrlEncodedProviderProvider = {
@@ -73,25 +75,36 @@ describe('SaarlandAdapter', () => {
         token: 'test-auth-token',
       };
       const mockPersonsResponse: SchulconnexPersonsResponse[] = [
-        { pid: 'person1' },
+        {
+          pid: 'person1',
+          personenkontexte: [
+            {
+              id: 'ctx1',
+              organisation: {
+                id: 'schule-1',
+                kennung: 'OLD_schule-1',
+              },
+            },
+          ],
+        },
         { pid: 'person2' },
       ];
       const mockOrganizationsResponse: SchulconnexOrganization[] = [
         {
           id: 'schule-1',
-          kennung: 'schule-1',
+          kennung: 'PREFIX_schule-1',
           name: 'Schule 1',
           typ: 'Schule',
         },
         {
           id: 'schule-2',
-          kennung: 'schule-2',
+          kennung: 'PREFIX_schule-2',
           name: 'Schule 2',
           typ: 'Schule',
         },
         {
           id: 'schule-3',
-          kennung: 'schule-3',
+          kennung: 'PREFIX_schule-3',
           name: 'Schule 3',
           typ: 'Schule',
         },
@@ -105,13 +118,13 @@ describe('SaarlandAdapter', () => {
       const mockClearance1 = new GroupClearance();
       mockClearance1.offerId = 1;
       mockClearance1.idmId = 'DE-SL-OnlineSchuleSaarlandTest';
-      mockClearance1.schoolId = 'schule-1';
+      mockClearance1.schoolId = 'DE-SL-schule-1';
       mockClearance1.groupId = 'group-1';
 
       const mockClearance2 = new GroupClearance();
       mockClearance2.offerId = 2;
       mockClearance2.idmId = 'DE-SL-OnlineSchuleSaarlandTest';
-      mockClearance2.schoolId = 'schule-2';
+      mockClearance2.schoolId = 'DE-SL-schule-2';
       mockClearance2.groupId = 'group-3';
 
       // Call the method
@@ -158,8 +171,85 @@ describe('SaarlandAdapter', () => {
       );
       expect(result).toEqual({
         idm: 'DE-SL-OnlineSchuleSaarlandTest',
-        response: mockPersonsResponse,
+        response: [
+          {
+            pid: 'person1',
+            personenkontexte: [
+              {
+                id: 'ctx1',
+                organisation: {
+                  id: 'schule-1',
+                  kennung: 'DE-SL-schule-1',
+                },
+              },
+            ],
+          },
+          { pid: 'person2' },
+        ],
       });
+    });
+  });
+
+  describe('adjustOrganizationPrefix', () => {
+    it('should split at "_" and prepend the school ID prefix', () => {
+      // @ts-expect-error - accessing private method for testing
+      expect(adapter.adjustOrganizationPrefix('XY_12345')).toBe('DE-SL-12345');
+    });
+
+    it('should work if no "_" is present', () => {
+      // @ts-expect-error - accessing private method for testing
+      expect(adapter.adjustOrganizationPrefix('12345')).toBe('DE-SL-12345');
+    });
+
+    it('should handle null or undefined', () => {
+      // @ts-expect-error - accessing private method for testing
+      expect(adapter.adjustOrganizationPrefix(null)).toBe(null);
+      // @ts-expect-error - accessing private method for testing
+      expect(adapter.adjustOrganizationPrefix(undefined)).toBe(undefined);
+    });
+
+    it('should handle multiple "_"', () => {
+      // @ts-expect-error - accessing private method for testing
+      expect(adapter.adjustOrganizationPrefix('A_B_C')).toBe('DE-SL-C');
+    });
+  });
+
+  describe('convertSchoolIdPrefixToIDMExpectation', () => {
+    it('should split at "-" and prepend "SL_"', () => {
+      // @ts-expect-error - accessing private method for testing
+      expect(adapter.convertSchoolIdPrefixToIDMExpectation('X-Y-12345')).toBe('SL_12345');
+    });
+
+    it('should work if no "-" is present', () => {
+      // @ts-expect-error - accessing private method for testing
+      expect(adapter.convertSchoolIdPrefixToIDMExpectation('12345')).toBe('SL_12345');
+    });
+
+    it('should handle null or undefined', () => {
+      // @ts-expect-error - accessing private method for testing
+      expect(adapter.convertSchoolIdPrefixToIDMExpectation(null)).toBe(null);
+      // @ts-expect-error - accessing private method for testing
+      expect(adapter.convertSchoolIdPrefixToIDMExpectation(undefined)).toBe(undefined);
+    });
+  });
+
+  describe('getOrganizations', () => {
+    it('should convert prefix in kennung parameter before fetching', async () => {
+      const mockAuthToken: BearerToken = { token: 'test-token' };
+      mockFormUrlEncodedProviderProvider.authenticate.mockResolvedValue(mockAuthToken);
+      mockSchulconnexFetcher.fetchOrganizations.mockResolvedValue([]);
+
+      const params = new SchulconnexOrganizationQueryParameters();
+      params.kennung = 'X-Y-12345';
+
+      await adapter.getOrganizations(params);
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(mockSchulconnexFetcher.fetchOrganizations).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ kennung: 'SL_12345' }),
+        mockAuthToken,
+      );
     });
   });
 });

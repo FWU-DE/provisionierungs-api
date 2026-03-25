@@ -18,28 +18,63 @@ export function applyClearancePersonsSchoolFilter(
     return [];
   }
 
-  const clearedSchoolIds = getClearedSchoolIds(schoolClearanceEntries);
+  const clearedSchoolOrgIds = getClearedSchoolOrgIds(schoolClearanceEntries);
 
-  return identities.filter((identity) => {
-    return (identity.personenkontexte ?? []).some((context) => {
-      const organizationId = context.organisation?.kennung;
-      return organizationId ? clearedSchoolIds.has(organizationId) : false;
-    });
-  });
+  return identities
+    .map((identity) => {
+      // 1. Filter stammorganisation
+      if (identity.person?.stammorganisation) {
+        if (!clearedSchoolOrgIds.has(identity.person.stammorganisation.id)) {
+          identity.person.stammorganisation = undefined;
+        }
+      }
+
+      // 2. Filter personenkontexte
+      if (identity.personenkontexte) {
+        identity.personenkontexte = identity.personenkontexte
+          .map((context) => {
+            const organizationId = context.organisation?.id;
+            const hasMatchingOrganization = organizationId
+              ? clearedSchoolOrgIds.has(organizationId)
+              : false;
+            if (!hasMatchingOrganization) {
+              return null;
+            }
+
+            // Filter gruppen
+            if (context.gruppen) {
+              context.gruppen = context.gruppen.filter((groupSet) => {
+                const groupOrgId = groupSet.gruppe?.orgid;
+                return groupOrgId ? clearedSchoolOrgIds.has(groupOrgId) : false;
+              });
+            }
+
+            // Keep the context if the organization matches
+            return context;
+          })
+          .filter((context): context is NonNullable<typeof context> => context !== null);
+      }
+
+      const hasMatchingRootOrg = !!identity.person?.stammorganisation;
+      const hasMatchingContexts = (identity.personenkontexte?.length ?? 0) > 0;
+
+      return hasMatchingRootOrg || hasMatchingContexts ? identity : null;
+    })
+    .filter((identity): identity is SchulconnexPersonsResponseDto => identity !== null);
 }
 
 /**
- * Extracts school IDs from school clearance entries into a Set for efficient lookup.
+ * Extracts school organization IDs from school clearance entries into a Set for efficient lookup.
  *
  * @param schoolClearanceEntries - Array of school clearance entries
- * @returns Set containing all unique school IDs from the clearance entries
+ * @returns Set containing all unique school organization IDs from the clearance entries
  */
-function getClearedSchoolIds(schoolClearanceEntries: SchoolClearance[]): Set<string> {
-  const schoolIds = new Set<string>();
+function getClearedSchoolOrgIds(schoolClearanceEntries: SchoolClearance[]): Set<string> {
+  const schoolOrgIds = new Set<string>();
 
   for (const entry of schoolClearanceEntries) {
-    schoolIds.add(entry.schoolId);
+    schoolOrgIds.add(entry.schoolOrgId);
   }
 
-  return schoolIds;
+  return schoolOrgIds;
 }

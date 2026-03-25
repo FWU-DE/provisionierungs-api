@@ -10,8 +10,9 @@ import { type TestingInfrastructure, createTestingInfrastructure } from '../../t
 import { type AdapterGetPersonsReturnType } from '../adapter/adapter-interface';
 import { EduplacesStagingAdapter } from '../adapter/eduplaces-staging/eduplaces-staging-adapter';
 import { EduplacesAdapter } from '../adapter/eduplaces/eduplaces-adapter';
+import { SaarlandAdapter } from '../adapter/saarland/saarland-adapter';
 import type { SchulconnexPersonsResponseDto } from '../dto/schulconnex/schulconnex-persons-response.dto';
-import { IdentityProviderModule } from '../identity-provider.module';
+import { PostRequestFilter } from '../post-request-filter/post-request-filter';
 import { Aggregator } from './aggregator';
 
 // Mock the clearance filter modules
@@ -45,6 +46,7 @@ describe('Aggregator', () => {
   let aggregator: Aggregator;
   let mockEduplacesAdapter: jest.Mocked<EduplacesAdapter>;
   let mockEduplacesStagingAdapter: jest.Mocked<EduplacesStagingAdapter>;
+  let mockSaarlandAdapter: jest.Mocked<SaarlandAdapter>;
   let mockPseudonymization: jest.Mocked<Pseudonymization>;
   let mockLogger: jest.Mocked<Logger>;
 
@@ -62,6 +64,12 @@ describe('Aggregator', () => {
       getPersons: jest.fn(),
     } as unknown as jest.Mocked<EduplacesStagingAdapter>;
 
+    mockSaarlandAdapter = {
+      getIdentifier: jest.fn().mockReturnValue('saarland'),
+      isEnabled: jest.fn().mockReturnValue(true),
+      getPersons: jest.fn(),
+    } as unknown as jest.Mocked<SaarlandAdapter>;
+
     mockPseudonymization = {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       pseudonymize: jest.fn().mockImplementation((clientId, data) => data),
@@ -72,20 +80,25 @@ describe('Aggregator', () => {
     } as unknown as jest.Mocked<Logger>;
 
     infra = await createTestingInfrastructure({
-      imports: [IdentityProviderModule],
-    })
-      .configureModule((module) => {
-        module
-          .overrideProvider(EduplacesAdapter)
-          .useValue(mockEduplacesAdapter)
-          .overrideProvider(EduplacesStagingAdapter)
-          .useValue(mockEduplacesStagingAdapter)
-          .overrideProvider(Pseudonymization)
-          .useValue(mockPseudonymization)
-          .overrideProvider(Logger)
-          .useValue(mockLogger);
-      })
-      .build();
+      providers: [
+        Aggregator,
+        { provide: EduplacesAdapter, useValue: mockEduplacesAdapter },
+        { provide: EduplacesStagingAdapter, useValue: mockEduplacesStagingAdapter },
+        { provide: SaarlandAdapter, useValue: mockSaarlandAdapter },
+        { provide: Pseudonymization, useValue: mockPseudonymization },
+        { provide: Logger, useValue: mockLogger },
+        {
+          provide: PostRequestFilter,
+          useValue: {
+            filterByQueryParameters: jest
+              .fn()
+              .mockImplementation(
+                (data: SchulconnexPersonsResponseDto[]): SchulconnexPersonsResponseDto[] => data,
+              ),
+          },
+        },
+      ],
+    }).build();
 
     aggregator = infra.module.get(Aggregator);
   });
@@ -406,7 +419,11 @@ describe('Aggregator', () => {
       const groupClearance = [{ groupId: 'g1' }] as GroupClearance[];
 
       // eslint-disable-next-line @typescript-eslint/dot-notation
-      const result = aggregator['applyClearance'](mockPersons, groupClearance, schoolClearance);
+      const result = aggregator['applyPersonsClearance'](
+        mockPersons,
+        groupClearance,
+        schoolClearance,
+      );
 
       expect(result).toHaveLength(2);
       expect(result.map((p) => p.pid)).toContain('p1');
@@ -456,7 +473,7 @@ describe('Aggregator', () => {
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockEduplacesAdapter.getIdentifier).toHaveBeenCalled();
       // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(mockEduplacesAdapter.getPersons).toHaveBeenCalledWith(mockParameters, []);
+      expect(mockEduplacesAdapter.getPersons).toHaveBeenCalledWith(mockParameters, [], []);
     });
 
     it('should not find adapter by ID when it does not exist', async () => {
