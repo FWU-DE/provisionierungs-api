@@ -28,6 +28,8 @@ import { getSpecifiedDatabasePoolSize } from './parallelism';
         synchronize: false,
         logging: process.env.LOG_LEVEL === 'debug',
         poolSize: getSpecifiedDatabasePoolSize(),
+        migrations: ['dist/src/common/database/migrations/*.js'],
+        migrationsRun: false,
         extra: {
           idleTimeoutMillis: 25000, // after 25s the connection will be closed if not used
         },

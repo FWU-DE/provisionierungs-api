@@ -3,11 +3,13 @@ import './instrumentation';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { DataSource } from 'typeorm';
 
 import { MainModule } from './main.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(MainModule);
+  await runMigrations(app.get(DataSource));
 
   // Enable NestJS Validation Pipe
   app.useGlobalPipes(
@@ -39,3 +41,11 @@ bootstrap().catch((err: unknown) => {
   // eslint-disable-next-line no-console
   console.error('Error during app bootstrap:', err);
 });
+
+async function runMigrations(connection: DataSource) {
+  const migrations = await connection.runMigrations({ transaction: 'each' });
+  for (const migration of migrations) {
+    // eslint-disable-next-line no-console
+    console.log(`Executed migration: ${migration.name}`);
+  }
+}
