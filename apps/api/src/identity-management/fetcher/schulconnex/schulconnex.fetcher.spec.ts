@@ -74,7 +74,9 @@ describe('SchulconnexFetcher', () => {
       } as unknown as Response);
 
       // Call the method
-      const result = await fetcher.fetchPersons(mockEndpointUrl, mockParameters, mockToken);
+      const result = await fetcher.fetchPersons(mockEndpointUrl, mockParameters, mockToken, {
+        'X-Extra-Header': 'extra-value',
+      });
 
       // Assertions
       expect(mockFetch).toHaveBeenCalledWith(
@@ -82,7 +84,8 @@ describe('SchulconnexFetcher', () => {
         {
           method: 'GET',
           headers: {
-            Authorization: 'Bearer test-token',
+            'Authorization': 'Bearer test-token',
+            'X-Extra-Header': 'extra-value',
           },
         },
       );

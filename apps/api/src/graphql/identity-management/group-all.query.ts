@@ -1,6 +1,6 @@
 import { Args, Query, Resolver } from '@nestjs/graphql';
 
-import { AllowResourceOwnerType, ResourceOwnerType } from '../../common/auth';
+import { AllowResourceOwnerType, ClientId, ResourceOwnerType } from '../../common/auth';
 import {
   type UserContext,
   UserCtx,
@@ -15,6 +15,7 @@ export class GroupAllQuery {
   @Query(() => [GroupDto])
   @AllowResourceOwnerType(ResourceOwnerType.USER)
   async allGroups(
+    @ClientId() clientId: string,
     @UserCtx() userContext: UserContext,
     @Args('schoolId', { type: () => String, nullable: true }) schoolId?: string,
   ): Promise<GroupDto[]> {
@@ -23,7 +24,7 @@ export class GroupAllQuery {
       schoolIds = [schoolId];
     }
 
-    return (await this.aggregator.getGroups([userContext.heimatorganisation], schoolIds))
+    return (await this.aggregator.getGroups([userContext.heimatorganisation], clientId, schoolIds))
       .flatMap((groups) => groups.groups)
       .map((group) => new GroupDto(group.id, group.bezeichnung));
   }

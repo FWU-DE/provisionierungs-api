@@ -38,7 +38,7 @@ describe('AdapterInterface', () => {
     // Test the getPersons method
     const mockParameters: SchulconnexPersonsQueryParameters =
       new SchulconnexPersonsQueryParameters();
-    const result = await mockAdapter.getPersons(mockParameters);
+    const result = await mockAdapter.getPersons(mockParameters, 'test-client-id');
 
     expect(result).toHaveProperty('idm', 'test-adapter');
     expect(result).toHaveProperty('response');
@@ -85,9 +85,14 @@ describe('AdapterInterface', () => {
       },
     };
 
-    await mockAdapter.getPersons(mockParameters, groupClearances, schoolClearances);
+    await mockAdapter.getPersons(mockParameters, 'idm-1', groupClearances, schoolClearances);
 
-    expect(getPersonsMock).toHaveBeenCalledWith(mockParameters, groupClearances, schoolClearances);
+    expect(getPersonsMock).toHaveBeenCalledWith(
+      mockParameters,
+      'idm-1',
+      groupClearances,
+      schoolClearances,
+    );
   });
 
   it('should allow null response in AdapterGetPersonsReturnType', async () => {
@@ -109,7 +114,7 @@ describe('AdapterInterface', () => {
     // Test the getPersons method with a null response
     const mockParameters: SchulconnexPersonsQueryParameters =
       new SchulconnexPersonsQueryParameters();
-    const result = await mockAdapter.getPersons(mockParameters);
+    const result = await mockAdapter.getPersons(mockParameters, 'test-client-id');
 
     expect(result).toHaveProperty('idm', 'test-adapter');
     expect(result.response).toBeNull();
@@ -138,7 +143,7 @@ describe('AdapterInterface', () => {
 
     const mockParameters: SchulconnexOrganizationQueryParameters =
       new SchulconnexOrganizationQueryParameters();
-    const result = await mockAdapter.getOrganizations(mockParameters);
+    const result = await mockAdapter.getOrganizations(mockParameters, 'test-client-id');
 
     expect(result).toHaveProperty('idm', 'test-adapter');
     expect(result).toHaveProperty('response');
@@ -164,7 +169,62 @@ describe('AdapterInterface', () => {
 
     const mockParameters: SchulconnexOrganizationQueryParameters =
       new SchulconnexOrganizationQueryParameters();
-    const result = await mockAdapter.getOrganizations(mockParameters);
+    const result = await mockAdapter.getOrganizations(mockParameters, 'test-client-id');
+
+    expect(result).toHaveProperty('idm', 'test-adapter');
+    expect(result.response).toBeNull();
+  });
+
+  it('should handle getOrganizations method correctly', async () => {
+    const mockAdapter: AdapterInterface = {
+      getIdentifier: () => 'test-adapter',
+      isEnabled: () => true,
+      getPersons: jest.fn(),
+      getOrganizations: () =>
+        Promise.resolve({
+          idm: 'test-adapter',
+          response: [
+            {
+              id: 'test-org-id',
+              name: 'Test School',
+              typ: 'Schule',
+            },
+          ],
+        }),
+      getGroups: function (): Promise<AdapterGetGroupsReturnType> {
+        throw new Error('Function not implemented.');
+      },
+    };
+
+    const mockParameters: SchulconnexOrganizationQueryParameters =
+      new SchulconnexOrganizationQueryParameters();
+    const result = await mockAdapter.getOrganizations(mockParameters, 'client-1');
+
+    expect(result).toHaveProperty('idm', 'test-adapter');
+    expect(result).toHaveProperty('response');
+    expect(Array.isArray(result.response)).toBe(true);
+    expect(result.response?.[0]).toHaveProperty('id', 'test-org-id');
+    expect(result.response?.[0]).toHaveProperty('name', 'Test School');
+  });
+
+  it('should allow null response in AdapterGetOrganizationsReturnType', async () => {
+    const mockAdapter: AdapterInterface = {
+      getIdentifier: () => 'test-adapter',
+      isEnabled: () => true,
+      getPersons: jest.fn(),
+      getOrganizations: () =>
+        Promise.resolve({
+          idm: 'test-adapter',
+          response: null,
+        }),
+      getGroups: function (): Promise<AdapterGetGroupsReturnType> {
+        throw new Error('Function not implemented.');
+      },
+    };
+
+    const mockParameters: SchulconnexOrganizationQueryParameters =
+      new SchulconnexOrganizationQueryParameters();
+    const result = await mockAdapter.getOrganizations(mockParameters, 'client-1');
 
     expect(result).toHaveProperty('idm', 'test-adapter');
     expect(result.response).toBeNull();

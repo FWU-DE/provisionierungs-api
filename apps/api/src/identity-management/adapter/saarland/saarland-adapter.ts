@@ -29,6 +29,7 @@ export class SaarlandAdapter implements AdapterInterface {
   ) {}
 
   getIdentifier(): string {
+    // @todo: Change to production identifier after implementation. Or make this identifier configurable.
     return 'DE-SL-OnlineSchuleSaarlandTest';
   }
 
@@ -89,6 +90,7 @@ export class SaarlandAdapter implements AdapterInterface {
 
   async getPersons(
     parameters: SchulconnexPersonsQueryParameters,
+    clientId: string,
     groupClearances?: GroupClearance[],
     schoolClearance?: SchoolClearance[],
   ): Promise<AdapterGetPersonsReturnType> {
@@ -105,6 +107,7 @@ export class SaarlandAdapter implements AdapterInterface {
 
     const availableOrganizations: AdapterGetOrganizationsReturnType = await this.getOrganizations(
       new SchulconnexOrganizationQueryParameters(),
+      clientId,
     );
 
     const organizationIds = (availableOrganizations.response ?? [])
@@ -124,6 +127,9 @@ export class SaarlandAdapter implements AdapterInterface {
           config.IDM_SAARLAND_API_ENDPOINT,
           localParameters,
           await this.getAuthToken(),
+          {
+            'X-VIDIS-CLIENT-ID': clientId,
+          },
         );
       }),
     );
@@ -150,6 +156,7 @@ export class SaarlandAdapter implements AdapterInterface {
 
   async getOrganizations(
     parameters: SchulconnexOrganizationQueryParameters,
+    clientId: string,
   ): Promise<AdapterGetOrganizationsReturnType> {
     if (!this.idmSaarlandConfig.IDM_SAARLAND_ENABLED) {
       throw new Error('Saarland IDM is not enabled');
@@ -164,6 +171,9 @@ export class SaarlandAdapter implements AdapterInterface {
       this.idmSaarlandConfig.IDM_SAARLAND_API_ENDPOINT,
       parameters,
       await this.getAuthToken(),
+      {
+        'X-VIDIS-CLIENT-ID': clientId,
+      },
     );
 
     (response ?? []).forEach((organization) => {
@@ -176,7 +186,7 @@ export class SaarlandAdapter implements AdapterInterface {
     };
   }
 
-  async getGroups(schoolIds?: string[]): Promise<AdapterGetGroupsReturnType> {
+  async getGroups(clientId: string, schoolIds?: string[]): Promise<AdapterGetGroupsReturnType> {
     const config = this.idmSaarlandConfig;
     if (!config.IDM_SAARLAND_ENABLED) {
       throw new Error('Saarland IDM is not enabled');
@@ -186,6 +196,7 @@ export class SaarlandAdapter implements AdapterInterface {
     if (schoolIds) {
       const organizations = await this.getOrganizations(
         new SchulconnexOrganizationQueryParameters(),
+        clientId,
       );
       organizationIds = organizations.response
         ?.filter((organization) => organization.kennung && schoolIds.includes(organization.kennung))
@@ -198,6 +209,9 @@ export class SaarlandAdapter implements AdapterInterface {
           config.IDM_SAARLAND_API_ENDPOINT,
           await this.getAuthToken(),
           organizationId,
+          {
+            'X-VIDIS-CLIENT-ID': clientId,
+          },
         );
       }) ?? [],
     );

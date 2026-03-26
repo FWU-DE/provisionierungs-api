@@ -3,6 +3,7 @@ import { Args, Int, Mutation, Resolver } from '@nestjs/graphql';
 import { SchoolClearanceResponseDto } from '../../clearance/dto/school-clearance-response.dto';
 import { SchoolClearance } from '../../clearance/entity/school-clearance.entity';
 import { SchoolClearanceService } from '../../clearance/school-clearance.service';
+import { ClientId } from '../../common/auth';
 import { SchulconnexOrganizationQueryParameters } from '../../controller/parameters/schulconnex-organisations-query-parameters';
 import { Aggregator } from '../../identity-management/aggregator/aggregator';
 
@@ -15,6 +16,7 @@ export class SchoolClearanceCreateMutation {
 
   @Mutation(() => SchoolClearanceResponseDto)
   async createSchoolClearance(
+    @ClientId() clientId: string,
     @Args('offerId', { type: () => Int }) offerId: number,
     @Args('idmId') idmId: string,
     @Args('schoolId') schoolId: string,
@@ -28,7 +30,11 @@ export class SchoolClearanceCreateMutation {
       undefined,
     );
 
-    const schoolOrgIds = await this.aggregator.getOrganizations([idmId], filterParameters);
+    const schoolOrgIds = await this.aggregator.getOrganizations(
+      [idmId],
+      clientId,
+      filterParameters,
+    );
 
     if (!schoolOrgIds.length) {
       throw new Error(

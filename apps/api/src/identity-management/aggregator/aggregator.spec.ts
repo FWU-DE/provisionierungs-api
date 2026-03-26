@@ -473,7 +473,12 @@ describe('Aggregator', () => {
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockEduplacesAdapter.getIdentifier).toHaveBeenCalled();
       // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(mockEduplacesAdapter.getPersons).toHaveBeenCalledWith(mockParameters, [], []);
+      expect(mockEduplacesAdapter.getPersons).toHaveBeenCalledWith(
+        mockParameters,
+        mockOfferContext.clientId,
+        [],
+        [],
+      );
     });
 
     it('should not find adapter by ID when it does not exist', async () => {

@@ -28,6 +28,7 @@ export interface AdapterInterface {
 
   getPersons(
     parameters: SchulconnexPersonsQueryParameters,
+    clientId: string,
     groupClearance?: GroupClearance[],
     // @todo: Add test for the schoolClearance parameter (include in tests)!
     schoolClearance?: SchoolClearance[],
@@ -35,7 +36,8 @@ export interface AdapterInterface {
 
   getOrganizations(
     parameters: SchulconnexOrganizationQueryParameters,
+    clientId: string,
   ): Promise<AdapterGetOrganizationsReturnType>;
 
-  getGroups(schoolIds?: string[]): Promise<AdapterGetGroupsReturnType>;
+  getGroups(clientId: string, schoolIds?: string[]): Promise<AdapterGetGroupsReturnType>;
 }

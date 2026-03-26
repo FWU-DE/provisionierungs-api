@@ -128,7 +128,7 @@ describe('SaarlandAdapter', () => {
       mockClearance2.groupId = 'group-3';
 
       // Call the method
-      const result = await adapter.getPersons(mockPersonsQueryParameters, [
+      const result = await adapter.getPersons(mockPersonsQueryParameters, 'test-client-id', [
         mockClearance1,
         mockClearance2,
       ]);
@@ -156,6 +156,9 @@ describe('SaarlandAdapter', () => {
           'schule-1',
         ),
         mockAuthToken,
+        {
+          'X-VIDIS-CLIENT-ID': 'test-client-id',
+        },
       );
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockSchulconnexFetcher.fetchPersons).toHaveBeenCalledWith(
@@ -168,6 +171,9 @@ describe('SaarlandAdapter', () => {
           'schule-2',
         ),
         mockAuthToken,
+        {
+          'X-VIDIS-CLIENT-ID': 'test-client-id',
+        },
       );
       expect(result).toEqual({
         idm: 'DE-SL-OnlineSchuleSaarlandTest',
@@ -242,13 +248,16 @@ describe('SaarlandAdapter', () => {
       const params = new SchulconnexOrganizationQueryParameters();
       params.kennung = 'X-Y-12345';
 
-      await adapter.getOrganizations(params);
+      await adapter.getOrganizations(params, 'test-client-id');
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockSchulconnexFetcher.fetchOrganizations).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({ kennung: 'SL_12345' }),
         mockAuthToken,
+        {
+          'X-VIDIS-CLIENT-ID': 'test-client-id',
+        },
       );
     });
   });

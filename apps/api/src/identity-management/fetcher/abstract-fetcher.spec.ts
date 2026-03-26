@@ -16,10 +16,12 @@ class TestFetcher extends AbstractFetcher<{ token: string }> {
     endpointUrl: string,
     parameters: SchulconnexPersonsQueryParameters,
     credentials: { token: string },
+    extraHeaders?: Record<string, string>,
   ): Promise<null | SchulconnexPersonsResponse[]> {
     void endpointUrl;
     void parameters;
     void credentials;
+    void extraHeaders;
 
     // This method is not tested directly in this file
     return Promise.resolve(null);
@@ -29,10 +31,12 @@ class TestFetcher extends AbstractFetcher<{ token: string }> {
     endpointUrl: string,
     parameters: SchulconnexOrganizationQueryParameters,
     { token }: BearerToken,
+    extraHeaders?: Record<string, string>,
   ): Promise<null | SchulconnexOrganization[]> {
     void endpointUrl;
     void parameters;
     void token;
+    void extraHeaders;
 
     return Promise.resolve(null);
   }
@@ -40,9 +44,13 @@ class TestFetcher extends AbstractFetcher<{ token: string }> {
   public async fetchGroups(
     endpointUrl: string,
     credentials: { token: string },
+    organizationId?: string,
+    extraHeaders?: Record<string, string>,
   ): Promise<SchulconnexGroup[]> {
     void endpointUrl;
     void credentials;
+    void organizationId;
+    void extraHeaders;
 
     // This method is not tested directly in this file
     return Promise.resolve([]);

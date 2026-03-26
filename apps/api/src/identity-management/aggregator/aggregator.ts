@@ -68,7 +68,9 @@ export class Aggregator {
         return [];
       }
 
-      idmRequests.push(adapter.getPersons(parameters, groupClearance, schoolClearance));
+      idmRequests.push(
+        adapter.getPersons(parameters, offerContext.clientId, groupClearance, schoolClearance),
+      );
     });
 
     // Merge all responses into one array on retrieval
@@ -131,6 +133,7 @@ export class Aggregator {
 
   public async getOrganizations(
     idmIds: string[],
+    clientId: string,
     parameters: SchulconnexOrganizationQueryParameters,
   ): Promise<SchulconnexOrganization[]> {
     // Request data from all IDMs in parallel
@@ -141,17 +144,17 @@ export class Aggregator {
         this.logger.error(`No adapter found for IDM: ${idmId}`);
         return [];
       }
-      idmRequests.push(adapter.getOrganizations(parameters));
+      idmRequests.push(adapter.getOrganizations(parameters, clientId));
     });
 
     // Merge all responses into one array on retrieval
     const rawOrganizations: SchulconnexOrganization[] = (await Promise.all(idmRequests)).reduce(
-      (acc: SchulconnexOrganization[], organization) => {
-        if (organization.response === null) {
-          this.logger.error('No data received from IDM: ' + organization.idm);
+      (acc: SchulconnexOrganization[], prganization) => {
+        if (prganization.response === null) {
+          this.logger.error('No data received from IDM: ' + prganization.idm);
           return acc;
         }
-        return [...acc, ...organization.response];
+        return [...acc, ...prganization.response];
       },
       [],
     );
@@ -162,7 +165,11 @@ export class Aggregator {
     return rawOrganizations;
   }
 
-  public async getGroups(idmIds: string[], schoolIds?: string[]): Promise<GroupsPerIdmModel[]> {
+  public async getGroups(
+    idmIds: string[],
+    clientId: string,
+    schoolIds?: string[],
+  ): Promise<GroupsPerIdmModel[]> {
     // Request data from all IDMs in parallel
     const idmRequests: Promise<AdapterGetGroupsReturnType>[] = [];
     idmIds.forEach((idmId) => {
@@ -171,7 +178,7 @@ export class Aggregator {
         this.logger.error(`No adapter found for IDM: ${idmId}`);
         return [];
       }
-      idmRequests.push(adapter.getGroups(schoolIds));
+      idmRequests.push(adapter.getGroups(clientId, schoolIds));
     });
 
     // Merge all responses into one array on retrieval

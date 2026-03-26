@@ -76,7 +76,7 @@ describe('EduplacesAdapter', () => {
       mockSchulconnexFetcher.fetchPersons.mockResolvedValue(mockResponse);
 
       // Call the method
-      const result = await adapter.getPersons(mockParameters);
+      const result = await adapter.getPersons(mockParameters, 'test-client-id');
 
       // Assertions
       // eslint-disable-next-line @typescript-eslint/unbound-method

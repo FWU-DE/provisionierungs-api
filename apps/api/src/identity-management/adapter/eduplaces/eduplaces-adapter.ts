@@ -50,9 +50,11 @@ export class EduplacesAdapter implements AdapterInterface {
 
   async getPersons(
     parameters: SchulconnexPersonsQueryParameters,
+    clientId: string,
     groupClearances?: GroupClearance[],
     schoolClearance?: SchoolClearance[],
   ): Promise<AdapterGetPersonsReturnType> {
+    void clientId;
     void groupClearances;
     void schoolClearance;
     if (!this.idmEduplacesConfig.IDM_EDUPLACES_ENABLED) {
@@ -73,9 +75,11 @@ export class EduplacesAdapter implements AdapterInterface {
 
   async getOrganizations(
     parameters: SchulconnexOrganizationQueryParameters,
+    clientId: string,
   ): Promise<AdapterGetOrganizationsReturnType> {
     // @todo: Implement!
     void parameters;
+    void clientId;
     return new Promise(() => {
       return {
         idm: this.getIdentifier(),
@@ -84,7 +88,8 @@ export class EduplacesAdapter implements AdapterInterface {
     });
   }
 
-  async getGroups(schoolIds?: string[]): Promise<AdapterGetGroupsReturnType> {
+  async getGroups(clientId: string, schoolIds?: string[]): Promise<AdapterGetGroupsReturnType> {
+    void clientId;
     void schoolIds;
     if (!this.idmEduplacesConfig.IDM_EDUPLACES_ENABLED) {
       throw new Error('Eduplaces IDM is not enabled');

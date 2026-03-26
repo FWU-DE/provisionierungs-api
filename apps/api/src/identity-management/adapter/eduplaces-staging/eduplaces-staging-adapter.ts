@@ -52,9 +52,11 @@ export class EduplacesStagingAdapter implements AdapterInterface {
 
   async getPersons(
     parameters: SchulconnexPersonsQueryParameters,
+    clientId: string,
     groupClearances?: GroupClearance[],
     schoolClearance?: SchoolClearance[],
   ): Promise<AdapterGetPersonsReturnType> {
+    void clientId;
     void groupClearances;
     void schoolClearance;
     if (!this.idmEduplacesStagingConfig.IDM_EDUPLACES_STAGING_ENABLED) {
@@ -75,9 +77,11 @@ export class EduplacesStagingAdapter implements AdapterInterface {
 
   async getOrganizations(
     parameters: SchulconnexOrganizationQueryParameters,
+    clientId: string,
   ): Promise<AdapterGetOrganizationsReturnType> {
     // @todo: Implement!
     void parameters;
+    void clientId;
     return new Promise(() => {
       return {
         idm: this.getIdentifier(),
@@ -86,7 +90,8 @@ export class EduplacesStagingAdapter implements AdapterInterface {
     });
   }
 
-  async getGroups(schoolIds?: string[]): Promise<AdapterGetGroupsReturnType> {
+  async getGroups(clientId: string, schoolIds?: string[]): Promise<AdapterGetGroupsReturnType> {
+    void clientId;
     void schoolIds;
     if (!this.idmEduplacesStagingConfig.IDM_EDUPLACES_STAGING_ENABLED) {
       throw new Error('Eduplaces Staging IDM is not enabled');

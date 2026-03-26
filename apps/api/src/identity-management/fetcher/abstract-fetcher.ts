@@ -29,17 +29,21 @@ export abstract class AbstractFetcher<Credentials> {
     endpointUrl: string,
     parameters: SchulconnexPersonsQueryParameters,
     credentials: Credentials,
+    extraHeaders?: Record<string, string>,
   ): Promise<null | SchulconnexPersonsResponse[]>;
 
   public abstract fetchOrganizations(
     endpointUrl: string,
     parameters: SchulconnexOrganizationQueryParameters,
     { token }: BearerToken,
+    extraHeaders?: Record<string, string>,
   ): Promise<null | SchulconnexOrganization[]>;
 
   public abstract fetchGroups(
     endpointUrl: string,
     credentials: Credentials,
+    organizationId?: string,
+    extraHeaders?: Record<string, string>,
   ): Promise<SchulconnexGroup[]>;
 
   public abstract getPersonsValidator(): ZodObject | ZodArray;
