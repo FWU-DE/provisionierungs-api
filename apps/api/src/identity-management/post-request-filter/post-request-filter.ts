@@ -98,8 +98,6 @@ export class PostRequestFilter {
       relations: complete.has('beziehungen'),
     };
 
-    // @todo: Remove 'beziehungen' data if not requested via 'vollstaendig'!
-
     return identities.map((identity) =>
       plainToInstance(SchulconnexPersonsResponseDto, {
         pid: identity.pid,
@@ -146,6 +144,10 @@ export class PostRequestFilter {
 
     if (!showFields.userContexts) {
       return filteredContext;
+    }
+
+    if (!showFields.relations) {
+      filteredContext.beziehungen = null;
     }
 
     filteredContext.rolle = context.rolle;

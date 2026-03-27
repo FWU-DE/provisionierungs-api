@@ -145,18 +145,24 @@ export const schulconnexPersonsResponseSchema = z.array(
             .optional(),
           beziehungen: z
             .object({
-              hat_als: z.array(
-                z.object({
-                  ktid: z.string().nullable().optional(),
-                  beziehung: z.enum(['SorgBer', 'SchB']).nullable().optional(),
-                }),
-              ),
-              ist_von: z.array(
-                z.object({
-                  ktid: z.string().nullable().optional(),
-                  beziehung: z.enum(['SorgBer', 'SchB']).nullable().optional(),
-                }),
-              ),
+              hat_als: z
+                .array(
+                  z.object({
+                    ktid: z.string().nullable().optional(),
+                    beziehung: z.enum(['SorgBer', 'SchB']).nullable().optional(),
+                  }),
+                )
+                .nullable()
+                .optional(),
+              ist_von: z
+                .array(
+                  z.object({
+                    ktid: z.string().nullable().optional(),
+                    beziehung: z.enum(['SorgBer', 'SchB']).nullable().optional(),
+                  }),
+                )
+                .nullable()
+                .optional(),
             })
             .nullable()
             .optional(),

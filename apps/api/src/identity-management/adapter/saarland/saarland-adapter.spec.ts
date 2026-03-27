@@ -156,9 +156,7 @@ describe('SaarlandAdapter', () => {
           'schule-1',
         ),
         mockAuthToken,
-        {
-          'X-VIDIS-CLIENT-ID': 'test-client-id',
-        },
+        { 'X-VIDIS-CLIENT-ID': 'test-client-id' },
       );
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockSchulconnexFetcher.fetchPersons).toHaveBeenCalledWith(
@@ -171,9 +169,7 @@ describe('SaarlandAdapter', () => {
           'schule-2',
         ),
         mockAuthToken,
-        {
-          'X-VIDIS-CLIENT-ID': 'test-client-id',
-        },
+        { 'X-VIDIS-CLIENT-ID': 'test-client-id' },
       );
       expect(result).toEqual({
         idm: 'DE-SL-OnlineSchuleSaarlandTest',

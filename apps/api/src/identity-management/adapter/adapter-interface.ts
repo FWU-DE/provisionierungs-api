@@ -30,7 +30,6 @@ export interface AdapterInterface {
     parameters: SchulconnexPersonsQueryParameters,
     clientId: string,
     groupClearance?: GroupClearance[],
-    // @todo: Add test for the schoolClearance parameter (include in tests)!
     schoolClearance?: SchoolClearance[],
   ): Promise<AdapterGetPersonsReturnType>;
 
