@@ -80,7 +80,7 @@ describe('SchulconnexFetcher', () => {
 
       // Assertions
       expect(mockFetch).toHaveBeenCalledWith(
-        'https://api.example.local/personen-info?vollstaendig=personenkontexte',
+        'https://api.example.local/personen-info?vollstaendig=personenkontexte%2Cpersonen',
         {
           method: 'GET',
           headers: {

@@ -10,40 +10,48 @@ export class SchulconnexPerson {
     nullable: true,
     type: SchulconnexOrganization,
   })
-  stammorganisation?: SchulconnexOrganization | null;
+  'stammorganisation'?: SchulconnexOrganization | null;
 
   @ApiProperty({
     description: 'The name of the person. Null if the name is not requested.',
     nullable: true,
     type: SchulconnexName,
   })
-  name?: SchulconnexName | null;
+  'name'?: SchulconnexName | null;
 
   @ApiProperty({
     description: 'The age information of the person.',
     nullable: true,
     type: SchulconnexBirth,
   })
-  geburt?: SchulconnexBirth | null;
+  'geburt'?: SchulconnexBirth | null;
 
   @ApiProperty({
     description: 'The gender information of the person.',
     nullable: true,
     enum: ['m', 'w', 'd', 'x'],
   })
-  geschlecht?: 'm' | 'w' | 'd' | 'x' | null;
+  'geschlecht'?: 'm' | 'w' | 'd' | 'x' | null;
 
   @ApiProperty({
     description: 'The language of the person.',
     nullable: true,
     examples: ['de', 'de-DE', 'en', 'en-GB'],
   })
-  lokalisierung?: string | null;
+  'lokalisierung'?: string | null;
 
   @ApiProperty({
     description: 'The trust level of the person.',
     nullable: true,
     enum: ['Kein', 'Unbe', 'Teil', 'Voll'],
   })
-  vertrauensstufe?: 'Kein' | 'Unbe' | 'Teil' | 'Voll' | null;
+  'vertrauensstufe'?: 'Kein' | 'Unbe' | 'Teil' | 'Voll' | null;
+
+  @ApiProperty({
+    description:
+      'Extension to transport the UID of the person to use for pseudonymization. Not exposed to clients.',
+    nullable: true,
+    example: 'vidis.leh',
+  })
+  'urn:ek-oss-saar:schulconnex:extensions:person:uid'?: string;
 }

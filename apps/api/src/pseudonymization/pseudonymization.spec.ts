@@ -137,6 +137,97 @@ describe('Pseudonymization', () => {
       );
     });
 
+    it('should use the UID in saarland', async () => {
+      // Mock data
+      const offerId = 12345678;
+      const clientId = 'test-client';
+      const identities: SchulconnexPersonsResponseDto[] = [
+        {
+          pid: 'person1',
+          person: {
+            'urn:ek-oss-saar:schulconnex:extensions:person:uid': 'saarland-uid',
+            'stammorganisation': {
+              id: 'org1',
+            },
+          },
+          personenkontexte: [
+            {
+              id: 'context1',
+            },
+            {
+              id: 'context2',
+            },
+          ],
+        },
+      ];
+
+      // Setup mock hash function
+      mockHasher.hash
+        .mockReturnValueOnce('hashed-person1') // For pid
+        .mockReturnValueOnce('hashed-org1') // For stammorganisation.id
+        .mockReturnValueOnce('hashed-context1') // For personenkontexte[0].id
+        .mockReturnValueOnce('hashed-context2'); // For personenkontexte[1].id
+
+      // Call the method
+      const result = await pseudonymization.pseudonymize(
+        new OfferContext(offerId, clientId),
+        identities,
+      );
+
+      // Assertions
+      expect(result).toEqual([
+        {
+          pid: 'hashed-person1',
+          person: {
+            'urn:ek-oss-saar:schulconnex:extensions:person:uid': 'saarland-uid',
+            'stammorganisation': {
+              id: 'hashed-org1',
+            },
+          },
+          personenkontexte: [
+            {
+              id: 'hashed-context1',
+            },
+            {
+              id: 'hashed-context2',
+            },
+          ],
+        },
+      ]);
+
+      // Verify hash was called with correct parameters
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(mockHasher.hash).toHaveBeenCalledTimes(4);
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(mockHasher.hash).toHaveBeenNthCalledWith(
+        1,
+        'saarland-uid',
+        '12345678',
+        'https://sector.identifier',
+      );
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(mockHasher.hash).toHaveBeenNthCalledWith(
+        2,
+        'org1',
+        '12345678',
+        'https://sector.identifier',
+      );
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(mockHasher.hash).toHaveBeenNthCalledWith(
+        3,
+        'context1',
+        '12345678',
+        'https://sector.identifier',
+      );
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(mockHasher.hash).toHaveBeenNthCalledWith(
+        4,
+        'context2',
+        '12345678',
+        'https://sector.identifier',
+      );
+    });
+
     it('should handle empty personenkontexte array', async () => {
       // Mock data
       const offerId = 12345678;

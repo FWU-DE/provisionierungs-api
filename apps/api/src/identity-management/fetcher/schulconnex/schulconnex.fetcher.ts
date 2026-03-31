@@ -26,6 +26,7 @@ export class SchulconnexFetcher extends AbstractFetcher<BearerToken> {
     // This is required to get group information for clearance filtration.
     const queryParams = parameters.clone();
     queryParams.vollstaendig.add('personenkontexte');
+    queryParams.vollstaendig.add('personen'); // for pseudonymization via saarland extension
 
     // Make sure the right data is included to filter by ID.
     if (parameters['personenkontext.id']) {

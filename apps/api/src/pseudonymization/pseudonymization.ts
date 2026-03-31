@@ -33,7 +33,11 @@ export class Pseudonymization {
     return await Promise.all(
       identities.map(
         async (identity: SchulconnexPersonsResponseDto): Promise<SchulconnexPersonsResponseDto> => {
-          identity.pid = this.hasher.hash(identity.pid, salt, sectorIdentifier);
+          identity.pid = this.hasher.hash(
+            identity.person?.['urn:ek-oss-saar:schulconnex:extensions:person:uid'] ?? identity.pid,
+            salt,
+            sectorIdentifier,
+          );
 
           if (identity.person?.stammorganisation?.id) {
             identity.person.stammorganisation.id = this.hasher.hash(

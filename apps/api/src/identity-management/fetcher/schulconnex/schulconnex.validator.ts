@@ -60,6 +60,7 @@ export const schulconnexPersonsResponseSchema = z.array(
         geschlecht: z.enum(['m', 'w', 'd', 'x']).nullable().optional(),
         lokalisierung: z.string().nullable().optional(),
         vertrauensstufe: z.enum(['Kein', 'Unbe', 'Teil', 'Voll']).nullable().optional(),
+        ['urn:ek-oss-saar:schulconnex:extensions:person:uid']: z.string().nullable().optional(),
       })
       .nullable()
       .optional(),
