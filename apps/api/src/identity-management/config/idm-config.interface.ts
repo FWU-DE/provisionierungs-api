@@ -5,6 +5,7 @@ export type IdmApiWithClientCredentialConfig<Name extends string> =
         | 'API_ENDPOINT'
         | 'CLIENT_ID'
         | 'CLIENT_SECRET'
+        | 'IDENTIFIER'
         | 'ENABLED' as `${Name}_${K}`]: K extends 'ENABLED' ? true : string;
     }
   | { [K in 'ENABLED' as `${Name}_${K}`]?: false };

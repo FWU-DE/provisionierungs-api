@@ -17,7 +17,9 @@ import {
   ArrowLeftIcon,
   BookIcon,
   PlusIcon,
+  RabbitIcon,
   SchoolIcon,
+  SquirrelIcon,
   Trash2Icon,
   UsersIcon,
 } from 'lucide-react';
@@ -280,12 +282,14 @@ export function OfferSettings({
                 groups={notSelectedGroups}
                 onClickGroup={toggleGroup}
                 isSearchable
+                emptyStateIcon={RabbitIcon}
               />
               <GroupList
                 className="rounded-2xl bg-gray-200 px-4 pb-4 pt-2 md:w-1/2"
                 headline={t('selected-groups')}
                 groups={selectedGroups}
                 onClickGroup={toggleGroup}
+                emptyStateIcon={SquirrelIcon}
               />
             </div>
           )}

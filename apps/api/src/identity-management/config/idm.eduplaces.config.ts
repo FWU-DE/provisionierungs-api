@@ -11,6 +11,7 @@ const eduplacesConfigSchema = z.discriminatedUnion('IDM_EDUPLACES_ENABLED', [
     IDM_EDUPLACES_API_ENDPOINT: z.url(),
     IDM_EDUPLACES_CLIENT_ID: z.string(),
     IDM_EDUPLACES_CLIENT_SECRET: z.string(),
+    IDM_EDUPLACES_IDENTIFIER: z.string(),
     IDM_EDUPLACES_ENABLED: z.literal(true),
   }),
   z.object({
@@ -24,6 +25,7 @@ export default registerAs('idmEduplacesConfig', (): EduplacesConfig => {
     IDM_EDUPLACES_API_ENDPOINT: process.env.IDM_EDUPLACES_API_ENDPOINT,
     IDM_EDUPLACES_CLIENT_ID: process.env.IDM_EDUPLACES_CLIENT_ID,
     IDM_EDUPLACES_CLIENT_SECRET: process.env.IDM_EDUPLACES_CLIENT_SECRET,
+    IDM_EDUPLACES_IDENTIFIER: process.env.IDM_EDUPLACES_IDENTIFIER,
     IDM_EDUPLACES_ENABLED: process.env.IDM_EDUPLACES_ENABLED === 'true',
   };
 

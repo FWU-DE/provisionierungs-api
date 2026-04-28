@@ -3,9 +3,8 @@
 import * as React from 'react';
 import type { Group } from '@/lib/model/group';
 import { cn } from '@/lib/utils';
-import { Search, X } from 'lucide-react';
+import { type LucideIcon, Search, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
 
 import { Input } from '../ui/input';
 
@@ -14,6 +13,7 @@ interface GroupListProps extends React.ComponentProps<'div'> {
   groups: Group[];
   onClickGroup: (groupId: string) => void;
   isSearchable?: boolean;
+  emptyStateIcon?: LucideIcon;
 }
 
 export function GroupList({
@@ -22,6 +22,7 @@ export function GroupList({
   groups,
   onClickGroup,
   isSearchable = false,
+  emptyStateIcon,
   ...props
 }: GroupListProps) {
   const t = useTranslations('component/group-list');
@@ -85,14 +86,18 @@ export function GroupList({
         </ul>
       ) : (
         <div className="mt-4 flex h-full flex-col items-center justify-center gap-4 text-center">
-          {/* @todo: Replace with actual image */}
-          <Image
-            src="https://picsum.photos/80"
-            alt={t('empty-state-image')}
-            width={80}
-            height={80}
-            className="bg-muted rounded-lg border"
-          />
+          {emptyStateIcon && (
+            <div
+              className="bg-muted flex h-20 w-20 items-center justify-center rounded-xl border"
+              title={t('empty-state-image')}
+            >
+              {React.createElement(emptyStateIcon, {
+                'size': 40,
+                'className': 'text-muted-foreground',
+                'aria-label': t('empty-state-image'),
+              })}
+            </div>
+          )}
           <p className="text-muted-foreground text-sm">{t('no-groups')}</p>
         </div>
       )}

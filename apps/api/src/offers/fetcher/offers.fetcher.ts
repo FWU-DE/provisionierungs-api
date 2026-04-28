@@ -58,13 +58,19 @@ export class OffersFetcher {
       return null;
     }
     const data = new OffersResponse((await response.json()) as OffersResponse);
+    const validatedData = this.validateData(data);
+
+    this.logger.debug(`OffersFetcher: Received offers from ${endpointUrl}`, {
+      offerCount: validatedData?.items.length ?? 0,
+      // offers: validatedData,
+    });
 
     this.logger.debug(`OffersFetcher: Received offers from ${endpointUrl}`, {
       // data: data,
     });
 
     // Validate response schema
-    return this.validateData(data);
+    return validatedData;
   }
 
   public async fetchActiveOffers(schoolIds: string[]): Promise<(OffersResponse | null)[]> {

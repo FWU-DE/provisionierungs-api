@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/create-next-app).
+# VIDIS Rostering UI
+
+This is the web interface for the VIDIS Rostering project, built with [Next.js](https://nextjs.org).
+
+## Technologies
+
+- **Framework**: [Next.js](https://nextjs.org) (App Router)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com)
+- **State Management & Data Fetching**: [Apollo Client](https://www.apollographql.com/docs/react/) with [gql.tada](https://gql-tada.0no.co/)
+- **Internationalization**: [next-intl](https://next-intl-docs.vercel.app/)
+- **Authentication**: OpenID Connect with [openid-client](https://github.com/panva/node-openid-client)
+- **Form Handling**: [React Hook Form](https://react-hook-form.com/) with [Zod](https://zod.dev/) validation
 
 ## Getting Started
 
-First, run the development server:
+### Environment Variables
+
+Ensure you have the necessary environment variables configured. You may need to create a `.env.local` file based on the project's requirements. Key variables include:
+
+- `SELF_BASE_URL`: The base URL of this UI application.
+- `AUTH_URL`: The OpenID Connect provider URL.
+- `AUTH_CLIENT_ID`: The OIDC client ID.
+- `AUTH_CLIENT_SECRET`: The OIDC client secret.
+- `SESSION_SECRET`: Secret key used to encrypt/decrypt session cookies.
+- `API_BASE_URL`: The base URL for the backend API.
+
+### Scripts
+
+First, install dependencies from the root of the monorepo:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
+```
+
+Then, run the development server for the UI app:
+
+```bash
+pnpm dev --filter @fwu/vidis-rostering-ui
+```
+
+Or run directly from this directory:
+
+```bash
 pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Available Commands
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load Inter, a custom Google Font.
+- `pnpm dev`: Starts the development server with Turbopack.
+- `pnpm build`: Builds the application for production.
+- `pnpm start`: Starts the production server.
+- `pnpm lint`: Runs ESLint to check for code quality issues.
+- `pnpm check-types`: Runs TypeScript compiler to check for type errors.
+- `pnpm clean`: Removes build artifacts (`.next/`, `.turbo/`).
 
-## Learn More
+## Developer Note: Retrieving User JWT
 
-To learn more about Next.js, take a look at the following resources:
+To retrieve the user's JWT from the cookies for debugging or performing manual queries:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Locate the session cookie named `session`.
+2. The cookie value is a JWT encrypted/signed with the `SESSION_SECRET`.
+3. Decrypt the JWT to access its payload.
+4. The `accessToken` property within the decrypted JWT is the actual user's access token.
+5. This access token can be used to perform authorized queries against the backend's GraphQL endpoints (typically by passing it in the `Authorization: Bearer <token>` header).

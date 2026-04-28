@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
+import { getConfig } from '@/lib/config';
 import { Link } from '@/lib/navigation';
 import { verifySession } from '@/lib/session';
 import { getUserSchoolSelection } from '@/lib/user/user';
@@ -29,14 +30,15 @@ export async function Header({ className, ...props }: React.ComponentProps<'div'
       {...props}
     >
       <Link href="/apps">
-        {/* @todo: replace with actual logo */}
-        <Image
-          src={'https://picsum.photos/200'}
-          width={40}
-          height={40}
-          alt={t('logo-alt')}
-          className={'rounded-md'}
-        />
+        {getConfig().appLogoPath && (
+          <Image
+            src={getConfig().appLogoPath}
+            width={40}
+            height={40}
+            alt={t('logo-alt')}
+            className={'rounded-md'}
+          />
+        )}
       </Link>
 
       <nav className="flex items-center gap-2">

@@ -28,7 +28,9 @@ export class EduplacesAdapter implements AdapterInterface {
   ) {}
 
   getIdentifier(): string {
-    return 'eduplaces';
+    return this.idmEduplacesConfig.IDM_EDUPLACES_ENABLED
+      ? this.idmEduplacesConfig.IDM_EDUPLACES_IDENTIFIER
+      : 'eduplaces';
   }
 
   isEnabled(): boolean {

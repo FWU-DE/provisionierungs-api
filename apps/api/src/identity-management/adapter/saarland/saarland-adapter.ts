@@ -29,8 +29,9 @@ export class SaarlandAdapter implements AdapterInterface {
   ) {}
 
   getIdentifier(): string {
-    // @todo: Change to production identifier after implementation. Or make this identifier configurable.
-    return 'DE-SL-OnlineSchuleSaarlandTest';
+    return this.idmSaarlandConfig.IDM_SAARLAND_ENABLED
+      ? this.idmSaarlandConfig.IDM_SAARLAND_IDENTIFIER
+      : 'DE-SL-OnlineSchuleSaarlandTest';
   }
 
   isEnabled(): boolean {

@@ -12,9 +12,10 @@ export interface FooterLinkProps {
 
 export interface FooterProps extends React.ComponentProps<'footer'> {
   links: FooterLinkProps[];
+  logoPath?: string;
 }
 
-export function Footer({ links, className, ...props }: FooterProps) {
+export function Footer({ links, className, logoPath, ...props }: FooterProps) {
   const t = useTranslations('component/footer');
   return (
     <footer className={cn('bg-accent/50 border-t px-4 py-8 md:px-6', className)} {...props}>
@@ -22,13 +23,15 @@ export function Footer({ links, className, ...props }: FooterProps) {
         {/* Logo to the left */}
         <div className="shrink-0">
           <Link href="/apps">
-            <Image
-              src={'https://picsum.photos/200'}
-              width={80} // Double the header's 40
-              height={80} // Double the header's 40
-              alt={t('logo-alt')}
-              className={'rounded-md'}
-            />
+            {logoPath && (
+              <Image
+                src={logoPath}
+                width={80} // Double the header's 40
+                height={80} // Double the header's 40
+                alt={t('logo-alt')}
+                className={'rounded-md'}
+              />
+            )}
           </Link>
         </div>
 

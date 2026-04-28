@@ -1,5 +1,6 @@
 import { Footer } from '@/components/layout/footer';
 import { Toaster } from '@/components/ui/sonner';
+import { getConfig } from '@/lib/config';
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
@@ -46,7 +47,7 @@ export default async function RootLayout({
         <NextIntlClientProvider messages={messages}>
           <div className="flex min-h-screen flex-col">
             {children}
-            <Footer className={'mt-auto'} links={footerLinks} />
+            <Footer className={'mt-auto'} links={footerLinks} logoPath={getConfig().appLogoPath} />
           </div>
           <Toaster />
         </NextIntlClientProvider>

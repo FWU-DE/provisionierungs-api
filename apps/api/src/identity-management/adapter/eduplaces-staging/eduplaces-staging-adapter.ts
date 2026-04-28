@@ -30,7 +30,9 @@ export class EduplacesStagingAdapter implements AdapterInterface {
   ) {}
 
   getIdentifier(): string {
-    return 'eduplaces-staging';
+    return this.idmEduplacesStagingConfig.IDM_EDUPLACES_STAGING_ENABLED
+      ? this.idmEduplacesStagingConfig.IDM_EDUPLACES_STAGING_IDENTIFIER
+      : 'eduplaces-staging';
   }
 
   isEnabled(): boolean {
