@@ -1,51 +1,68 @@
+import { ForbiddenException } from '@nestjs/common';
 import { Args, Int, Mutation, Resolver } from '@nestjs/graphql';
 
 import { SchoolClearanceResponseDto } from '../../clearance/dto/school-clearance-response.dto';
 import { SchoolClearance } from '../../clearance/entity/school-clearance.entity';
 import { SchoolClearanceService } from '../../clearance/school-clearance.service';
 import { ClientId } from '../../common/auth';
+import {
+  type UserContext,
+  UserCtx,
+} from '../../common/auth/param-decorators/user-context.decorator';
 import { SchulconnexOrganizationQueryParameters } from '../../controller/parameters/schulconnex-organisations-query-parameters';
 import { Aggregator } from '../../identity-management/aggregator/aggregator';
+import { OfferValidationService } from '../../offers/service/offer-validation.service';
+import { ClearancePolicyService } from '../clearance-policy.service';
 
 @Resolver(() => SchoolClearanceResponseDto)
 export class SchoolClearanceCreateMutation {
   constructor(
     private readonly schoolClearanceService: SchoolClearanceService,
     private readonly aggregator: Aggregator,
+    private readonly offerValidationService: OfferValidationService,
+    private readonly clearancePolicyService: ClearancePolicyService,
   ) {}
 
   @Mutation(() => SchoolClearanceResponseDto)
   async createSchoolClearance(
+    @UserCtx() userContext: UserContext,
     @ClientId() clientId: string,
     @Args('offerId', { type: () => Int }) offerId: number,
     @Args('idmId') idmId: string,
     @Args('schoolId') schoolId: string,
   ): Promise<SchoolClearanceResponseDto> {
-    // @todo: Validate that the idmId, schoolId and offerId are actually available to the current user!!!
+    await this.clearancePolicyService.verifyByUserAndOffer(userContext, offerId, idmId, schoolId);
 
+    // Validate that the school exists for the given IDMs or if there are ambiguities.
     const filterParameters = new SchulconnexOrganizationQueryParameters(
       undefined,
       schoolId,
       undefined,
       undefined,
     );
-
-    const schoolOrgIds = await this.aggregator.getOrganizations(
+    const schoolOrganizations = await this.aggregator.getOrganizations(
       [idmId],
       clientId,
       filterParameters,
     );
-
-    if (!schoolOrgIds.length) {
+    if (!schoolOrganizations.length) {
       throw new Error(
         'No schools found for the given idmId and schoolId: ' + schoolId + ', IDM: ' + idmId,
       );
     }
-    if (schoolOrgIds.length > 1) {
+    if (schoolOrganizations.length > 1) {
       throw new Error('Multiple schools found for the given idmId and schoolId');
     }
 
-    const schoolOrgId = schoolOrgIds[0].id;
+    const schoolOrgId = schoolOrganizations[0].id;
+
+    const activeSchoolIds = await this.offerValidationService.validateSchoolsAreActiveForOffer(
+      [schoolId],
+      offerId,
+    );
+    if (!activeSchoolIds.includes(schoolId)) {
+      throw new ForbiddenException();
+    }
 
     const clearanceEntry = new SchoolClearance();
     clearanceEntry.offerId = offerId;

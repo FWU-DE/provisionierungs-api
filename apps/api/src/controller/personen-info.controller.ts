@@ -1,25 +1,18 @@
-import { Controller, Get, Inject, Query, Res } from '@nestjs/common';
+import { Controller, Get, Query, Res } from '@nestjs/common';
 import { ApiBearerAuth, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import type { Response } from 'express';
 
-import { GroupClearanceService } from '../clearance/group-clearance.service';
-import { SchoolClearanceService } from '../clearance/school-clearance.service';
 import { AllowResourceOwnerType, ClientId, RequireScope, ResourceOwnerType } from '../common/auth';
 import { ScopeIdentifier } from '../common/auth/scope/scope-identifier';
 import { Logger } from '../common/logger';
-import { Aggregator } from '../identity-management/aggregator/aggregator';
 import { SchulconnexPersonsResponseDto } from '../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
-import { OffersFetcher } from '../offers/fetcher/offers.fetcher';
-import { OfferContext } from '../offers/model/offer-context';
 import { SchulconnexPersonsQueryParameters } from './parameters/schulconnex-persons-query-parameters';
+import { PersonInfoService } from './service/person-info.service';
 
 @Controller('schulconnex/v1')
 export class PersonenInfoController {
   constructor(
-    private readonly aggregator: Aggregator,
-    private readonly groupClearanceService: GroupClearanceService,
-    private readonly schoolClearanceService: SchoolClearanceService,
-    @Inject(OffersFetcher) private offersFetcher: OffersFetcher,
+    private readonly personInfoService: PersonInfoService,
     private readonly logger: Logger,
   ) {
     this.logger.setContext(PersonenInfoController.name);
@@ -72,7 +65,7 @@ export class PersonenInfoController {
     example: '3ab7d69a-379b-4d20-b6ea-60820ab503c3',
   })
   @ApiBearerAuth()
-  async getUsers(
+  async getPersons(
     @Res({ passthrough: true }) res: Response,
     @ClientId() clientId: string,
     @Query('vollstaendig') // comma separated string
@@ -94,44 +87,7 @@ export class PersonenInfoController {
       organizationIdFilter,
     );
 
-    const offerForClientId = await this.offersFetcher.fetchOfferForClientId(clientId);
-    if (!offerForClientId?.offerId) {
-      this.logger.error(
-        `No offer found for clientId "${clientId}". Cannot fetch users without a valid offer.`,
-      );
-      return [];
-    }
-
-    // @todo: Remove after implementation!
-    offerForClientId.offerId = 1944628;
-
-    const groupClearance = await this.groupClearanceService.findAllForOffer(
-      offerForClientId.offerId,
-    );
-    const schoolClearance = await this.schoolClearanceService.findAllForOffer(
-      offerForClientId.offerId,
-    );
-
-    if (groupClearance.length === 0 && schoolClearance.length === 0) {
-      this.logger.verbose(
-        `No clearance found for offer "${String(offerForClientId.offerId)}" and client "${clientId}"`,
-      );
-      return [];
-    }
-    const idmIds = [
-      ...new Set([...groupClearance.map((c) => c.idmId), ...schoolClearance.map((c) => c.idmId)]),
-    ];
-
-    /*
-     * Fetch data from IDM
-     */
-    const identities: SchulconnexPersonsResponseDto[] = await this.aggregator.getPersons(
-      idmIds,
-      new OfferContext(offerForClientId.offerId, clientId),
-      filterParameters,
-      groupClearance,
-      schoolClearance,
-    );
+    const identities = await this.personInfoService.fetchPersons(clientId, filterParameters);
 
     // Spec says we need to send an ETag header
     // However, we do not support caching yet, therefore, we just send a fake value

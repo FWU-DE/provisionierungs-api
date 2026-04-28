@@ -26,7 +26,7 @@ jest.mock('../../clearance/filter/clearance-group.filter', () => ({
   applyClearancePersonsGroupFilter: jest
     .fn()
     .mockImplementation((data, clearanceEntries?: GroupClearance[]) => {
-      if (!clearanceEntries) return [];
+      if (!clearanceEntries || clearanceEntries.length === 0) return [];
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return data;
     }),
@@ -35,7 +35,7 @@ jest.mock('../../clearance/filter/clearance-school.filter', () => ({
   applyClearancePersonsSchoolFilter: jest
     .fn()
     .mockImplementation((data, clearanceEntries?: SchoolClearance[]) => {
-      if (!clearanceEntries) return [];
+      if (!clearanceEntries || clearanceEntries.length === 0) return [];
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return data;
     }),
@@ -162,13 +162,15 @@ describe('Aggregator', () => {
       mockEduplacesAdapter.getPersons.mockResolvedValue(mockEduplacesResponse);
       mockEduplacesStagingAdapter.getPersons.mockResolvedValue(mockStagingResponse);
 
-      // Call the method - Providing empty arrays so the mocks (as updated) don't return empty
+      const mockSchoolClearance = [{ schoolId: 'school1' }] as SchoolClearance[];
+
+      // Call the method
       const result = await aggregator.getPersons(
         mockIdmIds,
         mockOfferContext,
         mockParameters,
         [],
-        [],
+        mockSchoolClearance,
       );
 
       // Assertions
@@ -233,8 +235,16 @@ describe('Aggregator', () => {
       mockEduplacesAdapter.getPersons.mockResolvedValue(mockEduplacesResponse);
       mockEduplacesStagingAdapter.getPersons.mockResolvedValue(mockStagingResponse);
 
+      const mockSchoolClearance = [{ schoolId: 'school1' }] as SchoolClearance[];
+
       // Call the method
-      const result = await aggregator.getPersons(mockIdmIds, mockOfferContext, mockParameters, []);
+      const result = await aggregator.getPersons(
+        mockIdmIds,
+        mockOfferContext,
+        mockParameters,
+        [],
+        mockSchoolClearance,
+      );
 
       // Assertions
       // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -277,13 +287,15 @@ describe('Aggregator', () => {
       // Setup mocks
       mockEduplacesStagingAdapter.getPersons.mockResolvedValue(mockStagingResponse);
 
+      const mockSchoolClearance = [{ schoolId: 'school1' }] as SchoolClearance[];
+
       // Call the method
       const result = await aggregator.getPersons(
         mockIdmIds,
         mockOfferContext,
         mockParameters,
         [],
-        [],
+        mockSchoolClearance,
       );
 
       // Assertions
@@ -334,11 +346,11 @@ describe('Aggregator', () => {
       { pid: 'p3', person: { name: { vorname: 'P3' } }, personenkontexte: [] },
     ];
 
-    it('should return combined results from school and group filters', async () => {
+    it('should prioritize school filter over group filter', async () => {
       (applyClearancePersonsSchoolFilter as jest.Mock).mockReturnValue([mockPersons[0]]);
       (applyClearancePersonsGroupFilter as jest.Mock).mockReturnValue([mockPersons[1]]);
 
-      // We test it through getPersons since applyClearance is private
+      // We test it through getPersons since applyPersonsClearance is private
       mockEduplacesAdapter.getPersons.mockResolvedValue({
         idm: 'eduplaces',
         response: mockPersons,
@@ -355,19 +367,15 @@ describe('Aggregator', () => {
         schoolClearance,
       );
 
-      // Result should be merged from school and group filters
-      expect(result).toHaveLength(2);
-      expect(result.map((p) => p.pid)).toContain('p1');
-      expect(result.map((p) => p.pid)).toContain('p2');
+      // Result should be only from school filter as it takes precedence
+      expect(result).toHaveLength(1);
+      expect(result[0].pid).toBe('p1');
 
       // Verify school filter was called with all persons
       expect(applyClearancePersonsSchoolFilter).toHaveBeenCalledWith(mockPersons, schoolClearance);
 
-      // Verify group filter was called with the diff (p2, p3)
-      expect(applyClearancePersonsGroupFilter).toHaveBeenCalledWith(
-        [mockPersons[1], mockPersons[2]],
-        groupClearance,
-      );
+      // Verify group filter was NOT called because school clearance took precedence
+      expect(applyClearancePersonsGroupFilter).not.toHaveBeenCalled();
     });
 
     it('should return empty if both filters return empty', async () => {
@@ -409,33 +417,6 @@ describe('Aggregator', () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].pid).toBe('p1');
-    });
-
-    it('should directly call the private applyClearance method', () => {
-      (applyClearancePersonsSchoolFilter as jest.Mock).mockReturnValue([mockPersons[0]]);
-      (applyClearancePersonsGroupFilter as jest.Mock).mockReturnValue([mockPersons[1]]);
-
-      const schoolClearance = [{ schoolId: 's1' }] as SchoolClearance[];
-      const groupClearance = [{ groupId: 'g1' }] as GroupClearance[];
-
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      const result = aggregator['applyPersonsClearance'](
-        mockPersons,
-        groupClearance,
-        schoolClearance,
-      );
-
-      expect(result).toHaveLength(2);
-      expect(result.map((p) => p.pid)).toContain('p1');
-      expect(result.map((p) => p.pid)).toContain('p2');
-
-      // Verify filters were called
-      expect(applyClearancePersonsSchoolFilter).toHaveBeenCalledWith(mockPersons, schoolClearance);
-      // Diff calculation: p1 is returned by school filter, so the diff should be [p2, p3]
-      expect(applyClearancePersonsGroupFilter).toHaveBeenCalledWith(
-        [mockPersons[1], mockPersons[2]],
-        groupClearance,
-      );
     });
   });
 
@@ -502,6 +483,52 @@ describe('Aggregator', () => {
       expect(mockEduplacesAdapter.getPersons).not.toHaveBeenCalled();
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockEduplacesStagingAdapter.getPersons).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('applyPersonsClearance', () => {
+    const mockPersons: SchulconnexPersonsResponseDto[] = [
+      { pid: 'p1', person: { name: { vorname: 'P1' } }, personenkontexte: [] },
+      { pid: 'p2', person: { name: { vorname: 'P2' } }, personenkontexte: [] },
+    ];
+
+    it('should return result of school filter when school clearance is provided', () => {
+      const schoolClearance = [{ schoolId: 's1' }] as SchoolClearance[];
+      const groupClearance = [{ groupId: 'g1' }] as GroupClearance[];
+
+      (applyClearancePersonsSchoolFilter as jest.Mock).mockReturnValue([mockPersons[0]]);
+
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      const result = aggregator['applyPersonsClearance'](
+        mockPersons,
+        groupClearance,
+        schoolClearance,
+      );
+
+      expect(result).toEqual([mockPersons[0]]);
+      expect(applyClearancePersonsSchoolFilter).toHaveBeenCalledWith(mockPersons, schoolClearance);
+      expect(applyClearancePersonsGroupFilter).not.toHaveBeenCalled();
+    });
+
+    it('should return result of group filter when only group clearance is provided', () => {
+      const groupClearance = [{ groupId: 'g1' }] as GroupClearance[];
+
+      (applyClearancePersonsGroupFilter as jest.Mock).mockReturnValue([mockPersons[1]]);
+      (applyClearancePersonsSchoolFilter as jest.Mock).mockClear();
+
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      const result = aggregator['applyPersonsClearance'](mockPersons, groupClearance, undefined);
+
+      expect(result).toEqual([mockPersons[1]]);
+      expect(applyClearancePersonsGroupFilter).toHaveBeenCalledWith(mockPersons, groupClearance);
+      expect(applyClearancePersonsSchoolFilter).not.toHaveBeenCalled();
+    });
+
+    it('should return empty array if both clearances are missing or empty', () => {
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      expect(aggregator['applyPersonsClearance'](mockPersons, undefined, undefined)).toEqual([]);
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      expect(aggregator['applyPersonsClearance'](mockPersons, [], [])).toEqual([]);
     });
   });
 });

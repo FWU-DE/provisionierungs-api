@@ -3,16 +3,34 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { GroupClearanceDeleteResponseDto } from '../../clearance/dto/group-clearance-delete-response.dto';
 import { GroupClearance } from '../../clearance/entity/group-clearance.entity';
 import { GroupClearanceService } from '../../clearance/group-clearance.service';
+import {
+  type UserContext,
+  UserCtx,
+} from '../../common/auth/param-decorators/user-context.decorator';
+import { ClearancePolicyService } from '../clearance-policy.service';
 
 @Resolver(() => GroupClearance)
 export class GroupClearanceDeleteMutation {
-  constructor(private readonly groupClearanceService: GroupClearanceService) {}
+  constructor(
+    private readonly groupClearanceService: GroupClearanceService,
+    private readonly clearancePolicyService: ClearancePolicyService,
+  ) {}
 
   @Mutation(() => GroupClearanceDeleteResponseDto)
   async deleteGroupClearance(
+    @UserCtx() userContext: UserContext,
     @Args('id', { type: () => String }) id: string,
   ): Promise<GroupClearanceDeleteResponseDto> {
-    // @todo: Validate that the clearance entry is actually available to the current user!!!
+    const clearanceEntry = await this.groupClearanceService.findOne({ where: { id } });
+    if (!clearanceEntry) {
+      return new GroupClearanceDeleteResponseDto(true);
+    }
+
+    this.clearancePolicyService.verifyByUser(
+      userContext,
+      clearanceEntry.idmId,
+      clearanceEntry.schoolId,
+    );
 
     await this.groupClearanceService.delete(id);
     return new GroupClearanceDeleteResponseDto(true);

@@ -7,6 +7,7 @@ import { SchoolClearance } from '../clearance/entity/school-clearance.entity';
 import { LogModule } from '../common/logger';
 import { IdentityProviderModule } from '../identity-management/identity-provider.module';
 import { OffersModule } from '../offers/offers.module';
+import { ClearancePolicyService } from './clearance-policy.service';
 import { GroupClearanceAllQuery } from './clearance/group-clearance-all.query';
 import { GroupClearanceCreateMutation } from './clearance/group-clearance-create.mutation';
 import { GroupClearanceDeleteAllMutation } from './clearance/group-clearance-delete-all.mutation';
@@ -36,6 +37,7 @@ import { OffersQuery } from './offers/offers.query';
     SchoolClearanceCreateMutation,
     SchoolClearanceDeleteMutation,
     OffersQuery,
+    ClearancePolicyService,
   ],
 })
 export class RosteringGraphqlModule {}

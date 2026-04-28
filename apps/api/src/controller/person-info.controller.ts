@@ -1,9 +1,7 @@
-import { Controller, Get, Inject, NotFoundException, Res } from '@nestjs/common';
+import { Controller, Get, NotFoundException, Res } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import type { Response } from 'express';
 
-import { GroupClearanceService } from '../clearance/group-clearance.service';
-import { SchoolClearanceService } from '../clearance/school-clearance.service';
 import {
   AllowResourceOwnerType,
   ClientId,
@@ -13,19 +11,14 @@ import {
 } from '../common/auth';
 import { ScopeIdentifier } from '../common/auth/scope/scope-identifier';
 import { Logger } from '../common/logger';
-import { Aggregator } from '../identity-management/aggregator/aggregator';
 import { SchulconnexPersonsResponseDto } from '../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
-import { OffersFetcher } from '../offers/fetcher/offers.fetcher';
-import { OfferContext } from '../offers/model/offer-context';
 import { SchulconnexPersonsQueryParameters } from './parameters/schulconnex-persons-query-parameters';
+import { PersonInfoService } from './service/person-info.service';
 
 @Controller('schulconnex/v1')
 export class PersonInfoController {
   constructor(
-    private readonly aggregator: Aggregator,
-    private readonly groupClearanceService: GroupClearanceService,
-    private readonly schoolClearanceService: SchoolClearanceService,
-    @Inject(OffersFetcher) private offersFetcher: OffersFetcher,
+    private readonly personInfoService: PersonInfoService,
     private readonly logger: Logger,
   ) {
     this.logger.setContext(PersonInfoController.name);
@@ -45,42 +38,9 @@ export class PersonInfoController {
     @ClientId() clientId: string,
     @Sub() userId: string,
   ): Promise<SchulconnexPersonsResponseDto> {
-    const offerForClientId = await this.offersFetcher.fetchOfferForClientId(clientId);
-    if (!offerForClientId?.offerId) {
-      this.logger.error(
-        `No offer found for clientId "${clientId}". Cannot fetch users without a valid offer.`,
-      );
-      throw new NotFoundException();
-    }
+    const filterParameters = new SchulconnexPersonsQueryParameters(undefined, userId);
 
-    const groupClearance = await this.groupClearanceService.findAllForOffer(
-      offerForClientId.offerId,
-    );
-    const schoolClearance = await this.schoolClearanceService.findAllForOffer(
-      offerForClientId.offerId,
-    );
-
-    if (groupClearance.length === 0 && schoolClearance.length === 0) {
-      this.logger.verbose(
-        `No clearance found for offer "${String(offerForClientId.offerId)}" and client "${clientId}"`,
-      );
-      throw new NotFoundException();
-    }
-
-    const idmIds = [
-      ...new Set([...groupClearance.map((c) => c.idmId), ...schoolClearance.map((c) => c.idmId)]),
-    ];
-
-    /*
-     * Fetch data from IDM
-     */
-    const identities: SchulconnexPersonsResponseDto[] = await this.aggregator.getPersons(
-      idmIds,
-      new OfferContext(offerForClientId.offerId, clientId),
-      new SchulconnexPersonsQueryParameters(undefined, userId),
-      groupClearance,
-      schoolClearance,
-    );
+    const identities = await this.personInfoService.fetchPersons(clientId, filterParameters);
 
     if (identities.length === 0) {
       this.logger.warn(

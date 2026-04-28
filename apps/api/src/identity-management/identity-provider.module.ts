@@ -15,6 +15,7 @@ import idmEduplacesConfig from './config/idm.eduplaces.config';
 import idmSaarlandConfig from './config/idm.saarland.config';
 import { SchulconnexFetcher } from './fetcher/schulconnex/schulconnex.fetcher';
 import { PostRequestFilter } from './post-request-filter/post-request-filter';
+import { ValidationService } from './service/validation.service';
 
 @Module({
   imports: [
@@ -34,8 +35,9 @@ import { PostRequestFilter } from './post-request-filter/post-request-filter';
     ClientCredentialsProvider,
     FormUrlEncodedProvider,
     PostRequestFilter,
+    ValidationService,
     SchulconnexFetcher,
   ],
-  exports: [Aggregator, PostRequestFilter],
+  exports: [Aggregator, PostRequestFilter, ValidationService],
 })
 export class IdentityProviderModule {}

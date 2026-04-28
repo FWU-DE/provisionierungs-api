@@ -5,6 +5,8 @@ import { type SchoolClearance } from '../entity/school-clearance.entity';
  * Filters identities based on school clearance entries.
  * Only returns identities that have at least one person context with an organization
  * matching a school ID from the provided clearance entries.
+ * If at least one school clearance is configured, all identities are filtered
+ * to only return entries with cleared organizations.
  *
  * @param identities - Array of Schulconnex person responses to filter
  * @param schoolClearanceEntries - Optional array of school clearance entries containing allowed school IDs
@@ -14,7 +16,7 @@ export function applyClearancePersonsSchoolFilter(
   identities: SchulconnexPersonsResponseDto[],
   schoolClearanceEntries?: SchoolClearance[],
 ): SchulconnexPersonsResponseDto[] {
-  if (typeof schoolClearanceEntries === 'undefined') {
+  if (!Array.isArray(schoolClearanceEntries) || schoolClearanceEntries.length === 0) {
     return [];
   }
 

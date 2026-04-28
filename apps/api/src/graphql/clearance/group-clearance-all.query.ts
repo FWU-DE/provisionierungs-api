@@ -7,10 +7,16 @@ import {
   type UserContext,
   UserCtx,
 } from '../../common/auth/param-decorators/user-context.decorator';
+import { ValidationService } from '../../identity-management/service/validation.service';
+import { OfferValidationService } from '../../offers/service/offer-validation.service';
 
 @Resolver()
 export class GroupClearanceAllQuery {
-  constructor(private readonly groupClearanceService: GroupClearanceService) {}
+  constructor(
+    private readonly groupClearanceService: GroupClearanceService,
+    private readonly offerValidationService: OfferValidationService,
+    private readonly idmValidationService: ValidationService,
+  ) {}
 
   @Query(() => [GroupClearanceResponseDto])
   @AllowResourceOwnerType(ResourceOwnerType.USER)
@@ -24,12 +30,26 @@ export class GroupClearanceAllQuery {
       schoolIds = [schoolId];
     }
 
+    if (offerId) {
+      schoolIds = await this.offerValidationService.validateSchoolsAreActiveForOffer(
+        schoolIds,
+        offerId,
+      );
+    }
     const response = await this.groupClearanceService.findByIdmAndSchools(
       [userContext.heimatorganisation],
       schoolIds,
       offerId,
     );
 
-    return response.map((groupClearance) => new GroupClearanceResponseDto(groupClearance));
+    const validGroupIds = await this.idmValidationService.validateGroupsForSchools(
+      schoolIds,
+      response.map((groupClearance) => groupClearance.groupId),
+      [userContext.heimatorganisation],
+    );
+
+    return response
+      .filter((groupClearance) => validGroupIds.includes(groupClearance.groupId))
+      .map((groupClearance) => new GroupClearanceResponseDto(groupClearance));
   }
 }

@@ -1,20 +1,18 @@
 import request from 'supertest';
 
-import { GroupClearance } from '../clearance/entity/group-clearance.entity';
 import { AuthModule } from '../common/auth';
 import { IntrospectionClient } from '../common/auth/introspection/introspection-client';
 import { TestIntrospectionClient } from '../common/auth/introspection/introspection-client.test';
 import { ScopeIdentifier } from '../common/auth/scope/scope-identifier';
-import { Aggregator } from '../identity-management/aggregator/aggregator';
-import type { SchulconnexPersonResponse } from '../identity-management/dto/schulconnex/schulconnex-person-response.dto';
-import { OffersFetcher } from '../offers/fetcher/offers.fetcher';
-import { fixture } from '../test/fixture/fixture.interface';
 import { type TestingInfrastructure, createTestingInfrastructure } from '../test/testing-module';
 import { ControllerModule } from './controller.module';
+import { PersonInfoService } from './service/person-info.service';
 
 describe('Schulconnex Person-Info Controller', () => {
   let infra: TestingInfrastructure;
   let testIntrospectionClient: TestIntrospectionClient;
+  let personInfoService: PersonInfoService;
+
   beforeEach(async () => {
     testIntrospectionClient = new TestIntrospectionClient();
     infra = await createTestingInfrastructure({
@@ -24,35 +22,14 @@ describe('Schulconnex Person-Info Controller', () => {
         module
           .overrideProvider(IntrospectionClient)
           .useValue(testIntrospectionClient)
-          .overrideProvider(OffersFetcher)
+          .overrideProvider(PersonInfoService)
           .useValue({
-            fetchOfferForClientId: (clientId: string) => {
-              if (clientId === 'test-client-id') {
-                return Promise.resolve({ offerId: 1234 });
-              }
-
-              return Promise.resolve(null);
-            },
-          })
-          .overrideProvider(Aggregator)
-          .useValue({
-            getPersons: () => {
-              return Promise.resolve([
-                { pid: 'test-person-id', person: {} } satisfies SchulconnexPersonResponse,
-              ]);
-            },
+            fetchPersons: jest.fn(),
           });
       })
-      .enableDatabase()
-      .addFixtures([
-        fixture(GroupClearance, {
-          offerId: 1234,
-          schoolId: 'test-school-id',
-          groupId: 'test-group-id',
-          idmId: 'test-idm',
-        }),
-      ])
       .build();
+
+    personInfoService = infra.module.get(PersonInfoService);
 
     testIntrospectionClient.addUserToken(
       '::access-token-with-scope::',
@@ -99,12 +76,33 @@ describe('Schulconnex Person-Info Controller', () => {
     });
   });
 
-  it('smoke test', async () => {
+  it('smoke test: returns person info for authenticated user', async () => {
+    const person = { pid: 'test-person-id', person: {} };
+    (personInfoService.fetchPersons as jest.Mock).mockResolvedValue([person]);
+
     const response = await request((await infra.getApp()).getHttpServer())
       .get('/schulconnex/v1/person-info')
       .set('Authorization', 'Bearer ::access-token-with-scope::')
       .expect(200);
 
-    expect(response.body).toEqual({ pid: 'test-person-id', person: {} });
+    expect(response.body).toEqual(person);
+    expect(response.header).toHaveProperty('etag');
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(personInfoService.fetchPersons).toHaveBeenCalledWith(
+      'test-client-id',
+      expect.objectContaining({
+        pid: 'test-user-id',
+      }),
+    );
+  });
+
+  it('returns 404 if person info not found', async () => {
+    (personInfoService.fetchPersons as jest.Mock).mockResolvedValue([]);
+
+    await request((await infra.getApp()).getHttpServer())
+      .get('/schulconnex/v1/person-info')
+      .set('Authorization', 'Bearer ::access-token-with-scope::')
+      .expect(404);
   });
 });

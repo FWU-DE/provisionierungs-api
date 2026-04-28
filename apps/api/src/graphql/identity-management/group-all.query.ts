@@ -20,6 +20,8 @@ export class GroupAllQuery {
     @Args('schoolId', { type: () => String, nullable: true }) schoolId?: string,
   ): Promise<GroupDto[]> {
     let schoolIds = userContext.schulkennung;
+
+    // Verify that the user has permission to access the requested school.
     if (schoolId && userContext.schulkennung.includes(schoolId)) {
       schoolIds = [schoolId];
     }

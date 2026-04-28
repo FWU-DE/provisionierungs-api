@@ -52,7 +52,7 @@ export class EduplacesStagingAdapter implements AdapterInterface {
 
   async getPersons(
     parameters: SchulconnexPersonsQueryParameters,
-    clientId: string,
+    clientId?: string,
     groupClearances?: GroupClearance[],
     schoolClearance?: SchoolClearance[],
   ): Promise<AdapterGetPersonsReturnType> {
@@ -77,7 +77,7 @@ export class EduplacesStagingAdapter implements AdapterInterface {
 
   async getOrganizations(
     parameters: SchulconnexOrganizationQueryParameters,
-    clientId: string,
+    clientId?: string,
   ): Promise<AdapterGetOrganizationsReturnType> {
     // @todo: Implement!
     void parameters;
@@ -90,7 +90,7 @@ export class EduplacesStagingAdapter implements AdapterInterface {
     });
   }
 
-  async getGroups(clientId: string, schoolIds?: string[]): Promise<AdapterGetGroupsReturnType> {
+  async getGroups(clientId?: string, schoolIds?: string[]): Promise<AdapterGetGroupsReturnType> {
     void clientId;
     void schoolIds;
     if (!this.idmEduplacesStagingConfig.IDM_EDUPLACES_STAGING_ENABLED) {

@@ -7,10 +7,14 @@ import {
   type UserContext,
   UserCtx,
 } from '../../common/auth/param-decorators/user-context.decorator';
+import { OfferValidationService } from '../../offers/service/offer-validation.service';
 
 @Resolver()
 export class SchoolClearanceAllQuery {
-  constructor(private readonly schoolClearanceService: SchoolClearanceService) {}
+  constructor(
+    private readonly schoolClearanceService: SchoolClearanceService,
+    private readonly offerValidationService: OfferValidationService,
+  ) {}
 
   @Query(() => [SchoolClearanceResponseDto])
   @AllowResourceOwnerType(ResourceOwnerType.USER)
@@ -20,10 +24,19 @@ export class SchoolClearanceAllQuery {
     @Args('schoolId', { type: () => String, nullable: true }) schoolId?: string,
   ): Promise<SchoolClearanceResponseDto[]> {
     let schoolIds = userContext.schulkennung;
-    if (schoolId && userContext.schulkennung.includes(schoolId)) {
+    if (schoolId && schoolIds.includes(schoolId)) {
       schoolIds = [schoolId];
     }
 
+    if (offerId) {
+      schoolIds = await this.offerValidationService.validateSchoolsAreActiveForOffer(
+        schoolIds,
+        offerId,
+      );
+    }
+
+    // NOTE: If no offerId was provided, the result of the following method might contain entries where the offer is no longer active for the school.
+    //        This is not massively problematic, but something to keep in mind: Users might get confused if they see entries that make no sense.
     const response = await this.schoolClearanceService.findByIdmAndSchools(
       userContext.heimatorganisation,
       schoolIds,

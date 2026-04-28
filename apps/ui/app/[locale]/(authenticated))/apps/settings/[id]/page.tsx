@@ -153,6 +153,7 @@ async function OfferSettingsDataWrapper({
 
   // Offer
   const offerResponse = await fetchOffer(offerId, schoolId);
+
   const offer = mapOffer(offerResponse.data?.offer);
 
   if (!offer) {

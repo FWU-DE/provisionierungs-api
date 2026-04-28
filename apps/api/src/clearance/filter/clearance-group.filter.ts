@@ -6,18 +6,18 @@ import { type GroupClearance } from '../entity/group-clearance.entity';
  * Returns only identities that have at least one person context with a group matching the cleared group IDs.
  *
  * @param identities - Array of Schulconnex person responses to filter
- * @param groupClearanceEntries - Optional array of group clearance entries containing allowed group IDs
+ * @param groupClearances - Optional array of group clearance entries containing allowed group IDs
  * @returns Filtered array of identities matching the cleared groups, or empty array if no clearance entries provided
  */
 export function applyClearancePersonsGroupFilter(
   identities: SchulconnexPersonsResponseDto[],
-  groupClearanceEntries?: GroupClearance[],
+  groupClearances?: GroupClearance[],
 ): SchulconnexPersonsResponseDto[] {
-  if (typeof groupClearanceEntries === 'undefined') {
+  if (!Array.isArray(groupClearances) || groupClearances.length === 0) {
     return [];
   }
 
-  const clearedGroupKeys = getClearedGroupKeys(groupClearanceEntries);
+  const clearedGroupKeys = getClearedGroupKeys(groupClearances);
 
   return identities
     .map((identity) => {
@@ -31,6 +31,7 @@ export function applyClearancePersonsGroupFilter(
 
           context.gruppen = (context.gruppen ?? []).filter((groupSet) => {
             const groupId = groupSet.gruppe?.id;
+
             return groupId ? clearedGroupKeys.has(`${schoolId}:${groupId}`) : false;
           });
           return context;

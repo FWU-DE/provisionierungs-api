@@ -5,10 +5,11 @@ import { LogModule } from '../common/logger';
 import offersConfig from './config/offers.config';
 import { OffersFetcher } from './fetcher/offers.fetcher';
 import { OffersService } from './offers.service';
+import { OfferValidationService } from './service/offer-validation.service';
 
 @Module({
   imports: [LogModule, ConfigModule.forFeature(offersConfig)],
-  providers: [OffersFetcher, OffersService],
-  exports: [OffersFetcher, OffersService],
+  providers: [OffersFetcher, OffersService, OfferValidationService],
+  exports: [OffersFetcher, OffersService, OfferValidationService],
 })
 export class OffersModule {}

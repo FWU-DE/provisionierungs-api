@@ -132,4 +132,42 @@ describe('GroupClearanceDeleteMutation', () => {
     expect(clearanceFromDb).toBeDefined();
     expect(clearanceFromDb?.offerId).toBeUndefined();
   });
+
+  it('denies deletion if idmId does not match', async () => {
+    const mockGroupClearance = fixture(GroupClearance, {
+      id: 'deb74e35-ea5f-535f-890f-5779b5d8e27f',
+      offerId: 34567,
+      schoolId: 'school-1',
+      idmId: 'idm-wrong',
+      groupId: 'group-1',
+    });
+    await infra.addFixtures(mockGroupClearance);
+
+    const response = await request((await infra.getApp()).getHttpServer())
+      .post('/graphql')
+      .set('Authorization', 'Bearer ::user-access-token::')
+      .send(mockDeleteQuery);
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    expect(response.body.errors[0].message).toBe('Forbidden');
+  });
+
+  it('denies deletion if schoolId does not match', async () => {
+    const mockGroupClearance = fixture(GroupClearance, {
+      id: 'deb74e35-ea5f-535f-890f-5779b5d8e27f',
+      offerId: 34567,
+      schoolId: 'school-wrong',
+      idmId: 'idm-1',
+      groupId: 'group-1',
+    });
+    await infra.addFixtures(mockGroupClearance);
+
+    const response = await request((await infra.getApp()).getHttpServer())
+      .post('/graphql')
+      .set('Authorization', 'Bearer ::user-access-token::')
+      .send(mockDeleteQuery);
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    expect(response.body.errors[0].message).toBe('Forbidden');
+  });
 });

@@ -28,15 +28,15 @@ export interface AdapterInterface {
 
   getPersons(
     parameters: SchulconnexPersonsQueryParameters,
-    clientId: string,
+    clientId?: string,
     groupClearance?: GroupClearance[],
     schoolClearance?: SchoolClearance[],
   ): Promise<AdapterGetPersonsReturnType>;
 
   getOrganizations(
     parameters: SchulconnexOrganizationQueryParameters,
-    clientId: string,
+    clientId?: string,
   ): Promise<AdapterGetOrganizationsReturnType>;
 
-  getGroups(clientId: string, schoolIds?: string[]): Promise<AdapterGetGroupsReturnType>;
+  getGroups(clientId?: string, schoolIds?: string[]): Promise<AdapterGetGroupsReturnType>;
 }

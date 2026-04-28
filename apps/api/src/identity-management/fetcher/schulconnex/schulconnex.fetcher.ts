@@ -20,7 +20,7 @@ export class SchulconnexFetcher extends AbstractFetcher<BearerToken> {
     endpointUrl: string,
     parameters: SchulconnexPersonsQueryParameters,
     { token }: BearerToken,
-    extraHeaders?: Record<string, string>,
+    extraHeaders?: Record<string, string | undefined | null>,
   ): Promise<null | SchulconnexPersonsResponse[]> {
     // Always include "personenkontexte" in the query parameters.
     // This is required to get group information for clearance filtration.
@@ -74,7 +74,7 @@ export class SchulconnexFetcher extends AbstractFetcher<BearerToken> {
     endpointUrl: string,
     parameters: SchulconnexOrganizationQueryParameters,
     { token }: BearerToken,
-    extraHeaders?: Record<string, string>,
+    extraHeaders?: Record<string, string | undefined | null>,
   ): Promise<null | SchulconnexOrganization[]> {
     const queryParams = parameters.clone();
 
@@ -103,7 +103,7 @@ export class SchulconnexFetcher extends AbstractFetcher<BearerToken> {
     endpointUrl: string,
     bearerToken: BearerToken,
     organizationId?: string,
-    extraHeaders?: Record<string, string>,
+    extraHeaders?: Record<string, string | undefined | null>,
   ): Promise<SchulconnexGroup[]> {
     const personsQueryParameters = new SchulconnexPersonsQueryParameters(
       'personenkontexte,gruppen',

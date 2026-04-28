@@ -5,6 +5,8 @@
  * Documentation: https://schulconnex.de/docs/generated/openapi/dienste/read-organisationen-info
  */
 
+// @todo: Add "vollstaendig" parameter. See: https://schulconnex.de/docs/generated/openapi/dienste/read-organisationen-info
+
 export class SchulconnexOrganizationQueryParameters {
   id?: string;
   kennung?: string;

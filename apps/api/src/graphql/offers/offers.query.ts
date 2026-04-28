@@ -19,10 +19,10 @@ export class OffersQuery {
     @UserCtx() userContext: UserContext,
     @Args('schoolId', { type: () => String, nullable: true }) schoolId?: string,
   ): Promise<OffersDto[]> {
-    const schoolIds = schoolId ? [schoolId] : userContext.schulkennung;
-
-    // @todo: Remove after real data is coming through!
-    schoolIds.push('DE-VIDIS-vidis_test_101010');
+    let schoolIds = userContext.schulkennung;
+    if (schoolId && userContext.schulkennung.includes(schoolId)) {
+      schoolIds = [schoolId];
+    }
 
     const offers = await this.offerService.getOffers(schoolIds);
 
@@ -43,9 +43,6 @@ export class OffersQuery {
     if (schoolId && userContext.schulkennung.includes(schoolId)) {
       schoolIds = [schoolId];
     }
-
-    // @todo: Remove after real data is coming through!
-    schoolIds.push('DE-VIDIS-vidis_test_101010');
 
     const offer = await this.offerService.getOfferById(schoolIds, id);
 

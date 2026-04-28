@@ -10,6 +10,7 @@ import { AuthModule } from '../../common/auth';
 import { IntrospectionClient } from '../../common/auth/introspection/introspection-client';
 import { TestIntrospectionClient } from '../../common/auth/introspection/introspection-client.test';
 import { GraphQLModule } from '../../common/graphql/graphql.module';
+import { OffersService } from '../../offers/offers.service';
 import { fixture } from '../../test/fixture/fixture.interface';
 import { type TestingInfrastructure, createTestingInfrastructure } from '../../test/testing-module';
 import { RosteringGraphqlModule } from '../graphql.module';
@@ -40,14 +41,29 @@ const mockDeleteAllQuery = {
 describe('GroupClearanceDeleteAllMutation', () => {
   let infra: TestingInfrastructure;
   let testIntrospectionClient: TestIntrospectionClient;
+  let mockOffersService: Partial<OffersService>;
 
   beforeEach(async () => {
     testIntrospectionClient = new TestIntrospectionClient();
+    mockOffersService = {
+      getOffers: jest.fn().mockResolvedValue([
+        {
+          offerId: 34567,
+          educationProviderOrganizationName: 'Mock Org',
+          offerTitle: 'Mock Title',
+          offerLongTitle: 'Mock Long Title',
+          offerDescription: 'Mock Description',
+          offerLink: 'Mock Link',
+          offerLogo: 'Mock Logo',
+        },
+      ]),
+    };
     infra = await createTestingInfrastructure({
       imports: [GraphQLModule, RosteringGraphqlModule, ClearanceModule, AuthModule],
     })
       .configureModule((module) => {
         module.overrideProvider(IntrospectionClient).useValue(testIntrospectionClient);
+        module.overrideProvider(OffersService).useValue(mockOffersService);
       })
       .enableDatabase()
       .build();
@@ -149,5 +165,37 @@ describe('GroupClearanceDeleteAllMutation', () => {
     });
     expect(otherEntry).toBeDefined();
     expect(otherEntry?.schoolId).toBe('school-2');
+  });
+
+  it('denies deletion if idmId does not match', async () => {
+    const response = await request((await infra.getApp()).getHttpServer())
+      .post('/graphql')
+      .set('Authorization', 'Bearer ::user-access-token::')
+      .send({
+        ...mockDeleteAllQuery,
+        variables: {
+          ...mockDeleteAllQuery.variables,
+          idmId: 'idm-wrong',
+        },
+      });
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    expect(response.body.errors[0].message).toBe('Forbidden');
+  });
+
+  it('denies deletion if schoolId does not match', async () => {
+    const response = await request((await infra.getApp()).getHttpServer())
+      .post('/graphql')
+      .set('Authorization', 'Bearer ::user-access-token::')
+      .send({
+        ...mockDeleteAllQuery,
+        variables: {
+          ...mockDeleteAllQuery.variables,
+          schoolId: 'school-wrong',
+        },
+      });
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    expect(response.body.errors[0].message).toBe('Forbidden');
   });
 });

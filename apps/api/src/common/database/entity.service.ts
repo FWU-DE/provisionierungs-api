@@ -1,4 +1,4 @@
-import type { DataSource, EntityManager, Repository } from 'typeorm';
+import type { DataSource, EntityManager, FindOneOptions, Repository } from 'typeorm';
 
 import type { BaseEntity } from './base.entity';
 
@@ -7,6 +7,10 @@ export abstract class EntityService<T extends BaseEntity> {
 
   protected getRepository(manager?: EntityManager): Repository<T> {
     return manager ? manager.getRepository(this.repository.target) : this.repository;
+  }
+
+  public async findOne(options: FindOneOptions<T>): Promise<T | null> {
+    return this.repository.findOne(options);
   }
 
   protected async runInTransaction<T>(

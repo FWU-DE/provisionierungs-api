@@ -86,17 +86,10 @@ export class Aggregator {
     );
 
     // Firstly, remove all entries the client does not have clearance for.
-    const mergedClearedData = this.applyPersonsClearance(
-      rawPersons,
-      groupClearance,
-      schoolClearance,
-    );
+    const clearedData = this.applyPersonsClearance(rawPersons, groupClearance, schoolClearance);
 
     // Secondly, pseudonymize the data.
-    const pseudonymizedData = await this.pseudonymization.pseudonymize(
-      offerContext,
-      mergedClearedData,
-    );
+    const pseudonymizedData = await this.pseudonymization.pseudonymize(offerContext, clearedData);
     // Add missing initials where necessary
     const additionalData = applyMissingInitials(pseudonymizedData);
 
@@ -118,22 +111,23 @@ export class Aggregator {
     schoolClearance?: SchoolClearance[],
   ): SchulconnexPersonsResponseDto[] {
     // The school filter needs to be used before the group filter is applied.
-    const clearedDataBySchool = applyClearancePersonsSchoolFilter(rawPersons, schoolClearance);
+    // While in reality there would not be a school and a group clearance configured at the same time for an offer,
+    // a school clearance will always take precedence over a group clearance.
+    if (Array.isArray(schoolClearance) && schoolClearance.length > 0) {
+      return applyClearancePersonsSchoolFilter(rawPersons, schoolClearance);
+    }
 
-    // A new diff between the original entries and the result from the school filtration needs to be created.
-    // The diff includes all entries that where not returned by the school filter.
-    const schoolFilterDiff = rawPersons.filter((person) => !clearedDataBySchool.includes(person));
+    // The group filter is applied if no school clearance was given but  group clearance instead.
+    if (Array.isArray(groupClearance) && groupClearance.length > 0) {
+      return applyClearancePersonsGroupFilter(rawPersons, groupClearance);
+    }
 
-    // The diff will be provided as entries to the group filter.
-    const clearedDataByGroup = applyClearancePersonsGroupFilter(schoolFilterDiff, groupClearance);
-
-    // Now, the results from the school filter and the group filter get merged and are the actual filtered data.
-    return [...clearedDataBySchool, ...clearedDataByGroup];
+    return [];
   }
 
   public async getOrganizations(
     idmIds: string[],
-    clientId: string,
+    clientId: string | undefined,
     parameters: SchulconnexOrganizationQueryParameters,
   ): Promise<SchulconnexOrganization[]> {
     // Request data from all IDMs in parallel
@@ -167,7 +161,7 @@ export class Aggregator {
 
   public async getGroups(
     idmIds: string[],
-    clientId: string,
+    clientId?: string,
     schoolIds?: string[],
   ): Promise<GroupsPerIdmModel[]> {
     // Request data from all IDMs in parallel

@@ -11,6 +11,8 @@ import { IntrospectionClient } from '../../common/auth/introspection/introspecti
 import { TestIntrospectionClient } from '../../common/auth/introspection/introspection-client.test';
 import { GraphQLModule } from '../../common/graphql/graphql.module';
 import { Aggregator } from '../../identity-management/aggregator/aggregator';
+import { OffersService } from '../../offers/offers.service';
+import { OfferValidationService } from '../../offers/service/offer-validation.service';
 import { type TestingInfrastructure, createTestingInfrastructure } from '../../test/testing-module';
 import { RosteringGraphqlModule } from '../graphql.module';
 
@@ -43,6 +45,14 @@ const mockCreateQuery = {
 describe('SchoolClearanceCreateMutation', () => {
   let infra: TestingInfrastructure;
   let testIntrospectionClient: TestIntrospectionClient;
+  const mockOffersService = {
+    getOffers: jest.fn(),
+  };
+  const mockOfferValidationService = {
+    validateSchoolsAreActiveForOffer: jest
+      .fn()
+      .mockImplementation((schoolIds: string[]) => schoolIds),
+  };
 
   beforeEach(async () => {
     testIntrospectionClient = new TestIntrospectionClient();
@@ -51,9 +61,13 @@ describe('SchoolClearanceCreateMutation', () => {
     })
       .configureModule((module) => {
         module.overrideProvider(IntrospectionClient).useValue(testIntrospectionClient);
+        module.overrideProvider(OffersService).useValue(mockOffersService);
+        module.overrideProvider(OfferValidationService).useValue(mockOfferValidationService);
       })
       .enableDatabase()
       .build();
+
+    mockOffersService.getOffers.mockResolvedValue([{ offerId: 54321 }]);
 
     testIntrospectionClient.addUserToken(
       '::user-access-token::',
@@ -62,8 +76,8 @@ describe('SchoolClearanceCreateMutation', () => {
       undefined,
       undefined,
       {
-        heimatorganisation: 'idm-1',
-        schulkennung: ['school-1'],
+        heimatorganisation: 'idm-5',
+        schulkennung: ['school-3'],
       },
     );
     infra.module.get(Aggregator).getOrganizations = jest.fn().mockResolvedValue([{ id: 'org-1' }]);
@@ -137,6 +151,48 @@ describe('SchoolClearanceCreateMutation', () => {
     });
     expect(clearancesFromDb).toBeDefined();
     expect(clearancesFromDb).toHaveLength(1);
+  });
+
+  it('denies clearance creation if idmId does not match', async () => {
+    const response = await request((await infra.getApp()).getHttpServer())
+      .post('/graphql')
+      .set('Authorization', 'Bearer ::user-access-token::')
+      .send({
+        ...mockCreateQuery,
+        variables: {
+          ...mockCreateQuery.variables,
+          idmId: 'idm-wrong',
+        },
+      });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    expect(response.body.errors[0].message).toBe('Forbidden');
+  });
+
+  it('denies clearance creation if schoolId does not match', async () => {
+    const response = await request((await infra.getApp()).getHttpServer())
+      .post('/graphql')
+      .set('Authorization', 'Bearer ::user-access-token::')
+      .send({
+        ...mockCreateQuery,
+        variables: {
+          ...mockCreateQuery.variables,
+          schoolId: 'school-wrong',
+        },
+      });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    expect(response.body.errors[0].message).toBe('Forbidden');
+  });
+
+  it('denies clearance creation if offerId is not in active offers', async () => {
+    mockOffersService.getOffers.mockResolvedValue([{ offerId: 99999 }]);
+
+    const response = await request((await infra.getApp()).getHttpServer())
+      .post('/graphql')
+      .set('Authorization', 'Bearer ::user-access-token::')
+      .send(mockCreateQuery);
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    expect(response.body.errors[0].message).toBe('Forbidden');
   });
 
   it('complains on missing fields', async () => {

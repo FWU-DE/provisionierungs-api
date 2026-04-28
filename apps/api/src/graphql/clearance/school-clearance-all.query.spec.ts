@@ -9,6 +9,7 @@ import { AuthModule } from '../../common/auth';
 import { IntrospectionClient } from '../../common/auth/introspection/introspection-client';
 import { TestIntrospectionClient } from '../../common/auth/introspection/introspection-client.test';
 import { GraphQLModule } from '../../common/graphql/graphql.module';
+import { OfferValidationService } from '../../offers/service/offer-validation.service';
 import { fixture } from '../../test/fixture/fixture.interface';
 import { type TestingInfrastructure, createTestingInfrastructure } from '../../test/testing-module';
 import { RosteringGraphqlModule } from '../graphql.module';
@@ -16,14 +17,22 @@ import { RosteringGraphqlModule } from '../graphql.module';
 describe('SchoolClearanceAllQuery', () => {
   let infra: TestingInfrastructure;
   let testIntrospectionClient: TestIntrospectionClient;
+  let offerValidationService: jest.Mocked<OfferValidationService>;
 
   beforeEach(async () => {
     testIntrospectionClient = new TestIntrospectionClient();
+    offerValidationService = {
+      validateSchoolsAreActiveForOffer: jest
+        .fn()
+        .mockImplementation((schoolIds: string[]) => schoolIds),
+    } as unknown as jest.Mocked<OfferValidationService>;
+
     infra = await createTestingInfrastructure({
       imports: [GraphQLModule, RosteringGraphqlModule, ClearanceModule, AuthModule],
     })
       .configureModule((module) => {
         module.overrideProvider(IntrospectionClient).useValue(testIntrospectionClient);
+        module.overrideProvider(OfferValidationService).useValue(offerValidationService);
       })
       .enableDatabase()
       .build();

@@ -23,21 +23,63 @@ function isOfferItem(item: unknown): item is OfferItem {
 export class OffersService {
   constructor(private readonly fetcher: OffersFetcher) {}
 
-  public async getOffers(schoolId: string[]): Promise<OffersDto[]> {
-    const offersResponse: OffersResponse[] = (
-      await this.fetcher.fetchActiveOffers(schoolId)
+  public async getOffers(schoolIds: string[]): Promise<OffersDto[]> {
+    const offersResponses: OffersResponse[] = (
+      await this.fetcher.fetchActiveOffers(schoolIds)
     ).filter((response) => response !== null);
 
-    return offersResponse.flatMap((response) => {
-      return response.items.map((item) => {
-        return this.mapToDto(item);
-      });
+    const seenOfferIds = new Set<number>();
+    return offersResponses.flatMap((response) => {
+      return response.items
+        .map((item) => this.mapToDto(item))
+        .filter((dto) => {
+          if (seenOfferIds.has(dto.offerId)) {
+            return false;
+          }
+          seenOfferIds.add(dto.offerId);
+          return true;
+        });
     });
   }
 
   public async getOfferById(schoolIds: string[], offerId: number): Promise<OffersDto | null> {
     const offers = await this.getOffers(schoolIds);
     return offers.find((offer) => offer.offerId === offerId) ?? null;
+  }
+
+  public async getOffersGroupedBySchool(schoolIds: string[]): Promise<Map<string, OffersDto[]>> {
+    const responses = await this.fetcher.fetchActiveOffers(schoolIds);
+
+    const groupedOffers = new Map<string, OffersDto[]>();
+
+    responses.forEach((response, index) => {
+      const schoolId = schoolIds[index];
+      if (response === null) {
+        groupedOffers.set(schoolId, []);
+        return;
+      }
+
+      groupedOffers.set(
+        schoolId,
+        response.items.map((item) => this.mapToDto(item)),
+      );
+    });
+
+    return groupedOffers;
+  }
+
+  public async getOfferByIdGroupedBySchool(
+    schoolIds: string[],
+    offerId: number,
+  ): Promise<Map<string, OffersDto | null>> {
+    const groupedOffers = await this.getOffersGroupedBySchool(schoolIds);
+
+    const result = new Map<string, OffersDto | null>();
+    groupedOffers.forEach((offers, schoolId) => {
+      result.set(schoolId, offers.find((offer) => offer.offerId === offerId) ?? null);
+    });
+
+    return result;
   }
 
   private mapToDto(item: unknown): OffersDto {

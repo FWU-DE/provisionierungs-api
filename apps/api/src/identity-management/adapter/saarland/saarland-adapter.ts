@@ -90,7 +90,7 @@ export class SaarlandAdapter implements AdapterInterface {
 
   async getPersons(
     parameters: SchulconnexPersonsQueryParameters,
-    clientId: string,
+    clientId?: string,
     groupClearances?: GroupClearance[],
     schoolClearance?: SchoolClearance[],
   ): Promise<AdapterGetPersonsReturnType> {
@@ -117,7 +117,7 @@ export class SaarlandAdapter implements AdapterInterface {
       )
       .map((organization) => organization.id);
 
-    // Fetch persons per retrieved organization
+    // Fetch persons per retrieved organization (query narrowing - large responses are not possible)
     const rawPersons = await Promise.all(
       organizationIds.map(async (organizationId) => {
         const localParameters = parameters.clone();
@@ -134,9 +134,10 @@ export class SaarlandAdapter implements AdapterInterface {
       }),
     );
 
-    // Get the unique associated persons
+    // Get all persons from all queries into one single list
     const response = [...new Set(rawPersons.filter((person) => person !== null).flat())];
 
+    // Transform the data and apply some formatting
     const transformedResponse = transformSchulconnexPersonsResponse(response);
     transformedResponse.forEach((personResponse) => {
       personResponse.personenkontexte?.forEach((context) => {
@@ -156,7 +157,7 @@ export class SaarlandAdapter implements AdapterInterface {
 
   async getOrganizations(
     parameters: SchulconnexOrganizationQueryParameters,
-    clientId: string,
+    clientId?: string,
   ): Promise<AdapterGetOrganizationsReturnType> {
     if (!this.idmSaarlandConfig.IDM_SAARLAND_ENABLED) {
       throw new Error('Saarland IDM is not enabled');
@@ -186,7 +187,7 @@ export class SaarlandAdapter implements AdapterInterface {
     };
   }
 
-  async getGroups(clientId: string, schoolIds?: string[]): Promise<AdapterGetGroupsReturnType> {
+  async getGroups(clientId?: string, schoolIds?: string[]): Promise<AdapterGetGroupsReturnType> {
     const config = this.idmSaarlandConfig;
     if (!config.IDM_SAARLAND_ENABLED) {
       throw new Error('Saarland IDM is not enabled');
