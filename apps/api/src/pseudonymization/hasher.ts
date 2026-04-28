@@ -1,21 +1,25 @@
 import { ensureError } from '@fwu-rostering/utils/error';
+import { Injectable } from '@nestjs/common';
 import { createHmac } from 'crypto';
-import debug from 'debug';
 import type { v3 as uuidv3Type } from 'uuid';
 
+import { Logger } from '../common/logger/logger';
+
+@Injectable()
 export class Hasher {
   // Will hold the imported UUID v3 function
   // So we can use it in a non-async context
   private uuidv3Fun: typeof uuidv3Type | null = null;
-  private debug = debug('vidis:hasher');
 
-  constructor() {
+  constructor(private readonly logger: Logger) {
+    this.logger.setContext('Hasher');
     // Import ESM module into commonJS context
     import('uuid')
       .then((mod) => mod.v3)
       .then((v3) => (this.uuidv3Fun = v3))
-      // eslint-disable-next-line no-console
-      .catch(console.error);
+      .catch((err: unknown) => {
+        this.logger.error('Failed to load uuid v3 function', err);
+      });
   }
 
   private uuidv3(buf: Buffer) {
@@ -39,6 +43,7 @@ export class Hasher {
       return this.uuidv3(hashBytes);
     } catch (error: unknown) {
       ensureError(error);
+      this.logger.error('Generating hash failed', { error });
       throw new Error('Generating hash failed: ' + ensureError(error).message);
     }
   }
@@ -49,7 +54,7 @@ export class Hasher {
       const url = new URL(sectorIdentifierUri);
       return url.hostname;
     } catch (_: unknown) {
-      this.debug('Invalid sectorIdentifierUri "%s"', sectorIdentifierUri);
+      this.logger.warn(`Invalid sectorIdentifierUri "${sectorIdentifierUri}" provided.`);
       return null; // invalid URL
     }
   }

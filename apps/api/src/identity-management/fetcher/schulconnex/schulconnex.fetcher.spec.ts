@@ -18,7 +18,12 @@ describe('SchulconnexFetcher', () => {
   beforeEach(async () => {
     // Create a mock for Logger
     mockLogger = {
+      setContext: jest.fn(),
       error: jest.fn(),
+      log: jest.fn(),
+      debug: jest.fn(),
+      warn: jest.fn(),
+      verbose: jest.fn(),
     } as unknown as jest.Mocked<Logger>;
 
     // Mock global fetch

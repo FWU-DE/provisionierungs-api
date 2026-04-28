@@ -41,6 +41,7 @@ export class OffersFetcher {
     const username = this.offersConfig.OFFERS_CLIENT_ID;
     const password = this.offersConfig.OFFERS_CLIENT_SECRET;
 
+    this.logger.debug(`OffersFetcher: Requesting offers from ${endpointUrl}`);
     const response = await fetch(endpointUrl, {
       method: 'GET',
       headers: {
@@ -57,6 +58,10 @@ export class OffersFetcher {
       return null;
     }
     const data = new OffersResponse((await response.json()) as OffersResponse);
+
+    this.logger.debug(`OffersFetcher: Received offers from ${endpointUrl}`, {
+      // data: data,
+    });
 
     // Validate response schema
     return this.validateData(data);

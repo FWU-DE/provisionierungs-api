@@ -1,5 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { Logger } from '../common/logger';
 import { type SchulconnexPersonsResponseDto } from '../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
 import { OfferContext } from '../offers/model/offer-context';
 import pseudonymizationConfig, {
@@ -12,6 +13,10 @@ describe('Pseudonymization', () => {
   let pseudonymization: Pseudonymization;
   let mockHasher: jest.Mocked<Hasher>;
   let mockConfig: PseudonymizationConfig;
+  const mockLogger = {
+    setContext: jest.fn(),
+    debug: jest.fn(),
+  } as unknown as jest.Mocked<Logger>;
 
   beforeEach(async () => {
     // Create a mock for Hasher
@@ -37,6 +42,7 @@ describe('Pseudonymization', () => {
           provide: pseudonymizationConfig.KEY,
           useValue: mockConfig,
         },
+        { provide: Logger, useValue: mockLogger },
       ],
     }).compile();
 

@@ -1,10 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
+import { Logger } from '../../common/logger';
 import { Aggregator } from '../aggregator/aggregator';
 
 @Injectable()
 export class ValidationService {
-  constructor(private readonly aggregator: Aggregator) {}
+  constructor(
+    private readonly aggregator: Aggregator,
+    private readonly logger: Logger,
+  ) {
+    this.logger.setContext(ValidationService.name);
+  }
 
   // Verify that the group is still part of the school.
   // This prevents passing group information to offers that are no longer part of a school but still have clearance entries.
@@ -19,9 +25,20 @@ export class ValidationService {
         await this.aggregator.getGroups(idmIds, undefined, schoolIds)
       ).flatMap((groups) => groups.groups);
 
-      // @todo: Log when a group entry got removed!
+      const activeGroupIds = groupsForSchools.map((group) => group.id);
+      const removedGroupIds = groupIds.filter((id) => !activeGroupIds.includes(id));
 
-      return Array.from(new Set(groupsForSchools.map((group) => group.id)));
+      if (removedGroupIds.length > 0) {
+        this.logger.debug(
+          `ValidationService: Group ID discarded as it is no longer part of the schools.`,
+          {
+            removedGroupIds: removedGroupIds,
+            schoolIds: schoolIds,
+          },
+        );
+      }
+
+      return Array.from(new Set(activeGroupIds));
     }
 
     return [];

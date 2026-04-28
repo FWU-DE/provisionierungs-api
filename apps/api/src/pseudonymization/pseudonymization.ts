@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
+import { Logger } from '../common/logger';
 import { SchulconnexPersonContext } from '../identity-management/dto/schulconnex/schulconnex-person-context.dto';
 import { type SchulconnexPersonsResponseDto } from '../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
 import { OfferContext } from '../offers/model/offer-context';
@@ -21,12 +22,18 @@ export class Pseudonymization {
     @Inject(pseudonymizationConfig.KEY)
     private readonly pseudonymConfig: PseudonymizationConfig,
     private readonly hasher: Hasher,
-  ) {}
+    private readonly logger: Logger,
+  ) {
+    this.logger.setContext('Pseudonymization');
+  }
 
   public async pseudonymize(
     offerContext: OfferContext,
     identities: SchulconnexPersonsResponseDto[],
   ): Promise<SchulconnexPersonsResponseDto[]> {
+    this.logger.debug(`Starting pseudonymization for identities.`, {
+      identitiesCount: identities.length,
+    });
     const salt = await this.getSalt(offerContext.clientId);
     const sectorIdentifier = await this.getSectorIdentifier(offerContext.clientId);
 
@@ -68,6 +75,9 @@ export class Pseudonymization {
     const saltEndpoint = this.pseudonymConfig.PSEUDONYMIZATION_SALT_ENDPOINT;
     void saltEndpoint;
 
+    this.logger.debug('Pseudonymization: Retrieved salt for pseudonymization.', {
+      clientId: clientId,
+    });
     return Promise.resolve(this.pseudonymConfig.PSEUDONYMIZATION_SALT);
   }
 

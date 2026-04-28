@@ -63,7 +63,10 @@ describe('PersonInfoService', () => {
           useValue: {
             setContext: jest.fn(),
             error: jest.fn(),
+            log: jest.fn(),
+            debug: jest.fn(),
             verbose: jest.fn(),
+            warn: jest.fn(),
           },
         },
       ],

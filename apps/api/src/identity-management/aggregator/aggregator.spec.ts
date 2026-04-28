@@ -77,6 +77,11 @@ describe('Aggregator', () => {
 
     mockLogger = {
       error: jest.fn(),
+      log: jest.fn(),
+      debug: jest.fn(),
+      warn: jest.fn(),
+      verbose: jest.fn(),
+      setContext: jest.fn(),
     } as unknown as jest.Mocked<Logger>;
 
     infra = await createTestingInfrastructure({

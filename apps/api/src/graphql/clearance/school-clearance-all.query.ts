@@ -1,3 +1,4 @@
+import { Inject } from '@nestjs/common';
 import { Args, Int, Query, Resolver } from '@nestjs/graphql';
 
 import { SchoolClearanceResponseDto } from '../../clearance/dto/school-clearance-response.dto';
@@ -7,6 +8,7 @@ import {
   type UserContext,
   UserCtx,
 } from '../../common/auth/param-decorators/user-context.decorator';
+import { Logger } from '../../common/logger';
 import { OfferValidationService } from '../../offers/service/offer-validation.service';
 
 @Resolver()
@@ -14,7 +16,10 @@ export class SchoolClearanceAllQuery {
   constructor(
     private readonly schoolClearanceService: SchoolClearanceService,
     private readonly offerValidationService: OfferValidationService,
-  ) {}
+    @Inject(Logger) private readonly logger: Logger,
+  ) {
+    this.logger.setContext(SchoolClearanceAllQuery.name);
+  }
 
   @Query(() => [SchoolClearanceResponseDto])
   @AllowResourceOwnerType(ResourceOwnerType.USER)
@@ -23,6 +28,7 @@ export class SchoolClearanceAllQuery {
     @Args('offerId', { type: () => Int, nullable: true }) offerId?: number,
     @Args('schoolId', { type: () => String, nullable: true }) schoolId?: string,
   ): Promise<SchoolClearanceResponseDto[]> {
+    this.logger.debug('SchoolClearanceAllQuery: Fetching all school clearances.');
     let schoolIds = userContext.schulkennung;
     if (schoolId && schoolIds.includes(schoolId)) {
       schoolIds = [schoolId];
@@ -42,6 +48,10 @@ export class SchoolClearanceAllQuery {
       schoolIds,
       offerId,
     );
+
+    this.logger.debug('SchoolClearanceAllQuery: Fetched school clearances.', {
+      schoolClearanceCount: response.length,
+    });
 
     return response.map((schoolClearance) => new SchoolClearanceResponseDto(schoolClearance));
   }

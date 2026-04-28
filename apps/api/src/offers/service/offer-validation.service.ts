@@ -1,10 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
+import { Logger } from '../../common/logger';
 import { OffersService } from '../offers.service';
 
 @Injectable()
 export class OfferValidationService {
-  constructor(private readonly offersService: OffersService) {}
+  constructor(
+    private readonly offersService: OffersService,
+    private readonly logger: Logger,
+  ) {
+    this.logger.setContext(OfferValidationService.name);
+  }
 
   async validateSchoolsAreActiveForOffer(schoolIds: string[], offerId: number): Promise<string[]> {
     const activeSchoolIds: string[] = [];
@@ -22,7 +28,13 @@ export class OfferValidationService {
         if (activeOfferBySchoolId.has(schoolId) && activeOfferBySchoolId.get(schoolId)) {
           activeSchoolIds.push(schoolId);
         } else {
-          // @todo: Log when a clearance entry got removed!
+          this.logger.debug(
+            `OfferValidationService: School ID discarded as offer is not active for that school.`,
+            {
+              schoolId: schoolId,
+              offerId: offerId,
+            },
+          );
         }
       }
     }

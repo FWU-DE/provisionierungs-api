@@ -1,8 +1,9 @@
 import { ensureError } from '@fwu-rostering/utils/error';
 import { assertUnreachable } from '@fwu-rostering/utils/typescript';
-import { ConsoleLogger, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import type { Request } from 'express';
 
+import { Logger } from '../../logger';
 import authConfig, { type AuthConfig } from '../config/auth.config';
 import { ResourceOwnerType } from '../enums/resource-owner-type.enum';
 import type {
@@ -19,10 +20,12 @@ export class IntrospectionProvider {
   constructor(
     @Inject(authConfig.KEY)
     private readonly authConfig: AuthConfig,
-    private readonly logger: ConsoleLogger,
+    @Inject(Logger) private readonly logger: Logger,
     private readonly introspectionClient: IntrospectionClient,
     private readonly accessTokenVerifierFactory: AccessTokenVerifierFactory,
-  ) {}
+  ) {
+    this.logger.setContext(IntrospectionProvider.name);
+  }
 
   async getIntrospection(
     request: RequestMaybeContainingIntrospection,
@@ -115,6 +118,9 @@ export class IntrospectionProvider {
       const resourceOwnerType = result.sid ? ResourceOwnerType.USER : ResourceOwnerType.CLIENT;
 
       this.logger.debug(
+        `IntrospectionProvider: Introspection response received from server for subject: ${result.sub}`,
+      );
+      this.logger.debug(
         `IntrospectionProvider: Token is valid, resource owner type is ${resourceOwnerType}`,
       );
 
@@ -133,6 +139,10 @@ export class IntrospectionProvider {
       try {
         const accessTokenVerifier = await this.accessTokenVerifierFactory.create();
         const jwtVerifyResult = await accessTokenVerifier.verifyAccessToken(accessToken);
+
+        this.logger.debug(
+          `IntrospectionProvider: JWT token verified successfully for subject: ${jwtVerifyResult.sub}`,
+        );
 
         const scopes = jwtVerifyResult.scope?.split(' ') ?? [];
         // Determine the resource owner type

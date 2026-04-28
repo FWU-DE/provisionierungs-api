@@ -1,4 +1,4 @@
-import { ForbiddenException } from '@nestjs/common';
+import { ForbiddenException, Inject } from '@nestjs/common';
 import { Args, Int, Mutation, Resolver } from '@nestjs/graphql';
 
 import { SchoolClearanceResponseDto } from '../../clearance/dto/school-clearance-response.dto';
@@ -9,6 +9,7 @@ import {
   type UserContext,
   UserCtx,
 } from '../../common/auth/param-decorators/user-context.decorator';
+import { Logger } from '../../common/logger';
 import { SchulconnexOrganizationQueryParameters } from '../../controller/parameters/schulconnex-organisations-query-parameters';
 import { Aggregator } from '../../identity-management/aggregator/aggregator';
 import { OfferValidationService } from '../../offers/service/offer-validation.service';
@@ -21,7 +22,10 @@ export class SchoolClearanceCreateMutation {
     private readonly aggregator: Aggregator,
     private readonly offerValidationService: OfferValidationService,
     private readonly clearancePolicyService: ClearancePolicyService,
-  ) {}
+    @Inject(Logger) private readonly logger: Logger,
+  ) {
+    this.logger.setContext(SchoolClearanceCreateMutation.name);
+  }
 
   @Mutation(() => SchoolClearanceResponseDto)
   async createSchoolClearance(
@@ -31,6 +35,11 @@ export class SchoolClearanceCreateMutation {
     @Args('idmId') idmId: string,
     @Args('schoolId') schoolId: string,
   ): Promise<SchoolClearanceResponseDto> {
+    this.logger.log(`SchoolClearanceCreateMutation: Creating school clearance.`, {
+      offerId: offerId,
+      idmId: idmId,
+      schoolId: schoolId,
+    });
     await this.clearancePolicyService.verifyByUserAndOffer(userContext, offerId, idmId, schoolId);
 
     // Validate that the school exists for the given IDMs or if there are ambiguities.
@@ -46,6 +55,13 @@ export class SchoolClearanceCreateMutation {
       filterParameters,
     );
     if (!schoolOrganizations.length) {
+      this.logger.warn(
+        `SchoolClearanceCreateMutation: No schools found for the given IDM and school ID`,
+        {
+          idmId: idmId,
+          schoolId: schoolId,
+        },
+      );
       throw new Error(
         'No schools found for the given idmId and schoolId: ' + schoolId + ', IDM: ' + idmId,
       );

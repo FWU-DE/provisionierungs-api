@@ -5,7 +5,11 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { DataSource } from 'typeorm';
 
+import { Logger } from './common/logger';
 import { MainModule } from './main.module';
+
+const logger = Logger.withFormatterFromEnv();
+logger.setContext('Bootstrap');
 
 async function bootstrap() {
   const app = await NestFactory.create(MainModule);
@@ -34,18 +38,18 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('openapi', app, document);
 
-  await app.listen(process.env.PORT ?? 3010);
+  const port = process.env.PORT ?? 3010;
+  await app.listen(port);
+  logger.log(`Application successfully started on port ${port.toString()}.`);
 }
 
 bootstrap().catch((err: unknown) => {
-  // eslint-disable-next-line no-console
-  console.error('Error during app bootstrap:', err);
+  logger.error('Error during app bootstrap:', err);
 });
 
 async function runMigrations(connection: DataSource) {
   const migrations = await connection.runMigrations({ transaction: 'each' });
   for (const migration of migrations) {
-    // eslint-disable-next-line no-console
-    console.log(`Executed migration: ${migration.name}`);
+    logger.log(`Executed migration: ${migration.name}`);
   }
 }

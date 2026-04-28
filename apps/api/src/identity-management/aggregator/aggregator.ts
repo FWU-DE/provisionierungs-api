@@ -85,6 +85,8 @@ export class Aggregator {
       [],
     );
 
+    this.logger.log(`Aggregator: Aggregated ${rawPersons.length.toString()} persons from IDMs.`);
+
     // Firstly, remove all entries the client does not have clearance for.
     const clearedData = this.applyPersonsClearance(rawPersons, groupClearance, schoolClearance);
 
@@ -102,7 +104,14 @@ export class Aggregator {
     // Fourthly, filter the data by the query parameters.
     // That has to be done last, because the client might only ever know pseudonymized data,
     // and therefore, IDs in queries will always be pseudonymized.
-    return this.postRequestFilter.filterByQueryParameters(clearedDataByFields, parameters);
+    const filteredData = this.postRequestFilter.filterByQueryParameters(
+      clearedDataByFields,
+      parameters,
+    );
+    this.logger.debug(
+      `Aggregator: Returning ${filteredData.length.toString()} filtered persons data to the controller.`,
+    );
+    return filteredData;
   }
 
   private applyPersonsClearance(

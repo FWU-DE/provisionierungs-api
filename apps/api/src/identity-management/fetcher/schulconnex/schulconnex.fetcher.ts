@@ -50,6 +50,7 @@ export class SchulconnexFetcher extends AbstractFetcher<BearerToken> {
     }
 
     const fullEndpointUrl = endpointUrl + '/personen-info?' + queryParams.toUrlSearchParams();
+    this.logger.debug(`SchulconnexFetcher: Requesting persons-info from ${fullEndpointUrl}`);
     const response = await fetch(fullEndpointUrl, {
       method: 'GET',
       headers: {
@@ -59,6 +60,10 @@ export class SchulconnexFetcher extends AbstractFetcher<BearerToken> {
     });
 
     const data = await this.handleData<SchulconnexPersonsResponse[]>(response, fullEndpointUrl);
+    this.logger.debug(`SchulconnexFetcher: fetchPersons: Data received from ${fullEndpointUrl}`, {
+      parameters: parameters,
+      // data: data,
+    });
 
     try {
       return this.validatePersonsData<SchulconnexPersonsResponse[]>(data);
@@ -79,6 +84,7 @@ export class SchulconnexFetcher extends AbstractFetcher<BearerToken> {
     const queryParams = parameters.clone();
 
     const fullEndpointUrl = endpointUrl + '/organisationen-info?' + queryParams.toUrlSearchParams();
+    this.logger.debug(`SchulconnexFetcher: Requesting organisationen-info from ${fullEndpointUrl}`);
     const response = await fetch(fullEndpointUrl, {
       method: 'GET',
       headers: {
@@ -88,12 +94,19 @@ export class SchulconnexFetcher extends AbstractFetcher<BearerToken> {
     });
 
     const data = await this.handleData<SchulconnexOrganization[]>(response, fullEndpointUrl);
+    this.logger.debug(
+      `SchulconnexFetcher: fetchOrganizations: Data received from ${fullEndpointUrl}`,
+      {
+        parameters: parameters,
+        // data: data,
+      },
+    );
 
     try {
       return this.validateOrganizationsData<SchulconnexOrganization[]>(data);
     } catch (error: unknown) {
       this.logger.error(
-        `Error while validating data fetched from ${endpointUrl}: ${ensureError(error).message}`,
+        `Error while validating data fetched from ${fullEndpointUrl}: ${ensureError(error).message}`,
       );
       return null;
     }
@@ -134,12 +147,18 @@ export class SchulconnexFetcher extends AbstractFetcher<BearerToken> {
       }, []);
 
     // Only get unique groups
-    return groups.reduce<SchulconnexGroup[]>((acc, current) => {
+    const uniqueGroups = groups.reduce<SchulconnexGroup[]>((acc, current) => {
       if (!acc.some((group) => group.id === current.id)) {
         acc.push(current);
       }
       return acc;
     }, []);
+
+    this.logger.debug(`SchulconnexFetcher: fetchGroups: Unique group data received:`, {
+      uniqueGroups: uniqueGroups,
+    });
+
+    return uniqueGroups;
   }
 
   public getPersonsValidator(): ZodObject | ZodArray {

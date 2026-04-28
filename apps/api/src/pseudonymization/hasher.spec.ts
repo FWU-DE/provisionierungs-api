@@ -1,13 +1,19 @@
+import type { Logger } from '../common/logger';
 import { Hasher } from './hasher';
 
 describe('hash', () => {
   const localSubject = 'user123';
   const salt = 'somesalt';
   const sectorIdentifier = 'example.local';
+  const mockLogger = {
+    setContext: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+  } as unknown as jest.Mocked<Logger>;
 
   let hasher: Hasher;
   beforeAll(async () => {
-    hasher = new Hasher();
+    hasher = new Hasher(mockLogger);
     await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for dynamic import
   });
 
@@ -59,7 +65,7 @@ describe('hash', () => {
 
   it('should throw an error when hash generation fails', () => {
     // Create a hasher with a broken uuidv3 function
-    const brokenHasher = new Hasher();
+    const brokenHasher = new Hasher(mockLogger);
     // @ts-expect-error - Accessing private property for testing
     brokenHasher.uuidv3Fun = null;
 

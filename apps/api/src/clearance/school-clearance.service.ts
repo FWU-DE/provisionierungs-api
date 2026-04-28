@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   DeleteResult,
@@ -12,6 +12,7 @@ import {
 
 import { EntityService } from '../common/database/entity.service';
 import type { ResolveRelations } from '../common/database/typeorm';
+import { Logger } from '../common/logger';
 import { SchoolClearance } from './entity/school-clearance.entity';
 
 @Injectable()
@@ -19,14 +20,21 @@ export class SchoolClearanceService extends EntityService<SchoolClearance> {
   constructor(
     @InjectRepository(SchoolClearance)
     schoolClearanceRepository: Repository<SchoolClearance>,
+    @Inject(Logger) private readonly logger: Logger,
   ) {
     super(schoolClearanceRepository);
+    this.logger.setContext(SchoolClearanceService.name);
   }
 
   async save(
     schoolClearance: SchoolClearance,
     transactionManager?: EntityManager,
   ): Promise<SchoolClearance> {
+    this.logger.log(`SchoolClearanceService: Saving school clearance entry.`, {
+      offerId: schoolClearance.offerId,
+      idmId: schoolClearance.idmId,
+      schoolId: schoolClearance.schoolId,
+    });
     await this.getRepository(transactionManager)
       .createQueryBuilder()
       .insert()

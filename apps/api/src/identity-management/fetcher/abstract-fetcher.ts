@@ -60,7 +60,11 @@ export abstract class AbstractFetcher<Credentials> {
       this.logger.error(`Response: ${await response.text()}`);
       return null;
     }
-    return (await response.json()) as T;
+    const data = (await response.json()) as T;
+    this.logger.debug(
+      `AbstractFetcher: Successfully parsed JSON response from ${endpointUrl ?? 'unknown'}`,
+    );
+    return data;
   }
 
   protected validatePersonsData<T>(data: T | null): T | null {

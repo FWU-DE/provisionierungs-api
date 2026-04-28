@@ -1,6 +1,7 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 
+import { Logger } from '../../common/logger';
 import type { OffersDto } from '../dto/offers.dto';
 import { OffersService } from '../offers.service';
 import { OfferValidationService } from './offer-validation.service';
@@ -8,6 +9,10 @@ import { OfferValidationService } from './offer-validation.service';
 describe('OfferValidationService', () => {
   let service: OfferValidationService;
   let offersService: jest.Mocked<OffersService>;
+  const mockLogger = {
+    setContext: jest.fn(),
+    debug: jest.fn(),
+  } as unknown as jest.Mocked<Logger>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -19,6 +24,7 @@ describe('OfferValidationService', () => {
             getOfferByIdGroupedBySchool: jest.fn(),
           },
         },
+        { provide: Logger, useValue: mockLogger },
       ],
     }).compile();
 

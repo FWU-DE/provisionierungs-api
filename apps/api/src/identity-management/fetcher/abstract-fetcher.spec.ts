@@ -83,6 +83,7 @@ describe('AbstractFetcher', () => {
   beforeEach(async () => {
     // Create a mock for Logger
     mockLogger = {
+      debug: jest.fn(),
       error: jest.fn(),
     } as unknown as jest.Mocked<Logger>;
 

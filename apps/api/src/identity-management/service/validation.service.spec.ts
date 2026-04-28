@@ -1,3 +1,4 @@
+import { Logger } from '../../common/logger';
 import { type TestingInfrastructure, createTestingInfrastructure } from '../../test/testing-module';
 import { Aggregator } from '../aggregator/aggregator';
 import type { SchulconnexGroup } from '../dto/schulconnex/schulconnex-group.dto';
@@ -15,7 +16,21 @@ describe('ValidationService', () => {
     } as unknown as jest.Mocked<Aggregator>;
 
     infra = await createTestingInfrastructure({
-      providers: [ValidationService, { provide: Aggregator, useValue: mockAggregator }],
+      providers: [
+        ValidationService,
+        { provide: Aggregator, useValue: mockAggregator },
+        {
+          provide: Logger,
+          useValue: {
+            setContext: jest.fn(),
+            error: jest.fn(),
+            log: jest.fn(),
+            debug: jest.fn(),
+            warn: jest.fn(),
+            verbose: jest.fn(),
+          },
+        },
+      ],
     }).build();
 
     validationService = infra.module.get(ValidationService);

@@ -1,4 +1,4 @@
-import { ForbiddenException } from '@nestjs/common';
+import { ForbiddenException, Inject } from '@nestjs/common';
 import { Args, Int, Mutation, Resolver } from '@nestjs/graphql';
 
 import { GroupClearanceResponseDto } from '../../clearance/dto/group-clearance-response.dto';
@@ -8,6 +8,7 @@ import {
   type UserContext,
   UserCtx,
 } from '../../common/auth/param-decorators/user-context.decorator';
+import { Logger } from '../../common/logger';
 import { ValidationService } from '../../identity-management/service/validation.service';
 import { OfferValidationService } from '../../offers/service/offer-validation.service';
 import { ClearancePolicyService } from '../clearance-policy.service';
@@ -19,7 +20,10 @@ export class GroupClearanceCreateMutation {
     private readonly offerValidationService: OfferValidationService,
     private readonly idmValidationService: ValidationService,
     private readonly clearancePolicyService: ClearancePolicyService,
-  ) {}
+    @Inject(Logger) private readonly logger: Logger,
+  ) {
+    this.logger.setContext(GroupClearanceCreateMutation.name);
+  }
 
   @Mutation(() => GroupClearanceResponseDto)
   async createGroupClearance(
@@ -29,6 +33,12 @@ export class GroupClearanceCreateMutation {
     @Args('schoolId') schoolId: string,
     @Args('idmId') idmId: string,
   ): Promise<GroupClearanceResponseDto> {
+    this.logger.log(`GroupClearanceCreateMutation: Creating group clearance.`, {
+      offerId: offerId,
+      groupId: groupId,
+      idmId: idmId,
+      schoolId: schoolId,
+    });
     await this.clearancePolicyService.verifyByUserAndOffer(userContext, offerId, idmId, schoolId);
 
     const activeSchoolIds = await this.offerValidationService.validateSchoolsAreActiveForOffer(

@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
+import { Logger } from '../common/logger';
 import { OffersDto } from './dto/offers.dto';
 import { OffersFetcher } from './fetcher/offers.fetcher';
 import { OfferItem } from './model/response/offer-item.model';
@@ -21,9 +22,17 @@ function isOfferItem(item: unknown): item is OfferItem {
 
 @Injectable()
 export class OffersService {
-  constructor(private readonly fetcher: OffersFetcher) {}
+  constructor(
+    private readonly fetcher: OffersFetcher,
+    @Inject(Logger) private readonly logger: Logger,
+  ) {
+    this.logger.setContext(OffersService.name);
+  }
 
   public async getOffers(schoolIds: string[]): Promise<OffersDto[]> {
+    this.logger.debug(`OffersService: Getting offers for school IDs.`, {
+      schoolIds: schoolIds,
+    });
     const offersResponses: OffersResponse[] = (
       await this.fetcher.fetchActiveOffers(schoolIds)
     ).filter((response) => response !== null);
@@ -84,6 +93,9 @@ export class OffersService {
 
   private mapToDto(item: unknown): OffersDto {
     if (!isOfferItem(item)) {
+      this.logger.warn('OffersService: Skipping invalid offer item structure during mapping.', {
+        item,
+      });
       throw new Error('Invalid offer item structure');
     }
 

@@ -27,6 +27,7 @@ export class PersonInfoService {
     clientId: string,
     filterParameters: SchulconnexPersonsQueryParameters,
   ): Promise<SchulconnexPersonsResponseDto[]> {
+    this.logger.debug(`PersonInfoService: Starting person info fetch for client ID: ${clientId}`);
     const offerForClientId = await this.offersFetcher.fetchOfferForClientId(clientId);
     if (!offerForClientId?.offerId) {
       this.logger.error(
@@ -65,6 +66,9 @@ export class PersonInfoService {
     /*
      * Fetch data from IDM
      */
+    this.logger.log(
+      `PersonInfoService: Triggering aggregator to fetch persons for IDMs: ${idmIds.join(', ')}`,
+    );
     return this.aggregator.getPersons(
       idmIds,
       new OfferContext(offerForClientId.offerId, clientId),
