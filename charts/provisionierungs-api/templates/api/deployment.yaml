@@ -126,6 +126,8 @@ spec:
                   key: {{ .Values.api.existingSecret.keyIdmEduplacesClientSecret }}
             - name: IDM_SAARLAND_ENABLED
               value: "true"
+            - name: IDM_SAARLAND_IDENTIFIER
+              value: {{ .Values.api.options.idmSaarlandIdentifier | quote }}
             - name: IDM_SAARLAND_TOKEN_ENDPOINT
               value: {{ .Values.api.options.idmSaarlandTokenEndpoint | quote }}
             - name: IDM_SAARLAND_API_ENDPOINT

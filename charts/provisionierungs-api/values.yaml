@@ -135,6 +135,7 @@ api:
     idmSaarlandApiEndpoint: 'https://nothing-to-see-here.org'
     idmSaarlandScope: ''
     idmSaarlandResource: ''
+    idmSaarlandIdentifier: 'DE-SL-OnlineSchuleSaarlandTest'
 
   existingSecret:
     name: vidis-rostering-api-secrets
