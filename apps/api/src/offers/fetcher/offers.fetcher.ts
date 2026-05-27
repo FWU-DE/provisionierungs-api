@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import z from 'zod';
 
 import { Logger } from '../../common/logger';
 import offersConfig, { type OffersConfig } from '../config/offers.config';
@@ -15,8 +16,18 @@ interface FetchOptions {
   schoolId: string;
 }
 
+const offersAccessTokenResponseSchema = z.object({
+  access_token: z.string().min(1),
+  expires_in: z.number().int().nonnegative(),
+  token_type: z.enum(['bearer', 'Bearer']),
+});
+
 @Injectable()
 export class OffersFetcher {
+  private accessToken: string | null = null;
+  private accessTokenExpiresAt = 0;
+  private tokenRequestPromise: Promise<string> | null = null;
+
   constructor(
     @Inject(offersConfig.KEY)
     private readonly offersConfig: OffersConfig,
@@ -38,14 +49,13 @@ export class OffersFetcher {
 
     const endpointUrl =
       this.offersConfig.OFFERS_API_ENDPOINT + '/offers/' + mode + (options?.schoolId ?? '');
-    const username = this.offersConfig.OFFERS_CLIENT_ID;
-    const password = this.offersConfig.OFFERS_CLIENT_SECRET;
+    const bearerToken = await this.getBearerToken();
 
     this.logger.debug(`OffersFetcher: Requesting offers from ${endpointUrl}`);
     const response = await fetch(endpointUrl, {
       method: 'GET',
       headers: {
-        Authorization: 'Basic ' + Buffer.from(`${username}:${password}`).toString('base64'),
+        Authorization: `Bearer ${bearerToken}`,
       },
     });
 
@@ -71,6 +81,61 @@ export class OffersFetcher {
 
     // Validate response schema
     return validatedData;
+  }
+
+  private async getBearerToken(): Promise<string> {
+    if (this.accessToken && Date.now() < this.accessTokenExpiresAt) {
+      return this.accessToken;
+    }
+
+    if (this.tokenRequestPromise) {
+      return await this.tokenRequestPromise;
+    }
+
+    this.tokenRequestPromise = this.fetchAccessToken();
+
+    try {
+      return await this.tokenRequestPromise;
+    } finally {
+      this.tokenRequestPromise = null;
+    }
+  }
+
+  private async fetchAccessToken(): Promise<string> {
+    const tokenEndpointUrl = `${new URL(this.offersConfig.OFFERS_API_ENDPOINT).origin}/o/oauth2/token`;
+    const clientId = this.offersConfig.OFFERS_CLIENT_ID;
+    const clientSecret = this.offersConfig.OFFERS_CLIENT_SECRET;
+
+    const response = await fetch(tokenEndpointUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        grant_type: 'client_credentials',
+        client_id: clientId,
+        client_secret: clientSecret,
+      }),
+    });
+
+    if (!response.ok) {
+      this.logger.error(
+        `Failed to fetch offers access token: ${String(response.status)} ${response.statusText}`,
+      );
+      throw new Error('Authorization towards Offers API failed.');
+    }
+
+    const tokenResponse: unknown = await response.json();
+    const { error, data: parsedData } = offersAccessTokenResponseSchema.safeParse(tokenResponse);
+
+    if (error) {
+      throw new Error(`Schema Validation | Offers token response is invalid: ${error.message}`);
+    }
+
+    this.accessToken = parsedData.access_token;
+    this.accessTokenExpiresAt = Date.now() + parsedData.expires_in * 1000;
+
+    return parsedData.access_token;
   }
 
   public async fetchActiveOffers(schoolIds: string[]): Promise<(OffersResponse | null)[]> {
