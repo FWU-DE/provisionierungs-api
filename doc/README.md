@@ -93,3 +93,7 @@ Die Oberfläche ist unter https://strukturdaten.vidis.schule erreichbar.
 Die Anmeldung erfolgt über VIDIS.
 
 In der Oberfläche kann eingestellt werden, welche Daten an welches Angebot übertragen werden sollen.
+
+## Stagingsystem
+
+Das Stagingsystem ist unter https://strukturdaten-stage.vidis.schule bzw https://ssd-staging.vidis.schule erreichbar.
