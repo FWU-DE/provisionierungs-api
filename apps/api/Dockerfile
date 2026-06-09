@@ -27,4 +27,6 @@ COPY --from=builder /src/out/full/ .
 COPY --chown=node:node --from=installer /src/apps/api/dist /app/apps/api/dist
 USER node
 
-CMD ["node", "apps/api/dist/src/main.js"]
+# start being relative for migrations
+WORKDIR /app/apps/api
+CMD ["node", "dist/src/main.js"]
