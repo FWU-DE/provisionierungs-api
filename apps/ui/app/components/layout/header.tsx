@@ -55,14 +55,14 @@ export async function Header({ className, ...props }: React.ComponentProps<'div'
 
         {isLoggedIn ? (
           <Button variant={'secondary'} asChild>
-            <LinkNative href="/api/logout" title={tAuth('logout')}>
+            <LinkNative prefetch={false} href="/api/logout" title={tAuth('logout')}>
               <span className="hidden md:inline">{tAuth('logout')}</span>
               <LogOutIcon className="h-4 w-4" />
             </LinkNative>
           </Button>
         ) : (
           <Button variant={'secondary'} asChild>
-            <LinkNative href="/api/login" title={tAuth('login')}>
+            <LinkNative prefetch={false} href="/api/login" title={tAuth('login')}>
               <span className="hidden md:inline">{tAuth('login')}</span>
               <LogOutIcon className="h-4 w-4" />
             </LinkNative>
