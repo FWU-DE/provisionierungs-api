@@ -42,7 +42,6 @@ export async function middleware(request: NextRequest) {
   }
 
   // Check if the user has multiple schools and force a selection of one
-
   if (user.schulkennung.length === 0 && pathname !== localizedUri('/user/no-school-available')) {
     return NextResponse.redirect(new URL(localizedUri('/user/no-school-available'), request.url));
   }
@@ -66,5 +65,5 @@ function redirectToLogout(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/|api/).*)'],
+  matcher: ['/((?!_next/|api/|images/|favicon.ico|robots.txt).*)'],
 };

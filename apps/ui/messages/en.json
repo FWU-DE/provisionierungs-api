@@ -73,11 +73,9 @@
     "empty-button": "Unlock now"
   },
   "component/footer": {
-    "help": "Help",
     "about-us": "About us",
     "legal-notice": "Legal notice",
     "privacy": "Privacy",
-    "terms-and-conditions": "Terms and conditions",
     "logo-alt": "VIDIS Rostering Logo"
   },
   "component/sidebar/main": {

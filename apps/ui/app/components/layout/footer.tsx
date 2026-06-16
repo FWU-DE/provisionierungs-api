@@ -1,7 +1,9 @@
 import * as React from 'react';
+import logo from '@/../assets/images/vidis-logo-white.svg';
 import { Link } from '@/lib/navigation';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
+import type { StaticImageData } from 'next/image';
 import Image from 'next/image';
 
 export interface FooterLinkProps {
@@ -12,31 +14,15 @@ export interface FooterLinkProps {
 
 export interface FooterProps extends React.ComponentProps<'footer'> {
   links: FooterLinkProps[];
-  logoPath?: string;
 }
 
-export function Footer({ links, className, logoPath, ...props }: FooterProps) {
+export function Footer({ links, className, ...props }: FooterProps) {
   const t = useTranslations('component/footer');
   return (
-    <footer className={cn('bg-accent/50 border-t px-4 py-8 md:px-6', className)} {...props}>
-      <div className="mx-auto flex flex-col items-center justify-between gap-6 md:flex-row">
-        {/* Logo to the left */}
-        <div className="shrink-0">
-          <Link href="/apps">
-            {logoPath && (
-              <Image
-                src={logoPath}
-                width={80} // Double the header's 40
-                height={80} // Double the header's 40
-                alt={t('logo-alt')}
-                className={'rounded-md'}
-              />
-            )}
-          </Link>
-        </div>
-
-        {/* Navigation to the right */}
-        <nav className="flex flex-col items-center gap-4 md:flex-row md:justify-end md:gap-x-6 md:gap-y-2">
+    <footer className={cn('bg-primary border-t', className)} {...props}>
+      <div className="mx-auto flex flex-col items-center justify-between gap-6 px-4 xl:container md:flex-row">
+        {/* Navigation */}
+        <nav className="flex flex-col items-center gap-4 md:flex-row md:justify-end md:gap-x-10 md:gap-y-2">
           {links.map((link, index) => (
             <Link
               key={index}
@@ -48,6 +34,19 @@ export function Footer({ links, className, logoPath, ...props }: FooterProps) {
             </Link>
           ))}
         </nav>
+
+        {/* Logo */}
+        <div className="shrink-0">
+          <Link href="/apps" className={'text-foreground hover:text-primary'}>
+            <Image
+              src={logo as StaticImageData}
+              width={80}
+              height={80}
+              alt={t('logo-alt')}
+              className={'m-8 h-12 w-auto rounded-md'}
+            />
+          </Link>
+        </div>
       </div>
     </footer>
   );

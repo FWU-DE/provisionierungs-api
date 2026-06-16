@@ -53,7 +53,7 @@ function TabItem({ active, onClick, icon: Icon, label }: TabItemProps) {
       onClick={onClick}
       className={cn(
         'flex w-1/3 cursor-pointer flex-col items-center gap-2 rounded-lg border border-gray-300 px-6 py-4 text-lg font-medium transition-colors',
-        active ? 'bg-primary text-white' : 'text-muted-foreground hover:text-foreground',
+        active ? 'bg-primary text-white' : 'text-foreground hover:text-foreground',
       )}
     >
       <Icon className="size-8" />
@@ -331,7 +331,7 @@ export function OfferSettings({
 
           {hasChanges && (
             <>
-              <Button variant="outline" onClick={handleCancel} disabled={isPending}>
+              <Button variant="secondary" onClick={handleCancel} disabled={isPending}>
                 {t('cancel')}
               </Button>
               <form action={handleSave}>

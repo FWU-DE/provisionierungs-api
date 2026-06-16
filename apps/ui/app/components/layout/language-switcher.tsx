@@ -43,7 +43,7 @@ export function LanguageSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-9 gap-2 px-3">
+        <Button variant="secondary" size="sm" className="h-9 px-3">
           <span className="text-lg" aria-hidden="true">
             {FLAGS[locale] || '🌐'}
           </span>

@@ -1,6 +1,11 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+@import '@fontsource/barlow/300.css';
+@import '@fontsource/barlow/400.css';
+@import '@fontsource/barlow/500.css';
+@import '@fontsource/barlow/600.css';
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -8,14 +13,13 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
+
+  --color-primary: var(--vidis-blue-100);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--vidis-blue-hover-100);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -26,11 +30,23 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-badge-default: var(--badge-default);
+  --color-badge-default-hover: var(--badge-default-hover);
+  --color-badge-default-foreground: var(--badge-default-foreground);
+
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -39,37 +55,118 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-vidis-blue-100: var(--vidis-blue-100);
+  --color-vidis-blue-hover-100: var(--vidis-blue-hover-100);
+  --color-vidis-blue-hover-40: var(--vidis-blue-hover-40);
+  --color-vidis-blue-light-100: var(--vidis-blue-light-100);
+  --color-vidis-black-100: var(--vidis-black-100);
+  --color-vidis-black-70: var(--vidis-black-70);
+  --color-vidis-black-40: var(--vidis-black-40);
+  --color-vidis-black-30: var(--vidis-black-30);
+  --color-vidis-black-20: var(--vidis-black-20);
+  --color-vidis-black-10: var(--vidis-black-10);
+  --color-vidis-gray-100: var(--vidis-gray-100);
+  --color-vidis-gray-70: var(--vidis-gray-70);
+  --color-vidis-gray-40: var(--vidis-gray-40);
+  --color-vidis-gray-30: var(--vidis-gray-30);
+  --color-vidis-gray-20: var(--vidis-gray-20);
+  --color-vidis-gray-10: var(--vidis-gray-10);
+  --color-vidis-text-disabled: var(--vidis-text-disabled);
+  --color-vidis-text-dark: var(--vidis-text-dark);
+  --color-vidis-text-link: var(--vidis-text-link);
+  --color-vidis-text-blue: var(--vidis-text-blue);
+  --color-vidis-lines: var(--vidis-lines);
+  --color-vidis-lines-darker: var(--vidis-lines-darker);
+  --color-vidis-bg-dark: var(--vidis-bg-dark);
+  --color-vidis-bg-mid: var(--vidis-bg-mid);
+  --color-vidis-bg-light: var(--vidis-bg-light);
+  --color-vidis-signal-green: var(--vidis-signal-green);
+  --color-vidis-signal-blue: var(--vidis-signal-blue);
+  --color-vidis-signal-yellow: var(--vidis-signal-yellow);
+  --color-vidis-signal-red: var(--vidis-signal-red);
+  --color-vidis-message-green: var(--vidis-message-green);
+  --color-vidis-message-blue: var(--vidis-message-blue);
+  --color-vidis-message-yellow: var(--vidis-message-yellow);
+  --color-vidis-message-red: var(--vidis-message-red);
 }
 
 :root {
+  /* VIDIS specific variables */
+  --font-sans: "Barlow", sans-serif;
+
+  --vidis-blue-100: #0000C4;
+  --vidis-blue-hover-100: #0032C4;
+  --vidis-blue-hover-40: #F7F7FD;
+  --vidis-blue-light-100: #D2EEFF;
+  --vidis-black-100: #000000;
+  --vidis-black-70: color-mix(in srgb, var(--vidis-black-100) 70%, transparent);
+  --vidis-black-40: color-mix(in srgb, var(--vidis-black-100) 40%, transparent);
+  --vidis-black-30: color-mix(in srgb, var(--vidis-black-100) 30%, transparent);
+  --vidis-black-20: color-mix(in srgb, var(--vidis-black-100) 20%, transparent);
+  --vidis-black-10: color-mix(in srgb, var(--vidis-black-100) 10%, transparent);
+  --vidis-gray-100: #808080;
+  --vidis-gray-70: color-mix(in srgb, var(--vidis-gray-100) 70%, transparent);
+  --vidis-gray-40: color-mix(in srgb, var(--vidis-gray-100) 40%, transparent);
+  --vidis-gray-30: color-mix(in srgb, var(--vidis-gray-100) 30%, transparent);
+  --vidis-gray-20: color-mix(in srgb, var(--vidis-gray-100) 20%, transparent);
+  --vidis-gray-10: color-mix(in srgb, var(--vidis-gray-100) 10%, transparent);
+  --vidis-text-disabled: color-mix(in srgb, #707070 50%, transparent);
+  --vidis-text-dark: #333333;
+  --vidis-text-link: #1B8FD9;
+  --vidis-text-blue: #0032C4;
+  --vidis-lines: #DDDDDD;
+  --vidis-lines-darker: #CCCCCC;
+  --vidis-bg-dark: #EBEBEB;
+  --vidis-bg-mid: #F3F3F3;
+  --vidis-bg-light: #F7F7F7;
+  --vidis-signal-green: #4DE54D;
+  --vidis-signal-blue: #4D95E5;
+  --vidis-signal-yellow: #E6E54D;
+  --vidis-signal-red: #E55E4D;
+  --vidis-message-green: #E9FCE9;
+  --vidis-message-blue: #E9F2FC;
+  --vidis-message-yellow: #FCFCE9;
+  --vidis-message-red: #FBEBE9;
+
+  /* General variables */
   --radius: 0.625rem;
-  --background: oklch(0.98 0.01 240);
-  --foreground: oklch(0.25 0.12 264);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.25 0.12 264);
+  --background: var(--color-white);
+  --foreground: var(--vidis-text-dark);
+
+  --primary: var(--vidis-blue-100);
+  --primary-foreground: var(--vidis-blue-light-100);
+  --secondary: var(--color-white);
+  --secondary-foreground: var(--vidis-blue-100);
+  --muted: color-mix(in srgb, var(--color-black) 50%, transparent);
+  --muted-foreground: var(--vidis-blue-hover-40);
+  --accent: var(--vidis-blue-light-100);
+  --accent-foreground: var(--vidis-blue-100);
+  --destructive: var(--vidis-signal-red);
+  --border: var(--vidis-lines);
+  --input: var(--color-white);
+  --ring: var(--vidis-blue-100);
+
+  --card: var(--color-white);
+  --card-foreground: var(--vidis-text-dark);
+
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.25 0.12 264);
-  --primary: oklch(0.42 0.22 264);
-  --primary-foreground: oklch(0.98 0.01 240);
-  --secondary: oklch(0.92 0.04 240);
-  --secondary-foreground: oklch(0.25 0.12 264);
-  --muted: oklch(0.96 0.02 240);
-  --muted-foreground: oklch(0.5 0.1 264);
-  --accent: oklch(0.68 0.15 60);
-  --accent-foreground: oklch(0.98 0.01 240);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.88 0.03 240);
-  --input: oklch(0.88 0.03 240);
-  --ring: oklch(0.42 0.22 264);
+
+  --badge-default: var(--vidis-gray-10);
+  --badge-default-hover: var(--vidis-gray-20);
+  --badge-default-foreground: var(--vidis-text-dark);
+
   --chart-1: oklch(0.42 0.22 264);
   --chart-2: oklch(0.92 0.04 240);
   --chart-3: oklch(0.68 0.15 60);
   --chart-4: oklch(0.6 0.2 280);
   --chart-5: oklch(0.7 0.18 240);
-  --sidebar: oklch(0.98 0.01 240);
-  --sidebar-foreground: oklch(0.25 0.12 264);
-  --sidebar-primary: oklch(0.42 0.22 264);
-  --sidebar-primary-foreground: oklch(0.98 0.01 240);
+
+  --sidebar: var(--color-white);
+  --sidebar-foreground: var(--vidis-text-dark);
+  --sidebar-primary: var(--vidis-blue-100);
+  --sidebar-primary-foreground: var(--vidis-blue-light-100);
   --sidebar-accent: oklch(0.92 0.04 240);
   --sidebar-accent-foreground: oklch(0.25 0.12 264);
   --sidebar-border: oklch(0.88 0.03 240);
@@ -79,8 +176,8 @@
 .dark {
   --background: oklch(0.147 0.004 49.25);
   --foreground: oklch(0.985 0.001 106.423);
-  --card: oklch(0.216 0.006 56.043);
-  --card-foreground: oklch(0.985 0.001 106.423);
+  --card: var(--color-white);
+  --card-foreground: var(--vidis-text-dark);
   --popover: oklch(0.216 0.006 56.043);
   --popover-foreground: oklch(0.985 0.001 106.423);
   --primary: oklch(0.923 0.003 48.717);

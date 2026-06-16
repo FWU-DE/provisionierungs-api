@@ -48,7 +48,6 @@
         "OFFERS_CLIENT_SECRET",
         "SELF_BASE_URL",
         "AUTH_REQUESTED_SCOPES",
-        "APP_LOGO_PATH",
         "APP_ALLOWED_IMAGE_DOMAINS"
       ],
       "outputs": [".next/**", "dist/**", "!.next/cache/**"]

@@ -32,15 +32,15 @@ export default async function RootLayout({
   return (
     <>
       <Header />
-      <main className="container mx-auto px-4 pt-20">
+      <main className="mx-auto px-4 pt-[76px] xl:container">
         <div className="flex w-full flex-col md:flex-row md:gap-6">
-          <aside className="w-full md:w-1/4">
+          <aside className="w-full py-10 md:w-1/4">
             <SidebarMain />
           </aside>
 
           <Separator className="mt-6 md:hidden" />
 
-          <article className="w-full pt-10 md:w-3/4 md:pt-0">{children}</article>
+          <article className="w-full pt-10 md:w-3/4">{children}</article>
         </div>
       </main>
     </>

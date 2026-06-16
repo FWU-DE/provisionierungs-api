@@ -72,11 +72,9 @@
     "empty-button": "Jetzt freischalten"
   },
   "component/footer": {
-    "help": "Hilfe",
     "about-us": "Über uns",
     "legal-notice": "Impressum",
     "privacy": "Datenschutz",
-    "terms-and-conditions": "AGB",
     "logo-alt": "VIDIS Rostering Logo"
   },
   "component/sidebar/main": {

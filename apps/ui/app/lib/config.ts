@@ -4,7 +4,6 @@ export interface Config {
   clientSecret: string;
   authUrl: string;
   apiBaseUrl: string;
-  appLogoPath: string;
   appAllowedImageDomains: string[];
   sessionCookieName: string;
   schoolSelectionCookieName: string;
@@ -31,7 +30,6 @@ export function getConfig(): Config {
     clientSecret: process.env.AUTH_CLIENT_SECRET,
     authUrl: process.env.AUTH_URL,
     apiBaseUrl: process.env.API_BASE_URL ?? 'http://localhost:3010',
-    appLogoPath: process.env.APP_LOGO_PATH ?? '',
     appAllowedImageDomains: process.env.APP_ALLOWED_IMAGE_DOMAINS
       ? process.env.APP_ALLOWED_IMAGE_DOMAINS.split(',')
       : [],

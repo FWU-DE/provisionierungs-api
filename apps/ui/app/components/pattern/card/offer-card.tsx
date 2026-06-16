@@ -17,7 +17,7 @@ import Image from 'next/image';
 
 export function OfferCardSkeleton({ className, ...props }: React.ComponentProps<'div'>) {
   return (
-    <Card className={cn(className, 'w-full bg-gray-50')} {...props}>
+    <Card className={cn(className, 'w-full')} {...props}>
       <CardHeader>
         <div className={'flex justify-start gap-6'}>
           <Skeleton className={'h-[76px] w-[76px] rounded-md shadow-md'} />
@@ -65,7 +65,7 @@ export function OfferCard({
   ...props
 }: React.ComponentProps<'div'> & OfferCardProps) {
   return (
-    <Card className={cn(className, 'w-full bg-gray-50')} {...props}>
+    <Card className={cn(className, 'w-full')} {...props}>
       <CardHeader>
         <div className={'flex min-w-0 justify-start gap-6'}>
           {logo && (
@@ -115,10 +115,10 @@ export function OfferCard({
         )}
 
         {groups && groups.length > 0 && (!schools || schools.length === 0) && (
-          <div className="mt-2 flex flex-wrap gap-2">
+          <div className="mt-4 flex flex-wrap gap-2">
             {groups.map((group) => (
               <Badge key={group} variant="default">
-                <span className="font-semibold">{group}</span>
+                <span>{group}</span>
                 <UsersIcon className="ml-1 h-4 w-4" />
               </Badge>
             ))}
@@ -129,7 +129,7 @@ export function OfferCard({
           <div className="mt-2 flex flex-wrap gap-2">
             {schools.map((school) => (
               <Badge key={school} variant="default">
-                <span className="font-semibold">{school}</span>
+                <span>{school}</span>
                 <SchoolIcon className="ml-1 h-4 w-4" />
               </Badge>
             ))}

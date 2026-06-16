@@ -27,6 +27,7 @@ function SidebarItem({
       <Button
         variant={isActive ? 'default' : 'ghost'}
         className={cn('w-full justify-start', isActive ? 'bg-primary text-primary-foreground' : '')}
+        size="lg"
         asChild
       >
         <Link href={href}>

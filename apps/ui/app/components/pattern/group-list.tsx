@@ -74,7 +74,7 @@ export function GroupList({
             <li key={group.id}>
               <a
                 role="button"
-                className="hover:border-primary relative flex cursor-pointer items-center rounded-2xl border-2 border-gray-300 bg-white px-8 py-4 text-xs"
+                className="hover:border-primary relative flex cursor-pointer items-center rounded-2xl border-2 border-gray-300 bg-white px-8 py-3 text-xs"
                 onClick={() => {
                   onClickGroup(group.id);
                 }}
@@ -98,7 +98,7 @@ export function GroupList({
               })}
             </div>
           )}
-          <p className="text-muted-foreground text-sm">{t('no-groups')}</p>
+          <p className="text-vidis-black-100 text-sm">{t('no-groups')}</p>
         </div>
       )}
     </div>

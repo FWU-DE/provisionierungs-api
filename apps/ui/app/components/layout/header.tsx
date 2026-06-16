@@ -1,12 +1,13 @@
 import * as React from 'react';
+import logo from '@/../assets/images/vidis-logo-blue.svg';
 import { Button } from '@/components/ui/button';
-import { getConfig } from '@/lib/config';
 import { Link } from '@/lib/navigation';
 import { verifySession } from '@/lib/session';
 import { getUserSchoolSelection } from '@/lib/user/user';
 import { cn } from '@/lib/utils';
 import { HouseIcon, LogOutIcon } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
+import type { StaticImageData } from 'next/image';
 import Image from 'next/image';
 import LinkNative from 'next/link';
 
@@ -24,30 +25,29 @@ export async function Header({ className, ...props }: React.ComponentProps<'div'
   return (
     <header
       className={cn(
-        'bg-accent fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-4 py-2',
+        'bg-background fixed left-0 right-0 top-0 z-50 flex items-center justify-between border-b px-4',
         className,
       )}
       {...props}
     >
-      <Link href="/apps">
-        {getConfig().appLogoPath && (
-          <Image
-            src={getConfig().appLogoPath}
-            width={40}
-            height={40}
-            alt={t('logo-alt')}
-            className={'rounded-md'}
-          />
-        )}
+      <Link href="/apps" className="shrink-0">
+        <Image
+          src={logo as StaticImageData}
+          width={40}
+          height={40}
+          alt={t('logo-alt')}
+          className={'m-6 h-9 w-auto rounded-md'}
+          loading="eager"
+        />
       </Link>
 
-      <nav className="flex items-center gap-2">
+      <nav className="flex items-center gap-2 md:gap-4">
         <LanguageSwitcher />
 
         {isLoggedIn && (
-          <Button variant={'outline'} asChild>
+          <Button variant={'secondary'} asChild>
             <Link href="/user/select-school" title={t('select-school')}>
-              {selectedSchool}
+              <span className={'hidden md:inline'}>{selectedSchool}</span>
               <HouseIcon className="h-4 w-4" />
             </Link>
           </Button>
