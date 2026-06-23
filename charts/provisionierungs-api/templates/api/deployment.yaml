@@ -146,6 +146,9 @@ spec:
               value: {{ .Values.api.options.idmSaarlandScope | quote }}
             - name: IDM_SAARLAND_RESOURCE
               value: {{ .Values.api.options.idmSaarlandResource | quote }}
+            {{- with .Values.api.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
           {{- with .Values.api.resources }}
           resources:
             {{- toYaml . | nindent 12 }}

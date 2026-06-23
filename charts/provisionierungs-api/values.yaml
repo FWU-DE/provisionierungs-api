@@ -123,6 +123,10 @@ api:
 
   affinity: {}
 
+  extraEnv: []
+    # - name: FEATURE_FLAG
+    #   value: "true"
+
   options:
     logLevel: 'log'
     logFormat: 'plain' # or json
@@ -257,6 +261,10 @@ ui:
     httpGet:
       path: /
       port: http
+
+  extraEnv: []
+    # - name: PUBLIC_FEATURE_FLAG
+    #   value: "true"
 
   # This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
   autoscaling:
