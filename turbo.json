@@ -48,7 +48,9 @@
         "OFFERS_CLIENT_SECRET",
         "SELF_BASE_URL",
         "AUTH_REQUESTED_SCOPES",
-        "APP_ALLOWED_IMAGE_DOMAINS"
+        "APP_ALLOWED_IMAGE_DOMAINS",
+        "OTEL_SDK_DISABLED",
+        "OTEL_SERVICE_NAME"
       ],
       "outputs": [".next/**", "dist/**", "!.next/cache/**"]
     },
@@ -71,7 +73,8 @@
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "passThroughEnv": ["OTEL_SDK_DISABLED", "OTEL_SERVICE_NAME", "OTEL_LOG_LEVEL"]
     }
   }
 }

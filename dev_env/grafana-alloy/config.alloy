@@ -1,0 +1,101 @@
+// This component receives tracing information from our applications via HTTP or gRPC
+otelcol.receiver.otlp "default" {
+  grpc {}
+  http {}
+
+  output {
+    // We only output traces (and ignore OTEL "metrics" and "logs") to the next component
+    traces = [otelcol.processor.memory_limiter.default.input]
+  }
+}
+
+// This component limits memory usage before traces enter the buffering tail sampler.
+otelcol.processor.memory_limiter "default" {
+  check_interval = "1s"
+
+  // May use at-most 90% of allowed RAM
+  limit_percentage = 90
+  // Soft Limit = 90% - 15% = 75%
+  spike_limit_percentage = 15
+
+  output {
+    traces = [otelcol.processor.tail_sampling.default.input]
+  }
+}
+
+// This component decides which complete traces should be kept.
+// Policies are evaluated like an OR: if any policy matches, the trace is sampled.
+otelcol.processor.tail_sampling "default" {
+  // A shorter value reduces buffering but can sample incomplete traces (Default: 30s)
+  decision_wait = "2s"
+
+  // Maximum number of traces kept in memory (Default: 50000)
+  num_traces = 10000
+
+  // Keep traces containing at least one span marked as ERROR.
+  policy {
+    name = "errors"
+    type = "status_code"
+
+    status_code {
+      status_codes = ["ERROR"]
+    }
+  }
+
+  // Keep traces whose end-to-end duration exceeds 15 seconds.
+  policy {
+    name = "slow"
+    type = "latency"
+
+    latency {
+      threshold_ms = 15000
+    }
+  }
+
+  // Keep a small sample of everything else to provide baseline visibility.
+  policy {
+    name = "baseline"
+    type = "probabilistic"
+
+    probabilistic {
+     // For Development: We sample 100% of all traces. On production, this value is much lower.
+      sampling_percentage = 100
+    }
+  }
+
+  output {
+    traces = [otelcol.processor.filter.drop_fast_spans.input]
+  }
+}
+
+// This comment drops spans of length <1ms
+otelcol.processor.filter "drop_fast_spans" {
+  error_mode = "ignore" // Recommended by Alloy documentation
+
+  traces {
+    span = [
+     `end_time_unix_nano - start_time_unix_nano < 1000000`,
+    ]
+  }
+
+  output {
+    traces = [otelcol.processor.batch.default.input]
+  }
+}
+
+// This component batches incoming traces before passing them on
+otelcol.processor.batch "default" {
+  output {
+    traces = [otelcol.exporter.otlp.tempo.input]
+  }
+}
+
+// This component sends the traces off to the Tempo tracing backend
+otelcol.exporter.otlp "tempo" {
+  client {
+    endpoint = "grafana-tempo:4317"
+    tls {
+      insecure = true
+    }
+  }
+}

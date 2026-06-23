@@ -24,6 +24,8 @@
   "dependencies": {
     "@apollo/client": "^4.0.8",
     "@apollo/client-integration-nextjs": "^0.14.1",
+    "@opentelemetry/core": "^2.8.0",
+    "@opentelemetry/sdk-trace-base": "^2.8.0",
     "gql.tada": "^1.8.13",
     "next-auth": "^4.24.12",
     "react": "catalog:",

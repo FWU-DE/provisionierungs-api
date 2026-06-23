@@ -1,21 +1,24 @@
 apiVersion: 1
 
 datasources:
+  - name: Prometheus
+    uid: 'prometheus'
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    editable: false
+
   - name: Tempo
     type: tempo
     access: proxy
-    orgId: 1
-    url: http://tempo:3200
-    basicAuth: false
-    isDefault: true
-    version: 1
+    url: http://grafana-tempo:3200
     editable: false
-    apiVersion: 1
-    uid: tempo-streaming-enabled
     jsonData:
-      httpMethod: GET
-      serviceMap:
-        datasourceUid: prometheus
       streamingEnabled:
         search: true
         metrics: true
+      # Enable Service Graph
+      serviceMap:
+        datasourceUid: 'prometheus'
+      nodeGraph:
+        enabled: true

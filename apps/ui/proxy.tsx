@@ -17,7 +17,7 @@ const intlMiddleware = createMiddleware({
   localePrefix: 'always',
 });
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const localizedUri = (uri: string) => {
     const [, locale] = pathname.split('/');

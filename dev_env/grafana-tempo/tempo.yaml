@@ -1,0 +1,38 @@
+storage:
+  # For a development setup, we won't store our data in block storage like S3,
+  # so we configure it to a local directory.
+  trace:
+    backend: local
+    local:
+      path: /var/tempo/blocks
+
+stream_over_http_enabled: true
+
+distributor:
+  receivers:
+    otlp:
+      # Realistically, we only need either gRCP *or* HTTP,
+      # so we're going with the former here.
+      protocols:
+        grpc:
+          endpoint: "grafana-tempo:4317"
+
+metrics_generator:
+  ring:
+    kvstore:
+      store: inmemory
+  storage:
+    path: /var/tempo/generator/wal
+    remote_write:
+      - url: http://prometheus:9090/api/v1/write
+
+overrides:
+  defaults:
+    metrics_generator:
+      processors:
+        - service-graphs
+        - span-metrics
+
+# Don't send usage statistics to Grafana
+usage_report:
+  reporting_enabled: false
