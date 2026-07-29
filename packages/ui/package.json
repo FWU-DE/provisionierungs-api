@@ -27,7 +27,7 @@
     "@opentelemetry/core": "^2.8.0",
     "@opentelemetry/sdk-trace-base": "^2.8.0",
     "gql.tada": "^1.8.13",
-    "next-auth": "^4.24.12",
+    "next-auth": "^4.24.15",
     "react": "catalog:",
     "react-dom": "catalog:",
     "rxjs": "^7.8.2"
