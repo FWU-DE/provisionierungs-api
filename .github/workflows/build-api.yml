@@ -15,18 +15,18 @@ jobs:
       actions: read
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version: 22
           cache: 'pnpm'
       - name: Install Node Dependencies
         run: pnpm install
       - name: Setup infrastructure
-        uses: hoverkraft-tech/compose-action@v2.0.0
+        uses: hoverkraft-tech/compose-action@11beaa1c2dae4e8ed7b1665aa074723b6cecb0e4 # v3.0.0
         with:
           compose-file: 'test_env/docker-compose.yml'
       - name: Prepare environment
@@ -34,13 +34,13 @@ jobs:
         run: cp .env.example .env
       - name: Tests
         run: pnpm --filter @fwu/vidis-rostering-api test:cov --json --testLocationInResults --outputFile=./coverage/report.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: coverage-report
           path: ./apps/api/coverage/report.json
           retention-days: 7
       - name: Find Pull Request
-        uses: jwalton/gh-find-current-pr@v1
+        uses: jwalton/gh-find-current-pr@f3d61b485d2801773f7a07b2aaa3306bd8f8e653 # v1.3.5
         id: findPr
       - name: Find Run ID for main branch
         id: findRunId
@@ -51,7 +51,7 @@ jobs:
         if: success() && steps.findPr.outputs.number
         env:
           GH_TOKEN: ${{ github.token }}
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         id: downloadBaseline
         if: success() && steps.findPr.outputs.number
         continue-on-error: true
@@ -61,7 +61,7 @@ jobs:
           run-id: ${{ steps.findRunId.outputs.RUN_ID }}
           github-token: ${{ github.token }}
       - name: Coverage Report with baseline
-        uses: ArtiomTr/jest-coverage-report-action@v2
+        uses: ArtiomTr/jest-coverage-report-action@262a7bb0b20c4d1d6b6b026af0f008f78da72788 # v2.3.1
         id: coverageReport
         if: success() && steps.findPr.outputs.number && steps.downloadBaseline.outcome == 'success'
         with:
@@ -71,7 +71,7 @@ jobs:
           output: report-markdown
           prnumber: ${{ steps.findPr.outputs.number }}
       - name: Coverage Report
-        uses: ArtiomTr/jest-coverage-report-action@v2
+        uses: ArtiomTr/jest-coverage-report-action@262a7bb0b20c4d1d6b6b026af0f008f78da72788 # v2.3.1
         id: coverageReportFailure
         if: success() && steps.findPr.outputs.number && steps.downloadBaseline.outcome == 'failure'
         with:
@@ -83,12 +83,12 @@ jobs:
           output: report-markdown
           prnumber: ${{ steps.findPr.outputs.number }}
           package-manager: pnpm
-      - uses: marocchino/sticky-pull-request-comment@v2
+      - uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
         if: success() && steps.findPr.outputs.number && steps.coverageReportFailure.outputs.report
         with:
           number: ${{ steps.findPr.outputs.number }}
           message: ${{ steps.coverageReportFailure.outputs.report }}
-      - uses: marocchino/sticky-pull-request-comment@v2
+      - uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
         if: success() && steps.findPr.outputs.number && steps.coverageReport.outputs.report
         with:
           number: ${{ steps.findPr.outputs.number }}
@@ -98,11 +98,11 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version: 22
           cache: 'pnpm'

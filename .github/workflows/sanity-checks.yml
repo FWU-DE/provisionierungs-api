@@ -11,7 +11,7 @@ jobs:
     name: pnpm as package manager
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Check if package manager is pnpm
         run: 'test ! -f yarn.lock && test ! -f package-lock.json && test -f pnpm-lock.yaml'
         shell: bash
@@ -20,9 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: package-manager
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Lint monorepo
-        uses: QuiiBz/sherif@v1
+        uses: QuiiBz/sherif@1eeac7104af1a6143d7f5d17d18d11635222ca8d # v1.13.0
   linter:
     name: Linter
     runs-on: ubuntu-latest
@@ -32,11 +32,11 @@ jobs:
       checks: write
       pull-requests: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version: 22
           cache: 'pnpm'
@@ -52,11 +52,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: package-manager
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version: 22
           cache: 'pnpm'
