@@ -90,6 +90,8 @@ export default async function OfferDetails({ params }: OfferDetailsProps) {
         } else {
           await deleteSchoolClearance(offerId, idmId, schoolId);
         }
+      } else {
+        throw new Error('User session is not valid or school ID is missing.');
       }
     } catch (error) {
       return { success: false, error: (error as Error).message };

@@ -4,6 +4,7 @@ import {
   clearUserSchoolSelection,
   getUserFromSession,
   getUserSchoolSelection,
+  setUserSchoolSelection,
 } from '@/lib/user/user';
 import createMiddleware from 'next-intl/middleware';
 import type { NextRequest } from 'next/server';
@@ -45,9 +46,12 @@ export async function proxy(request: NextRequest) {
   if (user.schulkennung.length === 0 && pathname !== localizedUri('/user/no-school-available')) {
     return NextResponse.redirect(new URL(localizedUri('/user/no-school-available'), request.url));
   }
-  if (user.schulkennung.length > 1 && pathname !== localizedUri('/user/select-school')) {
+
+  if (user.schulkennung.length > 0 && pathname !== localizedUri('/user/select-school')) {
     const selection = await getUserSchoolSelection();
-    if (!selection || !user.schulkennung.includes(selection)) {
+    if (!selection && user.schulkennung.length == 1) {
+      await setUserSchoolSelection(user.schulkennung[0]);
+    } else if (!selection || !user.schulkennung.includes(selection)) {
       await clearUserSchoolSelection();
       return NextResponse.redirect(new URL(localizedUri('/user/select-school'), request.url));
     }
