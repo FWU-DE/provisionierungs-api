@@ -2,12 +2,6 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 
 import { SchulconnexPersonsQueryParameters } from '../../controller/parameters/schulconnex-persons-query-parameters';
-import type { SchulconnexGroup } from '../dto/schulconnex/schulconnex-group.dto';
-import type { SchulconnexGroupdataset } from '../dto/schulconnex/schulconnex-groupdataset.dto';
-import type { SchulconnexName } from '../dto/schulconnex/schulconnex-name.dto';
-import type { SchulconnexOrganization } from '../dto/schulconnex/schulconnex-organization.dto';
-import type { SchulconnexPersonContext } from '../dto/schulconnex/schulconnex-person-context.dto';
-import type { SchulconnexPerson } from '../dto/schulconnex/schulconnex-person.dto';
 import type { SchulconnexPersonsResponseDto } from '../dto/schulconnex/schulconnex-persons-response.dto';
 import { PostRequestFilter } from './post-request-filter';
 
@@ -30,12 +24,12 @@ describe('PostRequestFilter', () => {
           name: {
             familienname: 'Doe',
             vorname: 'John',
-          } as SchulconnexName,
+          },
           stammorganisation: {
             id: 'org-1',
             name: 'School 1',
-          } as SchulconnexOrganization,
-        } as SchulconnexPerson,
+          },
+        },
         personenkontexte: [
           {
             id: 'context-1',
@@ -43,31 +37,31 @@ describe('PostRequestFilter', () => {
             organisation: {
               id: 'org-1',
               name: 'School 1',
-            } as SchulconnexOrganization,
+            },
             gruppen: [
               {
                 gruppe: {
                   id: 'group-1',
                   bezeichnung: 'Class 1',
-                } as SchulconnexGroup,
-              } as SchulconnexGroupdataset,
+                },
+              },
             ],
             loeschung: null,
-          } as SchulconnexPersonContext,
+          },
         ],
-      } as SchulconnexPersonsResponseDto,
+      },
       {
         pid: 'person-2',
         person: {
           name: {
             familienname: 'Smith',
             vorname: 'Jane',
-          } as SchulconnexName,
+          },
           stammorganisation: {
             id: 'org-2',
             name: 'School 2',
-          } as SchulconnexOrganization,
-        } as SchulconnexPerson,
+          },
+        },
         personenkontexte: [
           {
             id: 'context-2',
@@ -75,24 +69,24 @@ describe('PostRequestFilter', () => {
             organisation: {
               id: 'org-2',
               name: 'School 2',
-            } as SchulconnexOrganization,
+            },
             gruppen: [
               {
                 gruppe: {
                   id: 'group-2',
                   bezeichnung: 'Class 2',
-                } as SchulconnexGroup,
-              } as SchulconnexGroupdataset,
+                },
+              },
             ],
             loeschung: null,
-          } as SchulconnexPersonContext,
+          },
         ],
-      } as SchulconnexPersonsResponseDto,
+      },
       // Add a person with no person data and no context data for edge case testing
       {
         pid: 'person-3',
         personenkontexte: [],
-      } as SchulconnexPersonsResponseDto,
+      },
     ];
   });
 

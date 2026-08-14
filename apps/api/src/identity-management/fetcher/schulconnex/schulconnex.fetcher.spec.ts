@@ -76,7 +76,7 @@ describe('SchulconnexFetcher', () => {
       mockFetch.mockResolvedValue({
         ok: true,
         json: () => Promise.resolve(mockResponse),
-      } as unknown as Response);
+      });
 
       // Call the method
       const result = await fetcher.fetchPersons(mockEndpointUrl, mockParameters, mockToken, {
@@ -110,7 +110,7 @@ describe('SchulconnexFetcher', () => {
         status: 500,
         statusText: 'Internal Server Error',
         text: () => Promise.resolve('Server error'),
-      } as unknown as Response);
+      });
 
       // Call the method
       const result = await fetcher.fetchPersons(mockEndpointUrl, mockParameters, mockToken);
@@ -133,7 +133,7 @@ describe('SchulconnexFetcher', () => {
       mockFetch.mockResolvedValue({
         ok: true,
         json: () => Promise.resolve(mockResponse),
-      } as unknown as Response);
+      });
 
       // Call the method
       const result = await fetcher.fetchPersons(mockEndpointUrl, mockParameters, mockToken);

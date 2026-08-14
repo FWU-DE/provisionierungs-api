@@ -41,7 +41,7 @@ export function GroupList({
         <div className="relative flex items-center">
           <Search className="text-muted-foreground absolute left-3 h-5 w-5" />
           <Input
-            className="border-0 py-0 pl-10 pr-10 text-lg font-semibold text-black shadow-none placeholder:text-lg placeholder:font-semibold placeholder:text-black focus-visible:ring-0 md:text-lg"
+            className="border-0 py-0 pr-10 pl-10 text-lg font-semibold text-black shadow-none placeholder:text-lg placeholder:font-semibold placeholder:text-black focus-visible:ring-0 md:text-lg"
             placeholder={headline ?? t('headline')}
             value={searchTerm}
             onChange={(e) => {

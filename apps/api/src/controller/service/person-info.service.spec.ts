@@ -7,7 +7,6 @@ import { GroupClearanceService } from '../../clearance/group-clearance.service';
 import { SchoolClearanceService } from '../../clearance/school-clearance.service';
 import { Logger } from '../../common/logger';
 import { Aggregator } from '../../identity-management/aggregator/aggregator';
-import type { SchulconnexPersonsResponseDto } from '../../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
 import { OffersFetcher } from '../../offers/fetcher/offers.fetcher';
 import { OfferContext } from '../../offers/model/offer-context';
 import type { OfferItem } from '../../offers/model/response/offer-item.model';
@@ -142,7 +141,7 @@ describe('PersonInfoService', () => {
         groupClearances,
         schoolClearances,
       });
-      aggregator.getPersons.mockResolvedValue(persons as SchulconnexPersonsResponseDto[]);
+      aggregator.getPersons.mockResolvedValue(persons);
 
       const result = await service.fetchPersons(clientId, filterParameters);
 

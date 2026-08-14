@@ -173,7 +173,7 @@ describe('OffersFetcher', () => {
       text: jest.fn().mockResolvedValue('Unauthorized'),
     });
 
-    global.fetch = mockFetch as unknown as typeof global.fetch;
+    global.fetch = mockFetch;
 
     await expect(fetcher.fetchOfferForClientId('client-1')).rejects.toThrow(
       'Authorization towards Offers API failed.',
@@ -197,7 +197,7 @@ describe('OffersFetcher', () => {
         text: jest.fn().mockResolvedValue('Failure'),
       });
 
-    global.fetch = mockFetch as unknown as typeof global.fetch;
+    global.fetch = mockFetch;
 
     const result = await fetcher.fetchOfferForClientId('client-1');
 

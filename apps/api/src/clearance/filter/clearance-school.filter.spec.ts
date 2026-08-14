@@ -1,5 +1,4 @@
 import type { SchulconnexGroupdataset } from '../../identity-management/dto/schulconnex/schulconnex-groupdataset.dto';
-import type { SchulconnexOrganization } from '../../identity-management/dto/schulconnex/schulconnex-organization.dto';
 import { type SchulconnexPersonsResponseDto } from '../../identity-management/dto/schulconnex/schulconnex-persons-response.dto';
 import { type SchoolClearance } from '../entity/school-clearance.entity';
 import { applyClearancePersonsSchoolFilter } from './clearance-school.filter';
@@ -7,9 +6,7 @@ import { applyClearancePersonsSchoolFilter } from './clearance-school.filter';
 describe('clearance-school.filter', () => {
   describe('applyClearancePersonsSchoolFilter', () => {
     it('should return empty array if schoolClearanceEntries is undefined', () => {
-      const identities: SchulconnexPersonsResponseDto[] = [
-        { pid: 'user-1' } as SchulconnexPersonsResponseDto,
-      ];
+      const identities: SchulconnexPersonsResponseDto[] = [{ pid: 'user-1' }];
       const result = applyClearancePersonsSchoolFilter(identities, undefined);
       expect(result).toEqual([]);
     });
@@ -20,7 +17,7 @@ describe('clearance-school.filter', () => {
           pid: 'user-1',
           personenkontexte: [
             {
-              organisation: { id: 'school-A' } as SchulconnexOrganization,
+              organisation: { id: 'school-A' },
             },
           ],
         } as SchulconnexPersonsResponseDto,
@@ -38,7 +35,7 @@ describe('clearance-school.filter', () => {
           pid: 'user-match',
           personenkontexte: [
             {
-              organisation: { id: 'school-A' } as SchulconnexOrganization,
+              organisation: { id: 'school-A' },
             },
           ],
         } as SchulconnexPersonsResponseDto,
@@ -46,7 +43,7 @@ describe('clearance-school.filter', () => {
           pid: 'user-no-match',
           personenkontexte: [
             {
-              organisation: { id: 'school-B' } as SchulconnexOrganization,
+              organisation: { id: 'school-B' },
             },
           ],
         } as SchulconnexPersonsResponseDto,
@@ -65,10 +62,10 @@ describe('clearance-school.filter', () => {
           pid: 'user-match',
           personenkontexte: [
             {
-              organisation: { id: 'school-B' } as SchulconnexOrganization,
+              organisation: { id: 'school-B' },
             },
             {
-              organisation: { id: 'school-A' } as SchulconnexOrganization,
+              organisation: { id: 'school-A' },
             },
           ],
         } as SchulconnexPersonsResponseDto,
@@ -86,11 +83,11 @@ describe('clearance-school.filter', () => {
         {
           pid: 'user-no-ctx',
           personenkontexte: [],
-        } as SchulconnexPersonsResponseDto,
+        },
         {
           pid: 'user-null-ctx',
           personenkontexte: null,
-        } as SchulconnexPersonsResponseDto,
+        },
       ];
       const schoolClearanceEntries: SchoolClearance[] = [
         { schoolId: 'school-A' } as SchoolClearance,
@@ -112,7 +109,7 @@ describe('clearance-school.filter', () => {
           pid: 'user-no-id',
           personenkontexte: [
             {
-              organisation: { id: null } as unknown as SchulconnexOrganization,
+              organisation: { id: null } as unknown,
             },
           ],
         } as SchulconnexPersonsResponseDto,
@@ -130,7 +127,7 @@ describe('clearance-school.filter', () => {
           pid: 'user-null-id',
           personenkontexte: [
             {
-              organisation: { id: null } as unknown as SchulconnexOrganization,
+              organisation: { id: null } as unknown,
             },
           ],
         } as SchulconnexPersonsResponseDto,
@@ -146,15 +143,15 @@ describe('clearance-school.filter', () => {
       const identities: SchulconnexPersonsResponseDto[] = [
         {
           pid: 'user-1',
-          personenkontexte: [{ organisation: { id: 'school-A' } as SchulconnexOrganization }],
+          personenkontexte: [{ organisation: { id: 'school-A' } }],
         } as SchulconnexPersonsResponseDto,
         {
           pid: 'user-2',
-          personenkontexte: [{ organisation: { id: 'school-B' } as SchulconnexOrganization }],
+          personenkontexte: [{ organisation: { id: 'school-B' } }],
         } as SchulconnexPersonsResponseDto,
         {
           pid: 'user-3',
-          personenkontexte: [{ organisation: { id: 'school-C' } as SchulconnexOrganization }],
+          personenkontexte: [{ organisation: { id: 'school-C' } }],
         } as SchulconnexPersonsResponseDto,
       ];
       const schoolClearanceEntries: SchoolClearance[] = [
@@ -179,9 +176,9 @@ describe('clearance-school.filter', () => {
           {
             pid: 'user-1',
             person: {
-              stammorganisation: { id: 'cleared-school' } as SchulconnexOrganization,
+              stammorganisation: { id: 'cleared-school' },
             },
-          } as SchulconnexPersonsResponseDto,
+          },
         ];
         const result = applyClearancePersonsSchoolFilter(identities, schoolClearanceEntries);
         expect(result).toHaveLength(1);
@@ -193,11 +190,9 @@ describe('clearance-school.filter', () => {
           {
             pid: 'user-1',
             person: {
-              stammorganisation: { id: 'other-school' } as SchulconnexOrganization,
+              stammorganisation: { id: 'other-school' },
             },
-            personenkontexte: [
-              { organisation: { id: 'cleared-school' } as SchulconnexOrganization },
-            ],
+            personenkontexte: [{ organisation: { id: 'cleared-school' } }],
           } as SchulconnexPersonsResponseDto,
         ];
         const result = applyClearancePersonsSchoolFilter(identities, schoolClearanceEntries);
@@ -210,8 +205,8 @@ describe('clearance-school.filter', () => {
           {
             pid: 'user-1',
             personenkontexte: [
-              { organisation: { id: 'cleared-school' } as SchulconnexOrganization },
-              { organisation: { id: 'other-school' } as SchulconnexOrganization },
+              { organisation: { id: 'cleared-school' } },
+              { organisation: { id: 'other-school' } },
             ],
           } as SchulconnexPersonsResponseDto,
         ];
@@ -227,7 +222,7 @@ describe('clearance-school.filter', () => {
             pid: 'user-1',
             personenkontexte: [
               {
-                organisation: { id: 'other-school' } as SchulconnexOrganization,
+                organisation: { id: 'other-school' },
                 gruppen: [
                   { gruppe: { orgid: 'cleared-school' } } as SchulconnexGroupdataset,
                   { gruppe: { orgid: 'other-school' } } as SchulconnexGroupdataset,
@@ -246,7 +241,7 @@ describe('clearance-school.filter', () => {
             pid: 'user-1',
             personenkontexte: [
               {
-                organisation: { id: 'cleared-school' } as SchulconnexOrganization,
+                organisation: { id: 'cleared-school' },
                 gruppen: [
                   { gruppe: { orgid: 'cleared-school' } } as SchulconnexGroupdataset,
                   { gruppe: { orgid: 'other-school' } } as SchulconnexGroupdataset,

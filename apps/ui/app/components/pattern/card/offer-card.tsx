@@ -83,7 +83,7 @@ export function OfferCard({
             {link && (
               <Button
                 variant={'link'}
-                className={'block max-w-full overflow-hidden text-ellipsis pl-0'}
+                className={'block max-w-full overflow-hidden pl-0 text-ellipsis'}
                 asChild
                 title={link}
               >
@@ -95,7 +95,7 @@ export function OfferCard({
         <CardAction>
           <Button
             variant={'ghost'}
-            className={'px-0! py-0! inline-flex h-10 w-10 items-center justify-center rounded-full'}
+            className={'inline-flex h-10 w-10 items-center justify-center rounded-full px-0! py-0!'}
             asChild
           >
             <Link href={`/apps/settings/${String(offerId)}`}>
@@ -107,7 +107,7 @@ export function OfferCard({
       <CardContent>
         {description && (
           <CardDescription
-            className={'overflow-hidden text-ellipsis text-nowrap'}
+            className={'overflow-hidden text-nowrap text-ellipsis'}
             title={description}
           >
             {description}

@@ -210,7 +210,7 @@ describe('clearance-group.filter', () => {
               organisation: {
                 id: 'school-2',
                 kennung: 'school-2-kennung',
-              } as SchulconnexOrganization,
+              },
               gruppen: [
                 {
                   gruppe: { id: 'group-1' },
@@ -238,7 +238,7 @@ describe('clearance-group.filter', () => {
               organisation: {
                 id: 'school-1',
                 kennung: 'school-1-kennung',
-              } as SchulconnexOrganization,
+              },
               gruppen: [
                 {
                   gruppe: { id: 'group-1' },

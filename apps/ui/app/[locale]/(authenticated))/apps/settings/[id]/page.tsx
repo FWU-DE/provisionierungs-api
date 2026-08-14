@@ -162,7 +162,7 @@ async function OfferSettingsDataWrapper({
     return (
       <section className="flex flex-col items-center justify-center py-12">
         <Alert variant="default" className="flex max-w-md flex-col items-center gap-4 text-center">
-          <SearchX className="size-12! text-muted-foreground" />
+          <SearchX className="text-muted-foreground size-12!" />
           <AlertTitle className="text-xl font-bold">{t('not-found.headline')}</AlertTitle>
           <AlertDescription className="text-base">{t('not-found.description')}</AlertDescription>
           <Button asChild className="mt-4">

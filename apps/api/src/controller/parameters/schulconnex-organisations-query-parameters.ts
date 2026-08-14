@@ -13,12 +13,7 @@ export class SchulconnexOrganizationQueryParameters {
   name?: string;
   typ?: string;
 
-  constructor(
-    id: undefined | string = undefined,
-    kennung: undefined | string = undefined,
-    name: undefined | string = undefined,
-    typ: undefined | string = undefined,
-  ) {
+  constructor(id?: string, kennung?: string, name?: string, typ?: string) {
     this.id = id;
     this.kennung = kennung;
     this.name = name;

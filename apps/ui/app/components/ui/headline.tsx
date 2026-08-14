@@ -27,8 +27,7 @@ type HeadlineTag = 'h1' | 'h2' | 'h3' | 'h4';
 type HeadlineSize = HeadlineTag | 'h5' | 'h6';
 
 interface HeadlineProps
-  extends React.HTMLAttributes<HTMLHeadingElement>,
-    VariantProps<typeof headlineVariants> {
+  extends React.HTMLAttributes<HTMLHeadingElement>, VariantProps<typeof headlineVariants> {
   tag?: HeadlineTag;
   size?: HeadlineSize;
   headline: string;

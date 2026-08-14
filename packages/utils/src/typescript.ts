@@ -13,7 +13,6 @@ export type PropertiesOnly<T> = Omit<
 
 export function assertUnreachable(value: never): never {
   throw new Error(
-    'This should be unreachable. This should never happen. Value: ' +
-      JSON.stringify(value as unknown),
+    'This should be unreachable. This should never happen. Value: ' + JSON.stringify(value),
   );
 }

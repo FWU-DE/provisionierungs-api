@@ -23,11 +23,11 @@ export class SchulconnexPersonsQueryParameters {
   'organisation.id'?: string;
 
   'constructor'(
-    vollstaendig: undefined | string = undefined,
-    pid: undefined | string = undefined,
-    personenkontextId: undefined | string = undefined,
-    gruppeId: undefined | string = undefined,
-    organisationId: undefined | string = undefined,
+    vollstaendig?: string,
+    pid?: string,
+    personenkontextId?: string,
+    gruppeId?: string,
+    organisationId?: string,
   ) {
     this.pid = pid;
     this['personenkontext.id'] = personenkontextId;

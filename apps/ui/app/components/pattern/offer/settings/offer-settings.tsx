@@ -277,7 +277,7 @@ export function OfferSettings({
           {activeTab === 'groups' && (
             <div className="flex gap-4 md:flex-row" data-testid="group-list">
               <GroupList
-                className="rounded-2xl bg-gray-50 px-4 pb-4 pt-2 shadow-lg md:w-1/2"
+                className="rounded-2xl bg-gray-50 px-4 pt-2 pb-4 shadow-lg md:w-1/2"
                 headline={t('available-groups')}
                 groups={notSelectedGroups}
                 onClickGroup={toggleGroup}
@@ -285,7 +285,7 @@ export function OfferSettings({
                 emptyStateIcon={RabbitIcon}
               />
               <GroupList
-                className="rounded-2xl bg-gray-200 px-4 pb-4 pt-2 md:w-1/2"
+                className="rounded-2xl bg-gray-200 px-4 pt-2 pb-4 md:w-1/2"
                 headline={t('selected-groups')}
                 groups={selectedGroups}
                 onClickGroup={toggleGroup}
@@ -305,7 +305,7 @@ export function OfferSettings({
       {/* Warning for missing groups */}
       {!isOverlayVisible && activeTab === 'groups' && selectedGroups.length === 0 && (
         <Alert variant="destructive" className="mt-8">
-          <AlertCircleIcon className="translate-0! size-4" />
+          <AlertCircleIcon className="size-4 translate-0!" />
           <AlertDescription className="text-lg font-semibold">
             {t('please-select-at-least-one-group')}
           </AlertDescription>

@@ -39,7 +39,7 @@ export class OffersFetcher {
 
   private async fetchOffers(
     mode: OfferFetchMode,
-    options: undefined | FetchOptions = undefined,
+    options?: FetchOptions,
   ): Promise<OffersResponse | null> {
     if (mode === OfferFetchMode.ACTIVATED_BY_SCHOOL && !options?.schoolId) {
       throw new Error(
