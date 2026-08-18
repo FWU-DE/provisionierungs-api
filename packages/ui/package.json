@@ -22,7 +22,7 @@
     "typescript": "catalog:"
   },
   "dependencies": {
-    "@apollo/client": "^4.2.10",
+    "@apollo/client": "^4.2.11",
     "@apollo/client-integration-nextjs": "^0.14.5",
     "@opentelemetry/core": "^2.10.0",
     "@opentelemetry/sdk-trace-base": "^2.10.0",

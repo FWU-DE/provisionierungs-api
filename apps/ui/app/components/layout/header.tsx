@@ -7,7 +7,7 @@ import { getUserSchoolSelection } from '@/lib/user/user';
 import { cn } from '@/lib/utils';
 import { HouseIcon, LogOutIcon } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
-import Image from 'next/image';
+import Image, { type StaticImageData } from 'next/image';
 import LinkNative from 'next/link';
 
 import { LanguageSwitcher } from './language-switcher';
@@ -31,7 +31,7 @@ export async function Header({ className, ...props }: React.ComponentProps<'div'
     >
       <Link href="/apps" className="shrink-0">
         <Image
-          src={logo}
+          src={logo as StaticImageData}
           width={40}
           height={40}
           alt={t('logo-alt')}

@@ -5,7 +5,7 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 
-import { locales } from '../../../i18n';
+import { locales } from '../../../i18n/consts';
 import '../../globals.css';
 
 export async function generateMetadata(): Promise<Metadata> {

@@ -3,7 +3,7 @@ import logo from '@/../assets/images/vidis-logo-white.svg';
 import { Link } from '@/lib/navigation';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
+import Image, { type StaticImageData } from 'next/image';
 
 export interface FooterLinkProps {
   href: string;
@@ -38,7 +38,7 @@ export function Footer({ links, className, ...props }: FooterProps) {
         <div className="shrink-0">
           <Link href="/apps" className={'text-foreground hover:text-primary'}>
             <Image
-              src={logo}
+              src={logo as StaticImageData}
               width={80}
               height={80}
               alt={t('logo-alt')}

@@ -1,14 +1,11 @@
+import * as rootParams from 'next/root-params';
 import { getRequestConfig } from 'next-intl/server';
 
-// Can be imported from a shared config
-export const locales = ['de', 'en'] as const;
-export const defaultLocale = 'de' as const;
+import { type Locale, defaultLocale, locales } from './consts';
 
-export type Locale = (typeof locales)[number];
-
-export default getRequestConfig(async ({ requestLocale }) => {
+export default getRequestConfig(async () => {
   // This typically corresponds to the `[locale]` segment
-  let locale = await requestLocale;
+  let locale = await rootParams.locale();
 
   // Ensure that a valid locale is used
   if (!locale || !locales.includes(locale as Locale)) {
@@ -18,6 +15,6 @@ export default getRequestConfig(async ({ requestLocale }) => {
   return {
     locale: locale as Locale,
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-    messages: (await import(`./messages/${locale}.json`)).default,
+    messages: (await import(`../messages/${locale}.json`)).default,
   };
 });

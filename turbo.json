@@ -55,13 +55,17 @@
       "outputs": [".next/**", "dist/**", "!.next/cache/**"]
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": ["^lint", "typegen"]
     },
     "test": {
       "dependsOn": ["^test"]
     },
     "check-types": {
       "dependsOn": ["^check-types"]
+    },
+    "typegen": {
+      "dependsOn": ["^typegen"],
+      "outputs": [".next/types/**"]
     },
     "clean": {
       "dependsOn": ["^clean"],

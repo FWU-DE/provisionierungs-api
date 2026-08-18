@@ -1,4 +1,4 @@
-import type { Locale } from './i18n';
+import type { Locale } from './i18n/consts';
 import type messages from './messages/en.json';
 
 declare module 'next-intl' {
