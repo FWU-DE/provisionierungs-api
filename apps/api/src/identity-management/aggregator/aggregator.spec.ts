@@ -116,6 +116,25 @@ describe('Aggregator', () => {
     expect(aggregator).toBeDefined();
   });
 
+  describe('getAvailableAdapterIdentifiers', () => {
+    it('should return the identifiers of all enabled adapters', () => {
+      expect(aggregator.getAvailableAdapterIdentifiers()).toEqual([
+        'eduplaces',
+        'eduplaces-staging',
+        'saarland',
+      ]);
+    });
+
+    it('should exclude disabled adapters', () => {
+      mockSaarlandAdapter.isEnabled.mockReturnValue(false);
+
+      expect(aggregator.getAvailableAdapterIdentifiers()).toEqual([
+        'eduplaces',
+        'eduplaces-staging',
+      ]);
+    });
+  });
+
   describe('getUsers', () => {
     it('should aggregate users from multiple adapters', async () => {
       // Mock data

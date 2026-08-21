@@ -52,6 +52,10 @@ export class Aggregator {
     return this.getAvailableAdapters().find((adapter) => adapter.getIdentifier() === id);
   }
 
+  public getAvailableAdapterIdentifiers(): string[] {
+    return this.getAvailableAdapters().map((adapter) => adapter.getIdentifier());
+  }
+
   public async getPersons(
     idmIds: string[],
     offerContext: OfferContext,

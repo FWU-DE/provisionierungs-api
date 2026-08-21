@@ -8,10 +8,15 @@ import { PersonInfoController } from './person-info.controller';
 import { PersonenInfoController } from './personen-info.controller';
 import { ClearanceValidationService } from './service/clearance-validation.service';
 import { PersonInfoService } from './service/person-info.service';
+import { VerfuegbareHeimatorganisationenController } from './verfuegbare-heimatorganisationen.controller';
 
 @Module({
   imports: [IdentityProviderModule, ClearanceModule, OffersModule, LogModule],
-  controllers: [PersonenInfoController, PersonInfoController],
+  controllers: [
+    PersonenInfoController,
+    PersonInfoController,
+    VerfuegbareHeimatorganisationenController,
+  ],
   providers: [ClearanceValidationService, PersonInfoService],
 })
 export class ControllerModule {}
