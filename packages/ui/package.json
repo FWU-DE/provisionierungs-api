@@ -18,11 +18,11 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "eslint": "catalog:",
-    "eslint-plugin-turbo": "^2.10.9",
+    "eslint-plugin-turbo": "^2.10.10",
     "typescript": "catalog:"
   },
   "dependencies": {
-    "@apollo/client": "^4.2.11",
+    "@apollo/client": "^4.2.12",
     "@apollo/client-integration-nextjs": "^0.14.5",
     "@opentelemetry/core": "^2.10.0",
     "@opentelemetry/sdk-trace-base": "^2.10.0",
