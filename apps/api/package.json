@@ -29,7 +29,7 @@
     "@nestjs/core": "^11.1.29",
     "@nestjs/graphql": "^13.4.4",
     "@nestjs/platform-express": "^11.1.29",
-    "@nestjs/swagger": "^11.4.6",
+    "@nestjs/swagger": "^11.4.7",
     "@nestjs/terminus": "^11.1.1",
     "@nestjs/typeorm": "^11.0.3",
     "@opentelemetry/api": "^1.9.1",
