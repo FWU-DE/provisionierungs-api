@@ -22,9 +22,9 @@ export function Footer({ links, className, ...props }: FooterProps) {
       <div className="mx-auto flex flex-col items-center justify-between gap-6 px-4 md:flex-row xl:container">
         {/* Navigation */}
         <nav className="flex flex-col items-center gap-4 md:flex-row md:justify-end md:gap-x-10 md:gap-y-2">
-          {links.map((link, index) => (
+          {links.map((link) => (
             <Link
-              key={index}
+              key={link.href}
               href={link.href}
               target={link.target}
               className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors"

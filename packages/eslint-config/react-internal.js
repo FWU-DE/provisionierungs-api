@@ -1,6 +1,5 @@
+import eslintReact from '@eslint-react/eslint-plugin';
 import js from '@eslint/js';
-import pluginReact from 'eslint-plugin-react';
-import pluginReactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -14,28 +13,13 @@ export const config = tseslint.config([
   baseConfig,
   js.configs.recommended,
   tseslint.configs.strictTypeChecked,
-  pluginReact.configs.flat.recommended,
-  {
-    rules: { '@typescript-eslint/no-confusing-void-expression': 'off' },
-  },
+  eslintReact.configs.recommended,
   {
     languageOptions: {
-      ...pluginReact.configs.flat.recommended.languageOptions,
       globals: {
         ...globals.serviceworker,
         ...globals.browser,
       },
-    },
-  },
-  {
-    plugins: {
-      'react-hooks': pluginReactHooks,
-    },
-    settings: { react: { version: 'detect' } },
-    rules: {
-      ...pluginReactHooks.configs.recommended.rules,
-      // React scope no longer necessary with new JSX transform.
-      'react/react-in-jsx-scope': 'off',
     },
   },
 ]);

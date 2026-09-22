@@ -33,12 +33,12 @@ export default function ToastTrigger({
   description,
   type = 'default',
 }: ToastTriggerProps) {
-  const didTrigger = useRef(false);
+  const didTriggerRef = useRef(false);
 
   useEffect(() => {
-    if (didTrigger.current) return;
+    if (didTriggerRef.current) return;
 
-    didTrigger.current = true;
+    didTriggerRef.current = true;
 
     const options = {
       description: description,

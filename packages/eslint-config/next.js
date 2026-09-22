@@ -1,7 +1,7 @@
+import eslintReact from '@eslint-react/eslint-plugin';
 import js from '@eslint/js';
 import pluginNext from '@next/eslint-plugin-next';
-import pluginReact from 'eslint-plugin-react';
-import pluginReactHooks from 'eslint-plugin-react-hooks';
+import stylistic from '@stylistic/eslint-plugin';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -17,9 +17,8 @@ export const nextJsConfig = tseslint.config([
   js.configs.recommended,
   tseslint.configs.strictTypeChecked,
   {
-    ...pluginReact.configs.flat.recommended,
+    ...eslintReact.configs.recommended,
     languageOptions: {
-      ...pluginReact.configs.flat.recommended.languageOptions,
       globals: {
         ...globals.serviceworker,
       },
@@ -28,21 +27,11 @@ export const nextJsConfig = tseslint.config([
   {
     plugins: {
       '@next/next': pluginNext,
+      '@stylistic': stylistic,
     },
     rules: {
       ...pluginNext.configs.recommended.rules,
       ...pluginNext.configs['core-web-vitals'].rules,
-    },
-  },
-  {
-    plugins: {
-      'react-hooks': pluginReactHooks,
-    },
-    settings: { react: { version: 'detect' } },
-    rules: {
-      ...pluginReactHooks.configs.recommended.rules,
-      // React scope no longer necessary with new JSX transform.
-      'react/react-in-jsx-scope': 'off',
     },
   },
   { rules: { 'no-unused-vars': 'off', '@typescript-eslint/no-unused-vars': 'error' } },

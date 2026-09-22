@@ -127,6 +127,7 @@ export function OfferSettings({
     React.useState<Set<string>>(initialSelectedGroupIds);
 
   React.useEffect(() => {
+    // eslint-disable-next-line @eslint-react/set-state-in-effect
     setSelectedGroupIds(initialSelectedGroupIds);
   }, [initialSelectedGroupIds]);
 

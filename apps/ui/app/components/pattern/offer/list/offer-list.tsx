@@ -25,6 +25,7 @@ export function OfferListSkeleton() {
       </div>
       <ul className="mt-4 mb-10 grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3" role="list">
         {Array.from({ length: 3 }).map((_, i) => (
+          // eslint-disable-next-line @eslint-react/no-array-index-key
           <li key={i}>
             <OfferCardSkeleton />
           </li>

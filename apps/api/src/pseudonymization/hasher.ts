@@ -42,9 +42,9 @@ export class Hasher {
       const hashBytes = hmac.digest();
       return this.uuidv3(hashBytes);
     } catch (error: unknown) {
-      ensureError(error);
-      this.logger.error('Generating hash failed', { error });
-      throw new Error('Generating hash failed: ' + ensureError(error).message);
+      const ensuredError = ensureError(error);
+      this.logger.error('Generating hash failed', { error: ensuredError });
+      throw new Error('Generating hash failed: ' + ensuredError.message, { cause: error });
     }
   }
 
