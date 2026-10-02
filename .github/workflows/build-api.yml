@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Install pnpm
-        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
       - name: Setup Node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
@@ -26,7 +26,7 @@ jobs:
       - name: Install Node Dependencies
         run: pnpm install
       - name: Setup infrastructure
-        uses: hoverkraft-tech/compose-action@ee6af68587292d72db67743171809c19787df4c9 # v3.1.0
+        uses: hoverkraft-tech/compose-action@b659c744ee9bed25aea2307c017ad849bd104433 # v3.2.0
         with:
           compose-file: 'test_env/docker-compose.yml'
       - name: Prepare environment
@@ -100,7 +100,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Install pnpm
-        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
       - name: Setup Node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
