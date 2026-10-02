@@ -25,6 +25,7 @@ export const config = defineConfig([
     rules: {
       '@typescript-eslint/no-confusing-void-expression': 'off',
       '@typescript-eslint/no-extraneous-class': 'off',
+      '@typescript-eslint/no-meaningless-void-operator': 'off',
       '@typescript-eslint/consistent-type-imports': ['error'],
     },
   },
