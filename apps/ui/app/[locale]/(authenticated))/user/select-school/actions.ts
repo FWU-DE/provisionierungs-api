@@ -1,16 +1,16 @@
 'use server';
 
+import { redirect } from '@/lib/navigation';
 import { setUserSchoolSelection } from '@/lib/user/user';
-import { getLocale } from 'next-intl/server';
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 
-export async function selectSchool(formData: FormData) {
+import type { locales } from '../../../../../i18n/consts';
+
+export async function selectSchool(locale: (typeof locales)[number], formData: FormData) {
   const schoolId = formData.get('schoolId') as string;
   if (schoolId) {
     await setUserSchoolSelection(schoolId);
     revalidatePath('/', 'layout');
-    const locale = await getLocale();
-    redirect(`/${locale as string}/apps`);
+    redirect({ href: '/apps', locale });
   }
 }

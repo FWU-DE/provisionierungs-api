@@ -10,13 +10,9 @@ import createMiddleware from 'next-intl/middleware';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-import { defaultLocale, locales } from './i18n/consts';
+import { routing } from './i18n/routing';
 
-const intlMiddleware = createMiddleware({
-  locales,
-  defaultLocale,
-  localePrefix: 'always',
-});
+const intlMiddleware = createMiddleware(routing);
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;

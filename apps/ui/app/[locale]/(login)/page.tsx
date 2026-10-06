@@ -1,9 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Link } from '@/lib/navigation';
+import { Link, redirect } from '@/lib/navigation';
 import { verifySession } from '@/lib/session';
 import { getLocale, getTranslations } from 'next-intl/server';
-import { redirect } from 'next/navigation';
 
 export default async function Login() {
   const t = await getTranslations('auth');
@@ -13,7 +12,7 @@ export default async function Login() {
 
   if (session?.isAuth) {
     const locale = await getLocale();
-    redirect(`/${locale}/apps`);
+    redirect({ href: '/apps', locale });
   }
 
   return (
