@@ -4,7 +4,6 @@ import { Logger } from '../common/logger';
 import { OffersDto } from './dto/offers.dto';
 import { OffersFetcher } from './fetcher/offers.fetcher';
 import { OfferItem } from './model/response/offer-item.model';
-import { OffersResponse } from './model/response/offers.model';
 
 function isOfferItem(item: unknown): item is OfferItem {
   return (
@@ -33,9 +32,9 @@ export class OffersService {
     this.logger.debug(`OffersService: Getting offers for school IDs.`, {
       schoolIds: schoolIds,
     });
-    const offersResponses: OffersResponse[] = (
-      await this.fetcher.fetchActiveOffers(schoolIds)
-    ).filter((response) => response !== null);
+    const offersResponses = (await this.fetcher.fetchActiveOffers(schoolIds)).filter(
+      (response) => response !== null,
+    );
 
     const seenOfferIds = new Set<number>();
     return offersResponses.flatMap((response) => {

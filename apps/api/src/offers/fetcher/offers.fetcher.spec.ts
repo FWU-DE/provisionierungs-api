@@ -69,7 +69,7 @@ describe('OffersFetcher', () => {
     );
     expect(mockFetch).toHaveBeenNthCalledWith(
       2,
-      'https://service-stage.vidis.schule/o/vidis-rest/v1.0/offers/activated/by-school/school-1',
+      'https://service-stage.vidis.schule/o/vidis-rest/v1.0/offers/activated/by-school/school-1?pageSize=100',
       expect.objectContaining({
         method: 'GET',
         headers: {
@@ -104,6 +104,118 @@ describe('OffersFetcher', () => {
 
     expect(tokenCalls).toHaveLength(1);
     expect(mockFetch).toHaveBeenCalledTimes(3);
+  });
+
+  it('collects activated offers from every page for a school', async () => {
+    const mockFetch = jest
+      .fn()
+      .mockResolvedValueOnce(
+        mockOkResponse({ access_token: 'token-1', expires_in: 3600, token_type: 'bearer' }),
+      )
+      .mockResolvedValueOnce(
+        mockOkResponse({ ...offersResponsePayload, lastPage: 3, totalCount: 3, pageSize: 1 }),
+      )
+      .mockResolvedValueOnce(
+        mockOkResponse({
+          ...offersResponsePayload,
+          items: [{ ...offersResponsePayload.items[0], offerId: 200 }],
+          page: 2,
+          lastPage: 3,
+          totalCount: 3,
+          pageSize: 1,
+        }),
+      )
+      .mockResolvedValueOnce(
+        mockOkResponse({
+          ...offersResponsePayload,
+          items: [{ ...offersResponsePayload.items[0], offerId: 300 }],
+          page: 3,
+          lastPage: 3,
+          totalCount: 3,
+          pageSize: 1,
+        }),
+      );
+    global.fetch = mockFetch;
+
+    const responses = await fetcher.fetchActiveOffers(['school-1']);
+
+    expect(responses[0]?.items.map((item) => item.offerId)).toEqual([100, 200, 300]);
+    expect(Object.keys(responses[0] ?? {})).toEqual(['items']);
+    for (const page of [2, 3]) {
+      expect(mockFetch).toHaveBeenNthCalledWith(
+        page + 1,
+        `${offersConfig.OFFERS_API_ENDPOINT}/offers/activated/by-school/school-1?pageSize=100&page=${String(page)}`,
+        expect.objectContaining({ headers: { Authorization: 'Bearer token-1' } }),
+      );
+    }
+    expect(mockFetch).toHaveBeenCalledTimes(4);
+  });
+
+  it('finds a client offer on a later page', async () => {
+    const mockFetch = jest
+      .fn()
+      .mockResolvedValueOnce(
+        mockOkResponse({ access_token: 'token-1', expires_in: 3600, token_type: 'bearer' }),
+      )
+      .mockResolvedValueOnce(mockOkResponse({ ...offersResponsePayload, lastPage: 2 }))
+      .mockResolvedValueOnce(
+        mockOkResponse({
+          ...offersResponsePayload,
+          items: [{ ...offersResponsePayload.items[0], clientId: ['client-2'], offerId: 200 }],
+          page: 2,
+          lastPage: 2,
+        }),
+      );
+    global.fetch = mockFetch;
+
+    expect((await fetcher.fetchOfferForClientId('client-2'))?.offerId).toBe(200);
+    expect(mockFetch).toHaveBeenNthCalledWith(
+      3,
+      `${offersConfig.OFFERS_API_ENDPOINT}/offers/all?pageSize=100&page=2`,
+      expect.objectContaining({ method: 'GET' }),
+    );
+    expect(mockFetch).toHaveBeenCalledTimes(3);
+  });
+
+  it('returns null instead of partial offers when a later page fails', async () => {
+    const mockFetch = jest
+      .fn()
+      .mockResolvedValueOnce(
+        mockOkResponse({ access_token: 'token-1', expires_in: 3600, token_type: 'bearer' }),
+      )
+      .mockResolvedValueOnce(mockOkResponse({ ...offersResponsePayload, lastPage: 3 }))
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        statusText: 'Server Error',
+        text: jest.fn().mockResolvedValue('Failure'),
+      });
+    global.fetch = mockFetch;
+
+    expect(await fetcher.fetchActiveOffers(['school-1'])).toEqual([null]);
+    expect(mockFetch).toHaveBeenCalledTimes(3);
+  });
+
+  it('validates offers on later pages', async () => {
+    const mockFetch = jest
+      .fn()
+      .mockResolvedValueOnce(
+        mockOkResponse({ access_token: 'token-1', expires_in: 3600, token_type: 'bearer' }),
+      )
+      .mockResolvedValueOnce(mockOkResponse({ ...offersResponsePayload, lastPage: 2 }))
+      .mockResolvedValueOnce(
+        mockOkResponse({
+          ...offersResponsePayload,
+          items: [{ ...offersResponsePayload.items[0], offerId: 'invalid' }],
+          page: 2,
+          lastPage: 2,
+        }),
+      );
+    global.fetch = mockFetch;
+
+    await expect(fetcher.fetchActiveOffers(['school-1'])).rejects.toThrow(
+      'Schema Validation | Offers response is invalid:',
+    );
   });
 
   it('refreshes token after expiry', async () => {

@@ -3,6 +3,7 @@ import z from 'zod';
 
 import { Logger } from '../../common/logger';
 import offersConfig, { type OffersConfig } from '../config/offers.config';
+import type { Offers } from '../model/offers.interface';
 import { OfferItem } from '../model/response/offer-item.model';
 import { OffersResponse } from '../model/response/offers.model';
 import { activatedOffersBySchoolResponseSchema } from '../offers.validator';
@@ -37,9 +38,27 @@ export class OffersFetcher {
     this.logger.setContext(OffersFetcher.name);
   }
 
-  private async fetchOffers(
+  private async fetchOffers(mode: OfferFetchMode, options?: FetchOptions): Promise<Offers | null> {
+    const offers = await this.fetchOffersPage(mode, options);
+    if (!offers) {
+      return null;
+    }
+
+    for (let page = offers.page + 1; page <= offers.lastPage; page++) {
+      const nextPage = await this.fetchOffersPage(mode, options, page);
+      if (!nextPage) {
+        return null;
+      }
+      offers.items.push(...nextPage.items);
+    }
+
+    return { items: offers.items };
+  }
+
+  private async fetchOffersPage(
     mode: OfferFetchMode,
     options?: FetchOptions,
+    page?: number,
   ): Promise<OffersResponse | null> {
     if (mode === OfferFetchMode.ACTIVATED_BY_SCHOOL && !options?.schoolId) {
       throw new Error(
@@ -47,8 +66,15 @@ export class OffersFetcher {
       );
     }
 
-    const endpointUrl =
-      this.offersConfig.OFFERS_API_ENDPOINT + '/offers/' + mode + (options?.schoolId ?? '');
+    let endpointUrl =
+      this.offersConfig.OFFERS_API_ENDPOINT +
+      '/offers/' +
+      mode +
+      (options?.schoolId ?? '') +
+      '?pageSize=100';
+    if (page !== undefined) {
+      endpointUrl += `&page=${String(page)}`;
+    }
     const bearerToken = await this.getBearerToken();
 
     this.logger.debug(`OffersFetcher: Requesting offers from ${endpointUrl}`);
@@ -138,7 +164,7 @@ export class OffersFetcher {
     return parsedData.access_token;
   }
 
-  public async fetchActiveOffers(schoolIds: string[]): Promise<(OffersResponse | null)[]> {
+  public async fetchActiveOffers(schoolIds: string[]): Promise<(Offers | null)[]> {
     return await Promise.all(
       schoolIds.map(async (schoolId) => {
         return await this.fetchOffers(OfferFetchMode.ACTIVATED_BY_SCHOOL, {
