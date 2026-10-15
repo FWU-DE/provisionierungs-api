@@ -1,3 +1,4 @@
+import { type SchulconnexVerwaltungspolitischeKodierung } from '../../dto/schulconnex/schulconnex-address.dto';
 import { type SchulconnexPersonsResponse } from './schulconnex-response.interface';
 import { schulconnexPersonsResponseSchema } from './schulconnex.validator';
 
@@ -52,6 +53,9 @@ describe('SchulconnexValidator', () => {
                 postleitzahl: '12345',
                 ort: 'Berlin',
                 ortsteil: 'Mitte',
+                verwaltungspolitischekodierung: {
+                  bundesland: '11',
+                },
               },
             },
             geburt: {
@@ -74,6 +78,9 @@ describe('SchulconnexValidator', () => {
                   postleitzahl: '12345',
                   ort: 'Berlin',
                   ortsteil: 'Mitte',
+                  verwaltungspolitischekodierung: {
+                    bundesland: null,
+                  },
                 },
                 typ: 'Schule',
                 traegerschaft: '02',
@@ -224,6 +231,63 @@ describe('SchulconnexValidator', () => {
       const result = schulconnexPersonsResponseSchema.safeParse(mockResponse);
 
       // Assertions
+      expect(result.success).toBe(false);
+    });
+
+    it.each<[string, SchulconnexVerwaltungspolitischeKodierung | null | undefined]>([
+      ['a valid bundesland', { bundesland: '01' }],
+      ['the highest valid bundesland', { bundesland: '16' }],
+      ['a null bundesland', { bundesland: null }],
+      ['a missing bundesland', {}],
+      ['a null verwaltungspolitischekodierung', null],
+      ['a missing verwaltungspolitischekodierung', undefined],
+    ])('should accept an anschrift with %s', (_, verwaltungspolitischekodierung) => {
+      const mockResponse: SchulconnexPersonsResponse[] = [
+        {
+          pid: 'person1',
+          person: {
+            stammorganisation: {
+              id: 'org1',
+              anschrift: {
+                ort: 'Berlin',
+                verwaltungspolitischekodierung,
+              },
+            },
+          },
+        },
+      ];
+
+      const result = schulconnexPersonsResponseSchema.safeParse(mockResponse);
+
+      expect(result.success).toBe(true);
+      expect(result.data).toEqual(mockResponse);
+    });
+
+    it.each([
+      ['an unknown bundesland code', { bundesland: '17' }],
+      ['a bundesland code without leading zero', { bundesland: '1' }],
+      ['a numeric bundesland', { bundesland: 11 }],
+      ['a bundesland name instead of a code', { bundesland: 'Berlin' }],
+      ['a string verwaltungspolitischekodierung', '11'],
+    ])('should reject an anschrift with %s', (_, verwaltungspolitischekodierung) => {
+      const mockResponse = [
+        {
+          pid: 'person1',
+          personenkontexte: [
+            {
+              organisation: {
+                id: 'org1',
+                anschrift: {
+                  verwaltungspolitischekodierung,
+                },
+              },
+            },
+          ],
+        },
+      ];
+
+      const result = schulconnexPersonsResponseSchema.safeParse(mockResponse);
+
       expect(result.success).toBe(false);
     });
 

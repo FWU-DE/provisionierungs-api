@@ -102,6 +102,9 @@ describe('SchulconnexTransformer', () => {
                   postleitzahl: '12345',
                   ort: 'Berlin',
                   ortsteil: null,
+                  verwaltungspolitischekodierung: {
+                    bundesland: '11',
+                  },
                 },
                 typ: 'Schule',
                 traegerschaft: null,
