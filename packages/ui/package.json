@@ -18,15 +18,15 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "eslint": "catalog:",
-    "eslint-plugin-turbo": "^2.11.4",
+    "eslint-plugin-turbo": "^2.11.10",
     "typescript": "catalog:"
   },
   "dependencies": {
-    "@apollo/client": "^4.3.1",
+    "@apollo/client": "^4.3.5",
     "@apollo/client-integration-nextjs": "^0.14.5",
     "@opentelemetry/core": "^2.11.0",
     "@opentelemetry/sdk-trace-base": "^2.11.0",
-    "gql.tada": "^1.11.3",
+    "gql.tada": "^1.11.4",
     "next-auth": "^4.24.15",
     "react": "catalog:",
     "react-dom": "catalog:",
