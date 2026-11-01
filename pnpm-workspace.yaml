@@ -6,7 +6,7 @@ packages:
 catalog:
   '@types/react': ^19.3.0
   '@types/react-dom': ^19.3.0
-  eslint: ^10.11.0
+  eslint: ^10.13.0
   jest: ^30.5.2
   react: ^19.3.0
   react-dom: ^19.3.0
